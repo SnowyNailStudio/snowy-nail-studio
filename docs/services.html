@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services & Pricing | Snowy Nail Studio</title>
+  <meta name="description" content="Snowy Nail Studio services, pricing, and current promotions. Gel manicures, pedicures, nail art, extensions, and removal.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="services.title">Services &amp; Pricing</h1>
+        <p data-i18n="services.subtitle">Handcrafted nail art for manicures and pedicures</p>
+      </div>
+    </div>
+    <!-- Services grid -->
+    <section class="section reveal" aria-labelledby="services-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">What We Offer</p>
+          <h2 id="services-heading" data-i18n="services.section_services">What We Offer</h2>
+        </div>
+        <div class="services-grid" id="services-grid">
+          <!-- Populated by reviews.js â†’ loadServices() -->
+          <div class="loading-state" style="grid-column:1/-1">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Pricing poster -->
+    <section class="section section--alt reveal" aria-labelledby="pricing-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Transparent Pricing</p>
+          <h2 id="pricing-heading" data-i18n="services.section_pricing">Pricing</h2>
+          <p data-i18n="services.pricing_note">Pricing is shown on the poster below. Final price may vary by design complexity.</p>
+        </div>
+        <div class="poster-wrap" style="max-width:680px; margin-inline:auto;">
+          <div class="poster-lang-toggle">
+            <button class="poster-tab active" data-panel="poster-en" data-i18n="services.view_en">English</button>
+            <button class="poster-tab"        data-panel="poster-zh" data-i18n="services.view_zh">中文</button>
+          </div>
+          <!-- English poster -->
+          <div class="poster-panel active" id="poster-en">
+            <div class="poster-mock">
+              <h3 class="poster-mock-title">Snowy Nail Studio</h3>
+              <p class="poster-mock-sub">Richmond Hill · Price List</p>
+              <div class="poster-mock-items">
+                <div class="poster-mock-row">
+                  <span>Gel Manicure (plain)</span>
+                  <span class="poster-mock-price">from $55</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Gel Manicure + Art</span>
+                  <span class="poster-mock-price">from $70</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Gel Pedicure (plain)</span>
+                  <span class="poster-mock-price">from $65</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Extensions</span>
+                  <span class="poster-mock-price">from $85</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Removal</span>
+                  <span class="poster-mock-price">from $15</span>
+                </div>
+              </div>
+              <p class="poster-mock-note">
+                Replace this card with your real pricing poster image.<br>
+                Upload to <code>docs/assets/images/posters/en/</code>
+              </p>
+            </div>
+          </div>
+          <!-- Chinese poster -->
+          <div class="poster-panel" id="poster-zh">
+            <div class="poster-mock">
+              <h3 class="poster-mock-title" style="font-family:var(--font-zh)">Snowy ç¾Ž甲工作室</h3>
+              <p class="poster-mock-sub" style="font-family:var(--font-zh)">åˆ—治文山 · ä»·ç›®è¡¨</p>
+              <div class="poster-mock-items">
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å…‰ç–—ç¾Ž甲ï¼ˆçº¯è‰²ï¼‰</span>
+                  <span class="poster-mock-price">èµ· $55</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å…‰ç–—ç¾Ž甲 + å½©ç»˜</span>
+                  <span class="poster-mock-price">èµ· $70</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å…‰ç–—è¶³甲ï¼ˆçº¯è‰²ï¼‰</span>
+                  <span class="poster-mock-price">èµ· $65</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">甲ç‰‡å»¶é•¿</span>
+                  <span class="poster-mock-price">èµ· $85</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å¸甲</span>
+                  <span class="poster-mock-price">èµ· $15</span>
+                </div>
+              </div>
+              <p class="poster-mock-note" style="font-family:var(--font-zh)">
+                è¯·å°†æ­¤å ä½å›¾æ›¿æ¢ä¸ºçœŸå®žä»·ç›®è¡¨å›¾ç‰‡ã€‚<br>
+                ä¸Šä¼ è‡³ <code>docs/assets/images/posters/zh/</code>
+              </p>
+            </div>
+          </div>
+        </div><!-- /poster-wrap -->
+      </div>
+    </section>
+    <!-- Promotions -->
+    <section class="section reveal" aria-labelledby="promos-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Limited Time</p>
+          <h2 id="promos-heading" data-i18n="services.section_promos">Current Promotions</h2>
+        </div>
+        <div class="promo-cards" id="promos-container">
+          <div class="loading-state" style="grid-column:1/-1">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="services.contact_cta">Ask About a Service</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadServices('services-grid');
+      loadPromotions('promos-container');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &amp; FAQ | Snowy Nail Studio</title>
+  <meta name="description" content="Contact Snowy Nail Studio in Richmond Hill via Instagram, 小红书, or WeChat. Find answers to frequently asked questions.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="contact.title">Contact &amp; FAQ</h1>
+        <p data-i18n="contact.subtitle">Get in touch or find answers below</p>
+      </div>
+    </div>
+    <!-- Contact methods + CTAs -->
+    <section class="section reveal" aria-labelledby="contact-heading">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <p class="eyebrow">Reach Us</p>
+          <h2 id="contact-heading" data-i18n="contact.section_contact">Get in Touch</h2>
+          <p data-i18n="contact.contact_intro">The best way to reach us is through Instagram or 小红书. WeChat is also available for Chinese-speaking clients.</p>
+        </div>
+        <div class="contact-methods" id="contact-methods-container">
+          <div class="loading-state" style="min-height:80px;">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+        <!-- CTA buttons -->
+        <div class="contact-cta-grid" style="margin-top:32px;">
+          <a href="#" class="btn btn-primary" data-i18n="contact.cta_inspiration">Send an Inspiration Photo</a>
+          <a href="#" class="btn btn-outline" data-i18n="contact.cta_availability">Ask About Availability</a>
+          <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_instagram">Message on Instagram</a>
+          <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_xhs">Visit 小红书</a>
+        </div>
+      </div>
+    </section>
+    <!-- FAQ -->
+    <section class="section section--alt reveal" aria-labelledby="faq-heading">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-heading" data-i18n="contact.section_faq">Frequently Asked Questions</h2>
+        </div>
+        <div id="faq-container">
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <p data-i18n="contact.faq_loading">Loading FAQâ€¦</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Policies -->
+    <section class="section reveal" aria-labelledby="policies-heading">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <p class="eyebrow">Studio Policies</p>
+          <h2 id="policies-heading" data-i18n="contact.section_policies">Studio Policies</h2>
+        </div>
+        <div>
+          <div class="policy-box">
+            <h4 data-i18n="contact.cancellation_title">Cancellation Policy</h4>
+            <p data-i18n="contact.cancellation_text">Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may result in a deposit forfeiture.</p>
+          </div>
+          <div class="policy-box">
+            <h4 data-i18n="contact.late_title">Late Arrival Policy</h4>
+            <p data-i18n="contact.late_text">Please notify us if you will be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled to avoid affecting other appointments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFAQ('faq-container');
+      loadSiteContacts('contact-methods-container');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "business": {
+    "nameEn": "Snowy Nail Studio",
+    "nameZh": "Snowy美甲工作室",
+    "locationEn": "Richmond Hill, Ontario",
+    "locationZh": "安大略省列治文山"
+  },
+  "contacts": [
+    {
+      "id": "instagram",
+      "icon": "📸",
+      "labelEn": "Instagram",
+      "labelZh": "Instagram",
+      "valueEn": "@snowynailstudio",
+      "valueZh": "@snowynailstudio",
+      "url": "#",
+      "enabled": true
+    },
+    {
+      "id": "xhs",
+      "icon": "🌸",
+      "labelEn": "小红书 (XHS)",
+      "labelZh": "小红书",
+      "valueEn": "Snowy Nail Studio",
+      "valueZh": "Snowy Nail Studio",
+      "url": "#",
+      "enabled": true
+    },
+    {
+      "id": "wechat",
+      "icon": "💬",
+      "labelEn": "WeChat",
+      "labelZh": "微信",
+      "valueEn": "Ask for ID in DM",
+      "valueZh": "私信获取微信号",
+      "enabled": true
+    }
+  ]
+}

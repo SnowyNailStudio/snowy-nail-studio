@@ -1,0 +1,89 @@
+{
+  "_comment": "FAQ content. Edit this file to add, remove or update questions without touching any HTML.",
+  "categories": [
+    {
+      "id": "booking",
+      "titleEn": "Booking & Appointments",
+      "titleZh": "预约与排期",
+      "items": [
+        {
+          "id": "faq-001",
+          "questionEn": "How far in advance should I book?",
+          "questionZh": "需要提前多久预约？",
+          "answerEn": "We recommend booking at least 3–5 days in advance, especially for weekends. For same-week availability, send a message directly — spots sometimes open up.",
+          "answerZh": "建议至少提前3至5天预约，尤其是周末。如需当周预约，可直接发送消息询问 — 有时会有临时空位。"
+        },
+        {
+          "id": "faq-002",
+          "questionEn": "Can I bring a design reference photo?",
+          "questionZh": "我可以带参考图吗？",
+          "answerEn": "Absolutely — bringing a reference photo is encouraged! You can send it ahead of time through Instagram or 小红书 so we can discuss it and prepare any special materials.",
+          "answerZh": "当然可以！非常欢迎您带参考图。您可以提前通过 Instagram 或小红书发送参考图，这样我们可以事先沟通并准备所需材料。"
+        },
+        {
+          "id": "faq-003",
+          "questionEn": "What is your cancellation policy?",
+          "questionZh": "取消政策是什么？",
+          "answerEn": "Please provide at least 24 hours notice if you need to cancel or reschedule. Late cancellations (less than 24 hours) may result in a deposit forfeiture.",
+          "answerZh": "如需取消或改期，请至少提前24小时通知。晚于24小时的取消可能导致定金不予退还。"
+        },
+        {
+          "id": "faq-004",
+          "questionEn": "What is your late policy?",
+          "questionZh": "迟到政策是什么？",
+          "answerEn": "Please let us know if you expect to be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled to avoid affecting other appointments.",
+          "answerZh": "如预计迟到超过10分钟，请提前告知我们。迟到超过15分钟可能需要重新安排预约时间，以免影响其他客户。"
+        }
+      ]
+    },
+    {
+      "id": "studio",
+      "titleEn": "Studio & Comfort",
+      "titleZh": "工作室与舒适度",
+      "items": [
+        {
+          "id": "faq-005",
+          "questionEn": "Is parking available?",
+          "questionZh": "有停车位吗？",
+          "answerEn": "Yes, free street parking is available near the studio. The exact address is provided after booking is confirmed.",
+          "answerZh": "是的，工作室附近有免费路边停车位。预约确认后将提供详细地址。"
+        },
+        {
+          "id": "faq-006",
+          "questionEn": "Are there pets in the home studio?",
+          "questionZh": "家庭工作室里有宠物吗？",
+          "answerEn": "There are no pets in the studio space. Please let us know in advance if you have any allergies or sensitivities.",
+          "answerZh": "工作室空间内没有宠物。如您有任何过敏或特殊需求，请提前告知。"
+        },
+        {
+          "id": "faq-007",
+          "questionEn": "What languages do you support?",
+          "questionZh": "你们支持哪些语言服务？",
+          "answerEn": "We communicate comfortably in both English and Mandarin Chinese (普通话). Our website is also available in both languages.",
+          "answerZh": "我们可以用英语和普通话进行流畅沟通，网站同样支持中英双语。"
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "titleEn": "Services & Nails",
+      "titleZh": "服务与美甲",
+      "items": [
+        {
+          "id": "faq-008",
+          "questionEn": "Do you offer custom nail art?",
+          "questionZh": "你们提供定制美甲图案吗？",
+          "answerEn": "Yes! Custom nail art is our specialty. Bring any reference image and we'll work together to create something you love.",
+          "answerZh": "是的！定制美甲图案是我们的专长。请带上您喜欢的参考图，我们将共同打造您心仪的美甲。"
+        },
+        {
+          "id": "faq-009",
+          "questionEn": "Do you remove previous sets?",
+          "questionZh": "你们提供卸甲服务吗？",
+          "answerEn": "Yes, we offer professional removal of previous gel, acrylic, or dip powder sets. Please mention this when booking as it adds time to the appointment.",
+          "answerZh": "是的，我们提供专业卸除光疗胶、水晶甲或浸粉甲的服务。预约时请注明，因为卸甲需要额外时间。"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4662 @@
+﻿# Snowy Nail Studio — Project Bundle
+This file is a plain-text archive of every source file in the Snowy Nail Studio
+static website project (images excluded). It can be shared, version-controlled as
+a single file, or used to fully recreate the project on any machine.
+## What is included
+27 text files: HTML pages, CSS, JavaScript modules, JSON data, tooling, and config.
+Image files are NOT included — add them manually to the paths described in README.md.
+## How to extract (recreate all files)
+### Option A — Node.js (recommended)
+1. Place this file in the folder where you want the project root (e.g. `snowy-nail-studio/`).
+2. Run:
+```
+node -e "
+const fs=require('fs'),path=require('path');
+const src=fs.readFileSync('snowy-bundle.md','utf8');
+const RE=/^---FILE START: (.+?)---\r?\n([\s\S]*?)^---FILE END: .+?---$/gm;
+let m,n=0;
+while((m=RE.exec(src))!==null){
+  const p=m[1].trim(), c=m[2].replace(/\r\n/g,'\n'), d=path.dirname(p);
+  if(d!='.')fs.mkdirSync(d,{recursive:true});
+  fs.writeFileSync(p,c,'utf8');
+  console.log('extracted:',p); n++;
+}
+console.log('Done.',n,'files.');
+"
+```
+### Option B — Dedicated extract script
+Copy the script below and save it as `extract.js` next to this bundle file, then run `node extract.js`.
+```js
+#!/usr/bin/env node
+// extract.js — run with: node extract.js [bundle-file]
+'use strict';
+const fs   = require('fs');
+const path = require('path');
+const src  = process.argv[2] || 'snowy-bundle.md';
+const text = fs.readFileSync(src, 'utf8');
+const RE   = /^---FILE START: (.+?)---\r?\n([\s\S]*?)^---FILE END: .+?---$/gm;
+let match, count = 0;
+while ((match = RE.exec(text)) !== null) {
+  const relPath = match[1].trim();
+  const content = match[2].replace(/\r\n/g, '\n');
+  const dir     = path.dirname(relPath);
+  if (dir !== '.') fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(relPath, content, 'utf8');
+  console.log('  extracted:', relPath);
+  count++;
+}
+console.log(`\nDone. ${count} files extracted.`);
+```
+### After extraction
+1. Install a local server: `npm install -g serve` (one-time)
+2. Preview: `npx serve docs`
+3. Open `http://localhost:3000` in your browser
+4. Add real images to `docs/assets/images/` and update the JSON data files
+5. If emoji/special-chars look garbled, run: `node tools/fix-encoding.js`
+---
+---FILE START: .gitignore---
+# OS
+.DS_Store
+Thumbs.db
+# Editor
+.vscode/
+*.code-workspace
+# Node (tools)
+node_modules/
+npm-debug.log*
+# Temp
+*.tmp
+*.bak
+---FILE END: .gitignore---
+---FILE START: README.md---
+# Snowy Nail Studio — Website
+**Live site:** Deploy the `docs/` folder via GitHub Pages  
+**Language:** English + Simplified Chinese (切换语言: top-right button)  
+**Stack:** Fully static HTML · CSS · Vanilla JS · Local JSON files
+---
+## Project structure
+```
+snowy-nail-studio/
+│
+├── docs/                        ← GitHub Pages root (deploy this folder)
+│   ├── index.html               ← Home
+│   ├── gallery.html             ← Nail Art Gallery
+│   ├── services.html            ← Services, Pricing & Promotions
+│   ├── studio.html              ← Safety & Studio
+│   ├── about.html               ← About & Client Feedback
+│   ├── contact.html             ← Contact, FAQ & Policies
+│   ├── aftercare.html           ← Nail Care & Aftercare
+│   │
+│   ├── assets/
+│   │   ├── css/
+│   │   │   └── main.css         ← All styles (mobile-first, design tokens)
+│   │   ├── js/
+│   │   │   ├── i18n.js          ← Language switching (EN ↔ 中文)
+│   │   │   ├── main.js          ← Nav injection, scroll reveal, FAQ accordion
+│   │   │   ├── gallery.js       ← Gallery grid, filters, lightbox, swipe
+│   │   │   └── reviews.js       ← Reviews, services, promotions, FAQ, aftercare loaders
+│   │   └── images/
+│   │       ├── gallery/         ← Nail art photos (g001.webp … )
+│   │       ├── reviews/         ← Review screenshots (review-0004.webp … )
+│   │       └── posters/
+│   │           ├── en/          ← English pricing/promo poster images
+│   │           └── zh/          ← Chinese pricing/promo poster images
+│   │
+│   └── data/                    ← All site content — edit these JSON files
+│       ├── translations.json    ← All bilingual UI strings
+│       ├── gallery.json         ← Gallery items metadata
+│       ├── reviews.json         ← Client reviews (text + image types)
+│       ├── faq.json             ← FAQ questions and answers
+│       ├── aftercare.json       ← Aftercare guide content
+│       └── promotions.json      ← Services list and active promotions
+│
+├── content/                     ← Source / upload staging area
+│   ├── gallery/                 ← Original nail art photos before optimization
+│   ├── reviews/                 ← Original review screenshots
+│   └── posters/
+│       ├── en/                  ← Original EN poster files
+│       ├── zh/                  ← Original ZH poster files
+│       └── archive/             ← Past promotions
+│
+├── metadata/
+│   ├── gallery.csv              ← Optional: spreadsheet for bulk gallery updates
+│   └── promotions.json          ← Mirror of docs/data/promotions.json
+│
+└── README.md
+```
+---
+## GitHub Pages setup
+1. Push this repository to GitHub.
+2. Go to **Settings → Pages**.
+3. Set **Source** to `Deploy from a branch`, branch `main`, folder `/docs`.
+4. Your site will be live at `https://YOUR-USERNAME.github.io/snowy-nail-studio/`.
+---
+## Adding real content
+### Gallery photos
+1. Optimize photos to `.webp` (recommended: 800×1067 px, < 200 KB).
+2. Place files in `docs/assets/images/gallery/`.
+3. Open `docs/data/gallery.json` and add or update entries:
+   ```json
+   {
+     "id": "g015",
+     "src": "assets/images/gallery/g015.webp",
+     "thumb": "assets/images/gallery/g015.webp",
+     "altEn": "Description in English",
+     "altZh": "中文描述",
+     "style": ["floral"],
+     "colour": ["pink"],
+     "shape": "almond",
+     "length": "medium",
+     "finish": "gel",
+     "service": "manicure",
+     "featured": false,
+     "date": "2025-08",
+     "mockColor": ""
+   }
+   ```
+4. Set `"mockColor": ""` (empty) to use the real image; set a color name to keep using the CSS placeholder.
+### Reviews
+#### Text review
+```json
+{
+  "id": "review-0007",
+  "type": "text",
+  "quoteZh": "中文评价内容",
+  "quoteEn": "English translation",
+  "displayName": "Client",
+  "source": "小红书",
+  "rating": 5,
+  "featured": true
+}
+```
+#### Screenshot review
+1. Sanitize the screenshot: remove usernames, profile photos, and phone numbers.
+2. Save as `.webp` in `docs/assets/images/reviews/`.
+3. Add to `docs/data/reviews.json`:
+```json
+{
+  "id": "review-0008",
+  "type": "image",
+  "image": "assets/images/reviews/review-0008.webp",
+  "quoteZh": "原文中文",
+  "quoteEn": "English translation",
+  "displayName": "Client",
+  "source": "小红书",
+  "rating": 5,
+  "featured": false
+}
+```
+4. Leave `"image": ""` to display the built-in mock XHS conversation layout.
+### Pricing posters
+1. Upload EN poster to `docs/assets/images/posters/en/`.
+2. Upload ZH poster to `docs/assets/images/posters/zh/`.
+3. In `services.html`, replace the `<div class="poster-mock">` block with:
+   ```html
+   <img src="assets/images/posters/en/pricing-en.webp" alt="Price list">
+   ```
+   Or keep using the `poster-wrap` toggle — update `promotions.json` with `imageEn`/`imageZh` paths.
+### FAQ
+Edit `docs/data/faq.json` — no HTML changes needed. The site reads this file on every page load.
+### Aftercare
+Edit `docs/data/aftercare.json` — no HTML changes needed.
+### Promotions
+Edit `docs/data/promotions.json`. Set `"active": false` to hide a promotion.
+---
+## Language switching
+- The site auto-detects the visitor's browser language.
+- Visitors can switch with the **EN / 中文** button in the top-right nav.
+- All UI strings live in `docs/data/translations.json`.
+- Gallery alt text, review quotes, FAQ, and aftercare are bilingual in their own JSON files.
+---
+## Mock content
+All gallery items with `"mockColor"` set use CSS gradient placeholders.  
+All reviews with `"image": ""` show a mock 小红书 conversation.  
+Replace these incrementally as real content becomes available.
+---
+## Analytics (recommended)
+Add a script tag for your analytics provider before `</body>` in each HTML file.  
+Filter usage, page views, and contact link clicks are the primary metrics per the project plan.
+---
+## Maintenance workflow
+| Task | Action |
+|---|---|
+| Add nail art photo | Add to `docs/assets/images/gallery/`, update `docs/data/gallery.json` |
+| Add review | Update `docs/data/reviews.json` |
+| Update FAQ | Edit `docs/data/faq.json` |
+| Update aftercare | Edit `docs/data/aftercare.json` |
+| Add promotion | Update `docs/data/promotions.json` + upload poster images |
+| Update pricing | Upload new poster to `docs/assets/images/posters/`, update poster source in `services.html` |
+| Change UI text / translation | Edit `docs/data/translations.json` |
+---FILE END: README.md---
+---FILE START: docs/.nojekyll---
+---FILE END: docs/.nojekyll---
+---FILE START: docs/robots.txt---
+User-agent: *
+Allow: /
+Sitemap: https://snowynailstudio.github.io/snowy-nail-studio/sitemap.xml
+---FILE END: docs/robots.txt---
+---FILE START: docs/sitemap.xml---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/gallery.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/services.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/studio.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/about.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/contact.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://snowynailstudio.github.io/snowy-nail-studio/aftercare.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+</urlset>
+---FILE END: docs/sitemap.xml---
+---FILE START: docs/assets/ui/favicon.svg---
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="32" fill="#C4788A"/>
+  <text x="32" y="44" font-family="Georgia,serif" font-size="36" font-weight="bold"
+        text-anchor="middle" fill="#FFFFFF">S</text>
+</svg>
+---FILE END: docs/assets/ui/favicon.svg---
+---FILE START: docs/assets/css/main.css---
+/* =============================================================
+   SNOWY NAIL STUDIO — Main Stylesheet
+   Mobile-first · Bilingual · Fully static
+   ============================================================= */
+/* — Google Fonts — */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+/* — Design Tokens — */
+:root {
+  /* Palette */
+  --clr-bg:           #FAF7F8;
+  --clr-surface:      #FFFFFF;
+  --clr-surface-alt:  #FDF4F6;
+  --clr-border:       #F0DEE3;
+  --clr-border-dark:  #DCC8CE;
+  --clr-accent:       #C4788A;
+  --clr-accent-dark:  #A85F72;
+  --clr-accent-light: #F0CDD5;
+  --clr-accent-xlight:#FDF2F5;
+  --clr-gold:         #C8A882;
+  --clr-gold-light:   #F5E6D0;
+  --clr-text:         #2C2526;
+  --clr-text-muted:   #8A7375;
+  --clr-text-light:   #B8A0A5;
+  --clr-white:        #FFFFFF;
+  /* Typography */
+  --font-heading: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-zh:      'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  /* Spacing */
+  --sp-1: 4px;   --sp-2: 8px;   --sp-3: 12px;  --sp-4: 16px;
+  --sp-5: 20px;  --sp-6: 24px;  --sp-8: 32px;  --sp-10: 40px;
+  --sp-12: 48px; --sp-14: 56px; --sp-16: 64px; --sp-20: 80px;
+  /* Radii */
+  --r-sm:   6px;
+  --r:      12px;
+  --r-lg:   20px;
+  --r-xl:   32px;
+  --r-pill: 999px;
+  /* Shadows */
+  --shadow-sm: 0 1px 4px rgba(196,120,138,.08);
+  --shadow:    0 2px 16px rgba(196,120,138,.10);
+  --shadow-md: 0 4px 24px rgba(196,120,138,.14);
+  --shadow-lg: 0 8px 40px rgba(196,120,138,.18);
+  /* Transitions */
+  --t-fast:   .15s ease;
+  --t:        .25s ease;
+  --t-slow:   .4s ease;
+  /* Layout */
+  --max-w:      1100px;
+  --nav-h:      64px;
+  --pad:        24px;
+}
+@media (max-width: 480px) {
+  :root { --pad: 16px; }
+}
+/* ─── Reset ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--clr-text);
+  background: var(--clr-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+/* ─── Skip link (a11y) ──────────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.skip-link:focus {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  width: auto;
+  height: auto;
+  padding: 8px 20px;
+  background: var(--clr-accent);
+  color: var(--clr-white);
+  border-radius: var(--r);
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 10000;
+  overflow: visible;
+  text-decoration: none;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; font-family: inherit; border: none; background: none; }
+ul, ol { list-style: none; }
+:lang(zh), [lang="zh"] { font-family: var(--font-zh), var(--font-body); }
+/* ─── Layout helpers ─────────────────────────────────────── */
+.container { max-width: var(--max-w); margin-inline: auto; padding-inline: var(--pad); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+.page-content { padding-top: var(--nav-h); min-height: 100vh; }
+/* ─── Navigation ─────────────────────────────────────────── */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  background: rgba(255,255,255,.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--clr-border);
+  z-index: 1000;
+  transition: box-shadow var(--t);
+}
+.site-nav.scrolled { box-shadow: var(--shadow-sm); }
+.nav-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+.nav-logo { display: flex; flex-direction: column; line-height: 1.2; }
+.nav-logo-name {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--clr-accent);
+  letter-spacing: .01em;
+}
+.nav-logo-loc {
+  font-size: 10px;
+  color: var(--clr-text-muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.nav-links { display: none; gap: 2px; align-items: center; }
+.nav-links a {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast), background var(--t-fast);
+  white-space: nowrap;
+}
+.nav-links a:hover, .nav-links a.active {
+  color: var(--clr-accent);
+  background: var(--clr-accent-xlight);
+}
+.nav-actions { display: flex; align-items: center; gap: var(--sp-3); }
+.lang-btn {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  padding: 5px 14px;
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--r-pill);
+  background: var(--clr-surface);
+  letter-spacing: .04em;
+  transition: all var(--t-fast);
+}
+.lang-btn:hover { color: var(--clr-accent); border-color: var(--clr-accent); background: var(--clr-accent-xlight); }
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 22px;
+  height: 16px;
+  padding: 0;
+}
+.hamburger span {
+  display: block;
+  height: 2px;
+  background: var(--clr-text);
+  border-radius: 2px;
+  transition: transform var(--t), opacity var(--t);
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.nav-drawer {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0;
+  background: var(--clr-surface);
+  border-bottom: 1px solid var(--clr-border);
+  padding: var(--sp-3) var(--pad) var(--sp-6);
+  display: none;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 999;
+  box-shadow: var(--shadow-md);
+}
+.nav-drawer.open { display: flex; }
+.nav-drawer a {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--clr-text);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r);
+  transition: all var(--t-fast);
+}
+.nav-drawer a:hover, .nav-drawer a.active {
+  color: var(--clr-accent);
+  background: var(--clr-accent-xlight);
+}
+@media (min-width: 768px) {
+  .nav-links { display: flex; }
+  .hamburger { display: none; }
+}
+/* ─── Sections ───────────────────────────────────────────── */
+.section { padding-block: var(--sp-16); }
+.section--sm { padding-block: var(--sp-12); }
+.section--alt { background: var(--clr-surface-alt); }
+.section--dark { background: var(--clr-text); color: var(--clr-white); }
+.section-header { text-align: center; margin-bottom: var(--sp-10); }
+.section-header .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--clr-accent);
+  margin-bottom: var(--sp-2);
+}
+.section-header h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--clr-text);
+  line-height: 1.25;
+  margin-bottom: var(--sp-3);
+}
+.section-header p {
+  font-size: 16px;
+  color: var(--clr-text-muted);
+  max-width: 560px;
+  margin-inline: auto;
+  line-height: 1.7;
+}
+.section--dark .section-header h2 { color: var(--clr-white); }
+.divider {
+  width: 32px; height: 1px;
+  background: var(--clr-accent);
+  opacity: 0.4;
+  border-radius: 0;
+  margin: var(--sp-4) auto;
+}
+/* ─── Typography ─────────────────────────────────────────── */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+h1 { font-size: clamp(26px, 5vw, 44px); }
+h2 { font-size: clamp(20px, 3.5vw, 30px); }
+h3 { font-size: clamp(16px, 2.5vw, 21px); }
+p { line-height: 1.75; }
+/* ─── Buttons ────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  padding: 12px 28px;
+  border-radius: var(--r-pill);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  transition: all var(--t);
+  cursor: pointer;
+  white-space: nowrap;
+  border: 2px solid transparent;
+  text-align: center;
+}
+.btn-primary {
+  background: var(--clr-accent);
+  color: var(--clr-white);
+  border-color: var(--clr-accent);
+}
+.btn-primary:hover {
+  background: var(--clr-accent-dark);
+  border-color: var(--clr-accent-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--clr-accent);
+  border-color: var(--clr-accent);
+}
+.btn-outline:hover { background: var(--clr-accent-xlight); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent;
+  color: var(--clr-text);
+  border-color: var(--clr-border);
+}
+.btn-ghost:hover { background: var(--clr-surface-alt); border-color: var(--clr-border-dark); }
+.btn-white {
+  background: var(--clr-white);
+  color: var(--clr-accent);
+  border-color: var(--clr-white);
+}
+.btn-white:hover { background: var(--clr-accent-xlight); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-sm { padding: 8px 20px; font-size: 13px; }
+.btn-lg { padding: 15px 36px; font-size: 16px; }
+/* ─── Page hero strip ────────────────────────────────────── */
+.page-hero {
+  background: linear-gradient(135deg, var(--clr-accent-xlight) 0%, var(--clr-surface-alt) 60%, #EDD5DC 100%);
+  padding: var(--sp-14) var(--pad);
+  text-align: center;
+  border-bottom: 1px solid var(--clr-border);
+}
+.page-hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(24px, 4.5vw, 36px);
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  color: var(--clr-text);
+  margin-bottom: var(--sp-3);
+}
+.page-hero p {
+  font-size: 16px;
+  color: var(--clr-text-muted);
+  max-width: 560px;
+  margin-inline: auto;
+}
+/* ─── Home Hero ──────────────────────────────────────────── */
+.hero {
+  position: relative;
+  min-height: calc(100svh - var(--nav-h));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(140deg, #FDF2F5 0%, #F5E6EB 55%, #EDD5DC 100%);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 18% 55%, rgba(196,120,138,.18) 0%, transparent 55%),
+    radial-gradient(circle at 82% 18%, rgba(200,168,130,.13) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-deco {
+  position: absolute;
+  border-radius: 50%;
+  opacity: .12;
+  pointer-events: none;
+}
+.hero-deco-1 { width: 320px; height: 320px; background: var(--clr-accent); top: -80px; right: -80px; }
+.hero-deco-2 { width: 220px; height: 220px; background: var(--clr-gold); bottom: -70px; left: -50px; }
+.hero-deco-3 { width: 140px; height: 140px; background: var(--clr-accent); bottom: 60px; right: 10%; }
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: var(--sp-12) var(--pad);
+  max-width: 680px;
+}
+.hero-content h1 {
+  font-size: clamp(30px, 6.5vw, 50px);
+  font-weight: 300;
+  color: var(--clr-text);
+  margin-bottom: var(--sp-4);
+  line-height: 1.18;
+  letter-spacing: -0.03em;
+}
+.hero-content h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--clr-accent);
+}
+.hero-content p {
+  font-size: clamp(15px, 2.2vw, 19px);
+  color: var(--clr-text-muted);
+  margin-bottom: var(--sp-8);
+  line-height: 1.7;
+}
+.hero-actions {
+  display: flex;
+  gap: var(--sp-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+/* ─── Featured gallery strip (home) ─────────────────────── */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+}
+@media (min-width: 540px) { .featured-grid { grid-template-columns: repeat(4, 1fr); } }
+/* ─── Gallery ────────────────────────────────────────────── */
+.gallery-controls {
+  margin-bottom: var(--sp-8);
+}
+.filter-row {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: var(--sp-2);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin-bottom: var(--sp-3);
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.filter-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--clr-text-muted);
+  margin-bottom: var(--sp-2);
+  padding-left: 2px;
+}
+.filter-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 16px;
+  border-radius: var(--r-pill);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--clr-text-muted);
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all var(--t-fast);
+  cursor: pointer;
+}
+.filter-btn:hover { color: var(--clr-accent); border-color: var(--clr-accent-light); background: var(--clr-accent-xlight); }
+.filter-btn.active { color: var(--clr-white); background: var(--clr-accent); border-color: var(--clr-accent); }
+.gallery-count {
+  font-size: 13px;
+  color: var(--clr-text-muted);
+  margin-bottom: var(--sp-4);
+  min-height: 1.4em;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+}
+@media (min-width: 600px)  { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+.gallery-item {
+  position: relative;
+  border-radius: var(--r);
+  overflow: hidden;
+  cursor: pointer;
+  aspect-ratio: 3/4;
+  background: var(--clr-surface-alt);
+  transition: transform var(--t), box-shadow var(--t);
+}
+.gallery-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.gallery-item:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 3px; }
+.gallery-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform var(--t-slow);
+}
+.gallery-item:hover img { transform: scale(1.05); }
+.gallery-item .mock-label {
+  position: absolute;
+  bottom: var(--sp-2); left: var(--sp-2);
+  font-size: 10px;
+  background: rgba(255,255,255,.75);
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  color: var(--clr-text);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+.badge-featured {
+  position: absolute;
+  top: var(--sp-2); right: var(--sp-2);
+  background: var(--clr-gold);
+  color: var(--clr-white);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: var(--r-pill);
+  letter-spacing: .04em;
+  pointer-events: none;
+}
+/* Mock colour placeholders */
+.mock-pink     { background: linear-gradient(135deg, #FFB7C5, #FDE8EC); }
+.mock-rose     { background: linear-gradient(135deg, #C8899A, #F5DDE3); }
+.mock-nude     { background: linear-gradient(135deg, #E8C9A0, #F7EAD8); }
+.mock-red      { background: linear-gradient(135deg, #E85050, #FFB3B3); }
+.mock-purple   { background: linear-gradient(135deg, #9B59B6, #DEB4F3); }
+.mock-blue     { background: linear-gradient(135deg, #5B9BD5, #BDD8F5); }
+.mock-white    { background: linear-gradient(135deg, #EDEDED, #FFFFFF); border: 1px solid var(--clr-border); }
+.mock-black    { background: linear-gradient(135deg, #2C2526, #7C6C6C); }
+.mock-green    { background: linear-gradient(135deg, #27AE60, #A8E6CF); }
+.mock-gold     { background: linear-gradient(135deg, #C8A882, #F5E1C0); }
+.mock-lavender { background: linear-gradient(135deg, #B39DDB, #EDE7F6); }
+.mock-coral    { background: linear-gradient(135deg, #FF7F50, #FFCBA4); }
+.mock-teal     { background: linear-gradient(135deg, #2DC2A8, #A8E8E0); }
+.mock-peach    { background: linear-gradient(135deg, #FFAF87, #FFE4D6); }
+.gallery-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: var(--sp-16) var(--sp-6);
+  color: var(--clr-text-muted);
+  font-size: 15px;
+}
+.gallery-empty-icon { font-size: 40px; margin-bottom: var(--sp-4); opacity: .5; }
+.gallery-load-more { text-align: center; margin-top: var(--sp-10); }
+/* ─── Lightbox ───────────────────────────────────────────── */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(20,10,12,.93);
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.lightbox.open { display: flex; }
+.lightbox-inner {
+  position: relative;
+  max-width: min(88vw, 800px);
+  width: 100%;
+}
+.lightbox-img-wrap {
+  background: var(--clr-surface);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  max-height: 80svh;
+  width: 100%;
+}
+.lightbox-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.lightbox-close {
+  position: absolute;
+  top: -52px; right: 0;
+  color: var(--clr-white);
+  font-size: 26px;
+  background: rgba(255,255,255,.15);
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--t-fast);
+  cursor: pointer;
+}
+.lightbox-close:hover { background: rgba(255,255,255,.28); }
+.lightbox-prev, .lightbox-next {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  color: var(--clr-white);
+  background: rgba(255,255,255,.15);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  transition: background var(--t-fast);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+.lightbox-prev { left: -58px; }
+.lightbox-next { right: -58px; }
+.lightbox-prev:hover, .lightbox-next:hover { background: rgba(255,255,255,.28); }
+@media (max-width: 800px) {
+  .lightbox-prev { left: var(--sp-2); z-index: 1; }
+  .lightbox-next { right: var(--sp-2); z-index: 1; }
+  .lightbox-close { position: fixed; top: var(--sp-4); right: var(--sp-4); z-index: 9001; }
+}
+/* ─── Review cards ───────────────────────────────────────── */
+.reviews-grid {
+  display: grid;
+  gap: var(--sp-5);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 600px)  { .reviews-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .reviews-grid { grid-template-columns: repeat(3, 1fr); } }
+.review-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow var(--t), transform var(--t);
+}
+.review-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+/* text review */
+.review-card--text { padding: var(--sp-6); }
+.review-stars { color: var(--clr-gold); font-size: 15px; margin-bottom: var(--sp-3); letter-spacing: 2px; }
+.review-quote {
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-style: italic;
+  color: var(--clr-text);
+  line-height: 1.75;
+  margin-bottom: var(--sp-5);
+  flex: 1;
+}
+.review-quote::before { content: '\201C'; }
+.review-quote::after  { content: '\201D'; }
+.review-meta { display: flex; align-items: center; gap: var(--sp-3); margin-top: auto; }
+.review-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--clr-accent-light), var(--clr-accent));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600; color: var(--clr-white);
+  flex-shrink: 0;
+}
+.review-name { font-size: 13px; font-weight: 600; color: var(--clr-text); }
+.review-source { font-size: 11px; color: var(--clr-text-muted); }
+/* image review */
+.review-card--image .review-screenshot {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: #F8F3F5;
+  max-height: 340px;
+}
+.review-card--image .review-screenshot img { width: 100%; height: 100%; object-fit: cover; }
+/* Mock XHS conversation */
+.xhs-mock {
+  width: 100%; height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-4) var(--sp-4) var(--sp-2);
+  gap: var(--sp-3);
+  background: #F5EFF1;
+}
+.xhs-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+.xhs-header-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--clr-accent);
+  margin-left: auto;
+}
+.xhs-msg { display: flex; gap: var(--sp-2); align-items: flex-end; }
+.xhs-msg-r { flex-direction: row-reverse; }
+.xhs-ava {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--clr-border);
+  flex-shrink: 0;
+}
+.xhs-ava-r { background: var(--clr-accent-light); }
+.xhs-bubble {
+  max-width: 72%;
+  padding: 7px 11px;
+  border-radius: var(--r);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--clr-text);
+}
+.xhs-msg .xhs-bubble { background: var(--clr-white); border-bottom-left-radius: var(--r-sm); }
+.xhs-msg-r .xhs-bubble { background: var(--clr-accent); color: white; border-bottom-right-radius: var(--r-sm); }
+.review-translation {
+  padding: var(--sp-4) var(--sp-5);
+  border-top: 1px solid var(--clr-border);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+.review-original-zh {
+  font-size: 13px;
+  color: var(--clr-text);
+  font-family: var(--font-zh);
+  line-height: 1.6;
+  font-style: italic;
+}
+.review-translation-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--clr-accent);
+  margin-top: var(--sp-2);
+}
+.review-translation-en {
+  font-size: 13px;
+  color: var(--clr-text-muted);
+  font-style: italic;
+  line-height: 1.65;
+}
+/* ─── Service cards ──────────────────────────────────────── */
+.services-grid {
+  display: grid;
+  gap: var(--sp-4);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 600px)  { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .services-grid { grid-template-columns: repeat(3, 1fr); } }
+.service-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+  padding: var(--sp-6);
+  transition: all var(--t);
+}
+.service-card:hover { border-color: var(--clr-accent-light); box-shadow: var(--shadow); transform: translateY(-2px); }
+.service-icon {
+  width: 48px; height: 48px;
+  background: var(--clr-accent-xlight);
+  border-radius: var(--r);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: var(--sp-4);
+}
+.service-name {
+  font-family: var(--font-heading);
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: var(--sp-2);
+}
+.service-desc { font-size: 14px; color: var(--clr-text-muted); line-height: 1.65; }
+/* ─── Pricing poster ─────────────────────────────────────── */
+.poster-wrap {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+.poster-lang-toggle {
+  display: flex;
+  background: var(--clr-surface-alt);
+  border-bottom: 1px solid var(--clr-border);
+}
+.poster-tab {
+  flex: 1;
+  padding: var(--sp-3) var(--sp-4);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-text-muted);
+  text-align: center;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all var(--t-fast);
+  letter-spacing: .04em;
+}
+.poster-tab.active { color: var(--clr-accent); background: var(--clr-surface); border-bottom-color: var(--clr-accent); }
+.poster-panel { display: none; padding: var(--sp-6); }
+.poster-panel.active { display: block; }
+.poster-panel img { width: 100%; border-radius: var(--r); }
+/* Mock pricing poster */
+.poster-mock {
+  background: linear-gradient(135deg, var(--clr-accent-xlight), var(--clr-gold-light));
+  border-radius: var(--r);
+  padding: var(--sp-10) var(--sp-8);
+  text-align: center;
+  min-height: 420px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--sp-5);
+}
+.poster-mock-title {
+  font-family: var(--font-heading);
+  font-size: 26px;
+  color: var(--clr-accent);
+  margin-bottom: var(--sp-1);
+}
+.poster-mock-sub { font-size: 13px; color: var(--clr-text-muted); }
+.poster-mock-items { width: 100%; max-width: 340px; display: flex; flex-direction: column; gap: var(--sp-2); }
+.poster-mock-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-3) var(--sp-4);
+  background: rgba(255,255,255,.75);
+  border-radius: var(--r);
+  font-size: 14px;
+  backdrop-filter: blur(4px);
+}
+.poster-mock-price { font-weight: 700; color: var(--clr-accent); }
+.poster-mock-note {
+  font-size: 11px;
+  color: var(--clr-text-muted);
+  text-align: center;
+  margin-top: var(--sp-2);
+}
+/* ─── Promo cards ────────────────────────────────────────── */
+.promo-cards { display: grid; gap: var(--sp-5); grid-template-columns: 1fr; }
+@media (min-width: 640px) { .promo-cards { grid-template-columns: repeat(2, 1fr); } }
+.promo-card {
+  background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-dark) 100%);
+  border-radius: var(--r-xl);
+  padding: var(--sp-8);
+  color: var(--clr-white);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.promo-card-title { font-family: var(--font-heading); font-size: 22px; }
+.promo-card-desc { font-size: 14px; opacity: .88; line-height: 1.6; }
+.promo-lang-toggle { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+.promo-lang-btn {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid rgba(255,255,255,.4);
+  color: rgba(255,255,255,.8);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--t-fast);
+  letter-spacing: .04em;
+}
+.promo-lang-btn.active,
+.promo-lang-btn:hover { border-color: white; color: white; background: rgba(255,255,255,.15); }
+.promo-poster-img { border-radius: var(--r); overflow: hidden; background: rgba(255,255,255,.1); min-height: 200px; display: flex; align-items: center; justify-content: center; }
+.promo-poster-img img { width: 100%; height: auto; display: block; border-radius: var(--r); }
+.promo-poster-mock { padding: var(--sp-6); text-align: center; font-size: 13px; opacity: .7; }
+.promo-valid { font-size: 11px; opacity: .65; }
+/* ─── FAQ accordion ──────────────────────────────────────── */
+.faq-category { margin-bottom: var(--sp-10); }
+.faq-category-title {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  color: var(--clr-text);
+  margin-bottom: var(--sp-4);
+  padding-bottom: var(--sp-3);
+  border-bottom: 2px solid var(--clr-accent-light);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+.faq-category-title::before {
+  content: '';
+  display: block;
+  width: 4px; height: 22px;
+  background: var(--clr-accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.faq-list { display: flex; flex-direction: column; gap: var(--sp-2); }
+.faq-item {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: border-color var(--t-fast);
+}
+.faq-item.open { border-color: var(--clr-accent-light); }
+.faq-question {
+  width: 100%;
+  text-align: left;
+  padding: var(--sp-4) var(--sp-5);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--clr-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  transition: color var(--t-fast);
+  line-height: 1.5;
+}
+.faq-question:hover, .faq-item.open .faq-question { color: var(--clr-accent); }
+.faq-icon {
+  flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--clr-surface-alt);
+  border: 1.5px solid var(--clr-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--clr-text-muted);
+  transition: transform var(--t), background var(--t);
+}
+.faq-item.open .faq-icon {
+  transform: rotate(45deg);
+  background: var(--clr-accent);
+  border-color: var(--clr-accent);
+  color: white;
+}
+.faq-answer {
+  height: 0;
+  overflow: hidden;
+  transition: height var(--t);
+}
+.faq-answer-inner {
+  padding: 0 var(--sp-5) var(--sp-5);
+  font-size: 14px;
+  color: var(--clr-text-muted);
+  line-height: 1.75;
+}
+/* ─── Aftercare ──────────────────────────────────────────── */
+.aftercare-sections { display: flex; flex-direction: column; gap: var(--sp-6); }
+.aftercare-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.aftercare-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-6);
+  background: var(--clr-surface-alt);
+  border-bottom: 1px solid var(--clr-border);
+}
+.aftercare-card-icon {
+  width: 42px; height: 42px;
+  border-radius: var(--r);
+  background: var(--clr-accent-xlight);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.aftercare-card-title { font-family: var(--font-heading); font-size: 18px; font-weight: 600; }
+.aftercare-items { padding: var(--sp-2) var(--sp-6); }
+.aftercare-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--clr-border);
+  font-size: 14px;
+  color: var(--clr-text);
+  line-height: 1.65;
+}
+.aftercare-item:last-child { border-bottom: none; }
+.aftercare-dot { color: var(--clr-accent); font-size: 14px; margin-top: 3px; flex-shrink: 0; }
+/* ─── Studio ─────────────────────────────────────────────── */
+.studio-grid {
+  display: grid;
+  gap: var(--sp-5);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px)  { .studio-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1024px) { .studio-grid { grid-template-columns: repeat(3, 1fr); } }
+.studio-photo {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  background: var(--clr-surface-alt);
+  display: flex; align-items: center; justify-content: center;
+}
+.studio-photo img { width: 100%; height: 100%; object-fit: cover; }
+.studio-photo-mock {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: var(--sp-2);
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--clr-accent-xlight), var(--clr-surface-alt));
+  color: var(--clr-text-muted);
+  font-size: 13px;
+}
+.studio-photo-mock-icon { font-size: 36px; opacity: .4; }
+.sanitation-steps { display: flex; flex-direction: column; gap: var(--sp-5); }
+.sanitation-step { display: flex; gap: var(--sp-4); align-items: flex-start; }
+.step-num {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--clr-accent);
+  color: var(--clr-white);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  flex-shrink: 0;
+}
+.step-body h4 { font-size: 15px; font-weight: 600; margin-bottom: var(--sp-1); }
+.step-body p { font-size: 14px; color: var(--clr-text-muted); line-height: 1.65; }
+.promise-box {
+  background: linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark));
+  border-radius: var(--r-xl);
+  padding: var(--sp-8) var(--sp-8);
+  text-align: center;
+  color: var(--clr-white);
+}
+.promise-box p { font-family: var(--font-heading); font-size: clamp(16px, 3vw, 22px); font-style: italic; line-height: 1.5; }
+/* ─── Contact ────────────────────────────────────────────── */
+.contact-methods { display: flex; flex-direction: column; gap: var(--sp-3); }
+.contact-method {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+  color: var(--clr-text);
+  transition: all var(--t);
+}
+.contact-method:hover { border-color: var(--clr-accent); box-shadow: var(--shadow); transform: translateX(4px); }
+.contact-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--r);
+  background: var(--clr-accent-xlight);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.contact-info { display: flex; flex-direction: column; }
+.contact-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--clr-text-muted); }
+.contact-value { font-size: 15px; font-weight: 500; }
+.contact-cta-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sp-3);
+  margin-top: var(--sp-6);
+}
+@media (min-width: 480px) { .contact-cta-grid { grid-template-columns: repeat(2, 1fr); } }
+/* ─── Policy box ─────────────────────────────────────────── */
+.policy-box {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-left: 4px solid var(--clr-accent);
+  border-radius: var(--r);
+  padding: var(--sp-5) var(--sp-6);
+  margin-bottom: var(--sp-4);
+}
+.policy-box h4 { font-size: 15px; font-weight: 600; color: var(--clr-accent); margin-bottom: var(--sp-2); }
+.policy-box p { font-size: 14px; color: var(--clr-text-muted); line-height: 1.7; }
+/* ─── CTA section ────────────────────────────────────────── */
+.cta-section {
+  background: linear-gradient(135deg, var(--clr-accent) 0%, #A85F72 100%);
+  padding: var(--sp-16) var(--pad);
+  text-align: center;
+  color: var(--clr-white);
+}
+.cta-section h2 { font-family: var(--font-heading); font-size: clamp(24px, 4vw, 38px); margin-bottom: var(--sp-3); }
+.cta-section p { font-size: 16px; opacity: .88; margin-bottom: var(--sp-8); max-width: 500px; margin-inline: auto; line-height: 1.7; }
+.cta-actions { display: flex; gap: var(--sp-3); justify-content: center; flex-wrap: wrap; }
+/* ─── About ──────────────────────────────────────────────── */
+.about-layout {
+  display: grid;
+  gap: var(--sp-12);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+@media (min-width: 768px) { .about-layout { grid-template-columns: 1fr 1fr; } }
+.about-photo {
+  aspect-ratio: 3/4;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--clr-accent-light), var(--clr-accent-xlight));
+  display: flex; align-items: center; justify-content: center;
+  max-height: 520px;
+}
+.about-photo img { width: 100%; height: 100%; object-fit: cover; }
+.about-photo-mock { font-size: 72px; opacity: .5; }
+.about-text h1 { font-size: clamp(26px, 4.5vw, 40px); color: var(--clr-text); margin-bottom: var(--sp-5); }
+.about-text p { font-size: 15px; color: var(--clr-text-muted); line-height: 1.8; margin-bottom: var(--sp-4); }
+.about-badges { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin-top: var(--sp-5); }
+.about-badge {
+  display: flex; align-items: center; gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  background: var(--clr-accent-xlight);
+  border: 1px solid var(--clr-accent-light);
+  border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 500; color: var(--clr-accent);
+}
+/* ─── Footer ─────────────────────────────────────────────── */
+.site-footer {
+  background: var(--clr-text);
+  color: rgba(255,255,255,.65);
+  padding-block: var(--sp-16) var(--sp-8);
+}
+.footer-grid {
+  display: grid;
+  gap: var(--sp-10);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) { .footer-grid { grid-template-columns: 1.5fr 1fr 1fr; } }
+.footer-brand .nav-logo-name { color: var(--clr-white); font-size: 20px; display: block; margin-bottom: var(--sp-3); }
+.footer-tagline { font-size: 14px; margin-bottom: var(--sp-1); }
+.footer-loc { font-size: 12px; opacity: .45; }
+.footer-col h4 {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--clr-white);
+  margin-bottom: var(--sp-4);
+}
+.footer-col ul { display: flex; flex-direction: column; gap: var(--sp-2); }
+.footer-col a { font-size: 14px; color: rgba(255,255,255,.55); transition: color var(--t-fast); }
+.footer-col a:hover { color: var(--clr-white); }
+.footer-bottom {
+  margin-top: var(--sp-10);
+  padding-top: var(--sp-6);
+  border-top: 1px solid rgba(255,255,255,.09);
+  font-size: 12px;
+  text-align: center;
+  opacity: .42;
+}
+/* ─── Back to top ────────────────────────────────────────── */
+.back-to-top {
+  position: fixed;
+  bottom: var(--sp-6); right: var(--sp-6);
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--clr-accent);
+  color: var(--clr-white);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--t), transform var(--t);
+  z-index: 500;
+  font-size: 18px;
+}
+.back-to-top.visible { opacity: 1; pointer-events: all; }
+.back-to-top:hover { transform: translateY(-2px); }
+/* ─── Loading / error states ─────────────────────────────── */
+.loading-state { text-align: center; padding: var(--sp-16) var(--sp-6); color: var(--clr-text-muted); }
+.loading-spinner {
+  width: 32px; height: 32px;
+  border: 3px solid var(--clr-border);
+  border-top-color: var(--clr-accent);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 0 auto var(--sp-4);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-state {
+  text-align: center; padding: var(--sp-10);
+  color: var(--clr-text-muted);
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-lg);
+}
+/* ─── Scroll reveal ──────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+/* ─── Utility ────────────────────────────────────────────── */
+.text-center  { text-align: center; }
+.text-accent  { color: var(--clr-accent); }
+.text-muted   { color: var(--clr-text-muted); }
+.flex-center  { display: flex; align-items: center; justify-content: center; }
+.gap-3        { gap: var(--sp-3); }
+.mt-6         { margin-top: var(--sp-6); }
+.highlight-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  background: var(--clr-accent-xlight);
+  border-radius: var(--r-pill);
+  font-size: 12px; font-weight: 600;
+  color: var(--clr-accent); letter-spacing: .04em;
+}
+---FILE END: docs/assets/css/main.css---
+---FILE START: docs/assets/js/i18n.js---
+/**
+ * i18n.js — Language switching for Snowy Nail Studio
+ * Reads translations.json and applies to all [data-i18n] elements.
+ * Exposes a global I18N object.
+ */
+const I18N = (() => {
+  'use strict';
+  let _translations = {};
+  let _lang = 'en';
+  const STORAGE_KEY = 'snowy_lang';
+  const DATA_FILE   = 'data/translations.json';
+  /** Resolve a dot-path key against the translation dict. */
+  function _resolve(dict, path) {
+    return path.split('.').reduce(
+      (obj, key) => (obj && obj[key] !== undefined ? obj[key] : undefined),
+      dict
+    );
+  }
+  /** Apply the stored language to every translated element in the document. */
+  function _apply(lang) {
+    const dict = _translations[lang];
+    if (!dict) return;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const val = _resolve(dict, el.getAttribute('data-i18n'));
+      if (val !== undefined) el.textContent = val;
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const val = _resolve(dict, el.getAttribute('data-i18n-placeholder'));
+      if (val !== undefined) el.placeholder = val;
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const val = _resolve(dict, el.getAttribute('data-i18n-title'));
+      if (val !== undefined) el.title = val;
+    });
+    // Update lang-toggle button label
+    const btn = document.getElementById('lang-toggle');
+    if (btn && dict.lang) btn.textContent = dict.lang.toggle;
+  }
+  /** Load translations JSON and initialise language. */
+  async function init() {
+    const saved      = localStorage.getItem(STORAGE_KEY);
+    const browserZh  = navigator.language && navigator.language.startsWith('zh');
+    _lang = saved || (browserZh ? 'zh' : 'en');
+    try {
+      const res = await fetch(DATA_FILE);
+      if (!res.ok) throw new Error('translations.json not found');
+      _translations = await res.json();
+    } catch (err) {
+      console.warn('[i18n] Failed to load translations:', err.message);
+      return;
+    }
+    document.documentElement.lang = _lang === 'zh' ? 'zh-CN' : 'en';
+    _apply(_lang);
+  }
+  /** Toggle between 'en' and 'zh'. */
+  function toggle() {
+    setLang(_lang === 'en' ? 'zh' : 'en');
+  }
+  /** Set a specific language. */
+  function setLang(lang) {
+    if (lang !== 'en' && lang !== 'zh') return;
+    _lang = lang;
+    localStorage.setItem(STORAGE_KEY, lang);
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    _apply(lang);
+    document.dispatchEvent(new CustomEvent('langchange', { detail: { lang } }));
+  }
+  /** Translate a key, returning fallback if not found. */
+  function t(key, fallback) {
+    const dict = _translations[_lang];
+    if (!dict) return fallback !== undefined ? fallback : key;
+    const val = _resolve(dict, key);
+    return val !== undefined ? val : (fallback !== undefined ? fallback : key);
+  }
+  /** Current language code. */
+  function getLang() { return _lang; }
+  return { init, toggle, setLang, t, getLang };
+})();
+---FILE END: docs/assets/js/i18n.js---
+---FILE START: docs/assets/js/main.js---
+/**
+ * main.js — Site-wide functionality for Snowy Nail Studio
+ * Handles: nav injection, footer injection, mobile drawer,
+ *          scroll effects, active-link highlighting, scroll reveal,
+ *          back-to-top button.
+ *
+ * Called from every page. Runs after i18n.js is loaded.
+ */
+'use strict';
+/* ─── Shared nav HTML ──────────────────────────────────────── */
+const NAV_HTML = `
+<a href="#main-content" class="skip-link" data-i18n="common.skip_nav">Skip to content</a>
+<nav class="site-nav" id="site-nav" role="navigation" aria-label="Main navigation">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Snowy Nail Studio home">
+      <span class="nav-logo-name">Snowy Nail Studio</span>
+      <span class="nav-logo-loc">Richmond Hill</span>
+    </a>
+    <div class="nav-links" role="list">
+      <a href="index.html"     class="nav-link" data-i18n="nav.home">Home</a>
+      <a href="gallery.html"   class="nav-link" data-i18n="nav.gallery">Gallery</a>
+      <a href="services.html"  class="nav-link" data-i18n="nav.services">Services</a>
+      <a href="studio.html"    class="nav-link" data-i18n="nav.studio">Studio</a>
+      <a href="about.html"     class="nav-link" data-i18n="nav.about">About</a>
+      <a href="contact.html"   class="nav-link" data-i18n="nav.contact">Contact</a>
+      <a href="aftercare.html" class="nav-link" data-i18n="nav.aftercare">Nail Care</a>
+    </div>
+    <div class="nav-actions">
+      <button class="lang-btn" id="lang-toggle"
+              onclick="I18N.toggle()" aria-label="Switch language">中文</button>
+      <button class="hamburger" id="hamburger"
+              aria-label="Open menu" aria-expanded="false"
+              aria-controls="nav-drawer">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+  <a href="index.html"     class="nav-link" data-i18n="nav.home">Home</a>
+  <a href="gallery.html"   class="nav-link" data-i18n="nav.gallery">Gallery</a>
+  <a href="services.html"  class="nav-link" data-i18n="nav.services">Services</a>
+  <a href="studio.html"    class="nav-link" data-i18n="nav.studio">Studio</a>
+  <a href="about.html"     class="nav-link" data-i18n="nav.about">About</a>
+  <a href="contact.html"   class="nav-link" data-i18n="nav.contact">Contact</a>
+  <a href="aftercare.html" class="nav-link" data-i18n="nav.aftercare">Nail Care</a>
+</div>
+`;
+/* ─── Shared footer HTML ───────────────────────────────────── */
+const FOOTER_HTML = `
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo-name">Snowy Nail Studio</span>
+        <p class="footer-tagline" data-i18n="footer.tagline">Handcrafted nail art · Richmond Hill</p>
+        <p class="footer-loc"     data-i18n="footer.richmond_hill">Richmond Hill, Ontario</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.nav_title">Pages</h4>
+        <ul>
+          <li><a href="index.html"     data-i18n="nav.home">Home</a></li>
+          <li><a href="gallery.html"   data-i18n="nav.gallery">Gallery</a></li>
+          <li><a href="services.html"  data-i18n="nav.services">Services</a></li>
+          <li><a href="studio.html"    data-i18n="nav.studio">Studio</a></li>
+          <li><a href="about.html"     data-i18n="nav.about">About</a></li>
+          <li><a href="contact.html"   data-i18n="nav.contact">Contact</a></li>
+          <li><a href="aftercare.html" data-i18n="nav.aftercare">Nail Care</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.social_title">Follow Us</h4>
+        <ul>
+          <li><a href="#" aria-label="Instagram">📸 Instagram</a></li>
+          <li><a href="#" aria-label="小红书">🌸 小红书</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright"></p>
+    </div>
+  </div>
+</footer>
+<button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
+`;
+/* ─── Helpers ──────────────────────────────────────────────── */
+function _getPageName() {
+  const path = window.location.pathname;
+  const file = path.split('/').pop() || 'index.html';
+  return file || 'index.html';
+}
+function _setActiveLinks() {
+  const page = _getPageName();
+  document.querySelectorAll('.nav-link').forEach(a => {
+    const href = (a.getAttribute('href') || '').split('/').pop();
+    const isHome = (page === '' || page === 'index.html') && (href === 'index.html' || href === '');
+    const isCurrent = href === page || isHome;
+    a.classList.toggle('active', isCurrent);
+    if (isCurrent) {
+      a.setAttribute('aria-current', 'page');
+    } else {
+      a.removeAttribute('aria-current');
+    }
+  });
+}
+/* ─── Navigation behaviour ─────────────────────────────────── */
+function _initNav() {
+  const nav       = document.getElementById('site-nav');
+  const hamburger = document.getElementById('hamburger');
+  const drawer    = document.getElementById('nav-drawer');
+  const backTop   = document.getElementById('back-to-top');
+  if (!nav) return;
+  // Scroll shadow + back-to-top visibility
+  const onScroll = () => {
+    const y = window.scrollY;
+    nav.classList.toggle('scrolled', y > 8);
+    if (backTop) backTop.classList.toggle('visible', y > 320);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  // Hamburger / mobile drawer
+  if (hamburger && drawer) {
+    hamburger.addEventListener('click', () => {
+      const open = hamburger.classList.toggle('open');
+      drawer.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+    // Close drawer on outside click or nav link click
+    document.addEventListener('click', e => {
+      if (!nav.contains(e.target) && !drawer.contains(e.target)) {
+        hamburger.classList.remove('open');
+        drawer.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      }
+    });
+    drawer.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        drawer.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+  // Back to top
+  if (backTop) {
+    backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+  _setActiveLinks();
+}
+/* ─── Scroll reveal ────────────────────────────────────────── */
+function _initScrollReveal() {
+  if (!window.IntersectionObserver) {
+    // Fallback: reveal all immediately
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+    return;
+  }
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -32px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+const initScrollReveal = _initScrollReveal;
+/* ─── FAQ accordion ────────────────────────────────────────── */
+function initFAQAccordion() {
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item   = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const isOpen = item.classList.contains('open');
+      // Collapse all others
+      document.querySelectorAll('.faq-item.open').forEach(openItem => {
+        openItem.classList.remove('open');
+        const a = openItem.querySelector('.faq-answer');
+        if (a) a.style.height = '0';
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        if (answer) answer.style.height = answer.scrollHeight + 'px';
+      }
+    });
+  });
+}
+/* ─── Poster language toggle ───────────────────────────────── */
+function initPosterToggle() {
+  document.querySelectorAll('.poster-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const wrap  = tab.closest('.poster-wrap');
+      const panel = tab.getAttribute('data-panel');
+      if (!wrap || !panel) return;
+      wrap.querySelectorAll('.poster-tab').forEach(t => t.classList.remove('active'));
+      wrap.querySelectorAll('.poster-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const target = wrap.querySelector('#' + panel);
+      if (target) target.classList.add('active');
+    });
+  });
+}
+/* ─── Escape helpers (used by gallery.js / reviews.js) ──────── */
+function escapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+function escapeAttr(str) {
+  return String(str == null ? '' : str)
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+/* ─── Copyright year helper ────────────────────────────────── */
+function _updateCopyrightYear() {
+  const yr   = new Date().getFullYear();
+  const lang = (typeof I18N !== 'undefined' && I18N.getLang) ? I18N.getLang() : 'en';
+  document.querySelectorAll('.footer-copyright').forEach(el => {
+    el.textContent = lang === 'zh'
+      ? `© ${yr} Snowy Nail Studio 版权所有`
+      : `© ${yr} Snowy Nail Studio. All rights reserved.`;
+  });
+}
+/* ─── Bootstrap ────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', async () => {
+  // Inject nav + footer
+  const navPh    = document.getElementById('nav-placeholder');
+  const footerPh = document.getElementById('footer-placeholder');
+  if (navPh)    navPh.innerHTML    = NAV_HTML;
+  if (footerPh) footerPh.innerHTML = FOOTER_HTML;
+  // Ensure main has id for skip-link target
+  const main = document.querySelector('main');
+  if (main && !main.id) main.id = 'main-content';
+  // Boot i18n (loads translations + applies language to all [data-i18n] elements,
+  // including those just injected into nav-placeholder / footer-placeholder)
+  await I18N.init();
+  _updateCopyrightYear();
+  _initNav();
+  _initScrollReveal();
+  initFAQAccordion();
+  initPosterToggle();
+});
+document.addEventListener('langchange', _updateCopyrightYear);
+---FILE END: docs/assets/js/main.js---
+---FILE START: docs/assets/js/reviews.js---
+/**
+ * reviews.js — Review card rendering (text + image/XHS screenshot)
+ * Depends on: i18n.js, main.js (escapeHtml / escapeAttr)
+ */
+'use strict';
+let _reviewsData = [];
+/* ─── Load ─────────────────────────────────────────────────── */
+async function loadReviews(targetId, featuredOnly) {
+  const container = document.getElementById(targetId);
+  if (!container) return;
+  container.innerHTML = `<div class="loading-state" style="grid-column:1/-1">
+    <div class="loading-spinner"></div>
+  </div>`;
+  try {
+    const res = await fetch('data/reviews.json');
+    if (!res.ok) throw new Error('reviews.json not found');
+    const data = await res.json();
+    _reviewsData = data.items || [];
+  } catch {
+    container.innerHTML = `<div class="error-state" style="grid-column:1/-1">
+      <p data-i18n="common.error">Content could not be loaded.</p>
+    </div>`;
+    return;
+  }
+  const items = featuredOnly
+    ? _reviewsData.filter(r => r.featured)
+    : _reviewsData;
+  _renderReviews(container, items);
+}
+/* ─── Render ───────────────────────────────────────────────── */
+function _renderReviews(container, items) {
+  if (!items.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--clr-text-muted);padding:2rem;">No reviews yet.</p>';
+    return;
+  }
+  container.innerHTML = items.map(_buildReviewCard).join('');
+}
+function _buildReviewCard(review) {
+  return review.type === 'image'
+    ? _buildImageCard(review)
+    : _buildTextCard(review);
+}
+/* ── Text review ── */
+function _buildTextCard(review) {
+  const lang   = I18N.getLang();
+  const quote  = lang === 'zh'
+    ? (review.quoteZh || review.quoteEn || '')
+    : (review.quoteEn || review.quoteZh || '');
+  const stars  = '★'.repeat(Math.min(5, Math.max(1, review.rating || 5)));
+  const initial = (review.displayName || 'C')[0].toUpperCase();
+  const source  = review.source || '小红书';
+  return `<div class="review-card review-card--text">
+    <div class="review-stars" aria-label="${review.rating || 5} stars">${escapeHtml(stars)}</div>
+    <p class="review-quote">${escapeHtml(quote)}</p>
+    <div class="review-meta">
+      <div class="review-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
+      <div>
+        <div class="review-name">${escapeHtml(review.displayName || 'Client')}</div>
+        <div class="review-source">${escapeHtml(source)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+/* ── Image/screenshot review ── */
+function _buildImageCard(review) {
+  const lang   = I18N.getLang();
+  const quoteZh = review.quoteZh || '';
+  const quoteEn = review.quoteEn || '';
+  const tlabel  = lang === 'zh'
+    ? I18N.t('about.screenshot_translation_label', '翻译：')
+    : 'Translation:';
+  const initial = (review.displayName || 'C')[0].toUpperCase();
+  const source  = review.source || '小红书';
+  const screenshotHTML = review.image
+    ? `<img src="${escapeAttr(review.image)}" alt="Customer review screenshot" loading="lazy"
+           data-fallback-quote="${escapeAttr(quoteZh)}"
+           onerror="window.snowyReviewFallback(this)">`
+    : _buildMockXHS(quoteZh);
+  const zhBlock = quoteZh
+    ? `<p class="review-original-zh">"${escapeHtml(quoteZh)}"</p>` : '';
+  return `<div class="review-card review-card--image">
+    <div class="review-screenshot">${screenshotHTML}</div>
+    <div class="review-translation">
+      ${zhBlock}
+      <div class="review-translation-label">${escapeHtml(tlabel)}</div>
+      <p class="review-translation-en">"${escapeHtml(quoteEn)}"</p>
+      <div class="review-meta" style="margin-top:12px">
+        <div class="review-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
+        <div>
+          <div class="review-name">${escapeHtml(review.displayName || 'Client')}</div>
+          <div class="review-source">${escapeHtml(source)}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+/* ── Mock XHS conversation ── */
+function _buildMockXHS(quoteZh) {
+  const msg1 = escapeHtml(quoteZh || '太好看了！做得超级细致，环境也很舒适！');
+  const msg2 = escapeHtml('谢谢你的支持！❤️');
+  const msg3 = escapeHtml('工作室环境很干净，下次还来！');
+  return `<div class="xhs-mock">
+    <div class="xhs-header">
+      <span>小红书私信</span>
+      <div class="xhs-header-dot"></div>
+    </div>
+    <div class="xhs-msg">
+      <div class="xhs-ava"></div>
+      <div class="xhs-bubble">${msg1}</div>
+    </div>
+    <div class="xhs-msg xhs-msg-r">
+      <div class="xhs-bubble">${msg2}</div>
+      <div class="xhs-ava xhs-ava-r"></div>
+    </div>
+    <div class="xhs-msg">
+      <div class="xhs-ava"></div>
+      <div class="xhs-bubble">${msg3}</div>
+    </div>
+  </div>`;
+}
+/* ─── Image review fallback (global so inline onerror can reach it) ─── */
+window.snowyReviewFallback = function (img) {
+  const quote = img.getAttribute('data-fallback-quote') || '';
+  const mock  = document.createElement('div');
+  mock.innerHTML = _buildMockXHS(quote);
+  if (mock.firstElementChild) img.replaceWith(mock.firstElementChild);
+};
+/* ─── Services / promotions loader ────────────────────────── */
+async function loadServices(gridId) {
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  try {
+    const res = await fetch('data/promotions.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const lang = I18N.getLang();
+    const services = data.services || [];
+    grid.innerHTML = services.map(svc => {
+      const name = lang === 'zh' ? (svc.nameZh || svc.nameEn) : (svc.nameEn || '');
+      const desc = lang === 'zh' ? (svc.descZh || svc.descEn) : (svc.descEn || '');
+      return `<div class="service-card">
+        <div class="service-icon">${escapeHtml(svc.icon || '💅')}</div>
+        <h3 class="service-name">${escapeHtml(name)}</h3>
+        <p class="service-desc">${escapeHtml(desc)}</p>
+      </div>`;
+    }).join('');
+  } catch {
+    if (grid) grid.innerHTML = '';
+  }
+}
+async function loadPromotions(containerId) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  try {
+    const res = await fetch('data/promotions.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const lang   = I18N.getLang();
+    const promos = (data.active || []).filter(p => p.active);
+    if (!promos.length) {
+      const msg = I18N.t('services.no_promos', 'No active promotions at this time.');
+      wrap.innerHTML = `<p style="color:var(--clr-text-muted);font-size:15px;">${escapeHtml(msg)}</p>`;
+      return;
+    }
+    wrap.innerHTML = promos.map(promo => {
+      const title = lang === 'zh' ? (promo.titleZh || promo.titleEn) : (promo.titleEn || '');
+      const desc  = lang === 'zh' ? (promo.descriptionZh || promo.descriptionEn) : (promo.descriptionEn || '');
+      const lblEn = I18N.t('services.view_en', 'English');
+      const lblZh = I18N.t('services.view_zh', '中文');
+      const enPanelId = `pp-en-${promo.id}`;
+      const zhPanelId = `pp-zh-${promo.id}`;
+      const enImg = promo.imageEn
+        ? `<img src="${escapeAttr(promo.imageEn)}" alt="${escapeAttr(title)} - English" loading="lazy"
+               onerror="this.closest('.promo-poster-img').innerHTML='<div class=\\'promo-poster-mock\\'>${escapeAttr(I18N.t('common.mock_note'))}</div>'">`
+        : `<div class="promo-poster-mock">${escapeHtml(I18N.t('common.mock_note', 'Replace with real image'))}</div>`;
+      const zhImg = promo.imageZh
+        ? `<img src="${escapeAttr(promo.imageZh)}" alt="${escapeAttr(title)} - 中文" loading="lazy"
+               onerror="this.closest('.promo-poster-img').innerHTML='<div class=\\'promo-poster-mock\\'>${escapeAttr(I18N.t('common.mock_note'))}</div>'">`
+        : `<div class="promo-poster-mock">${escapeHtml(I18N.t('common.mock_note', 'Replace with real image'))}</div>`;
+      const validUntil = promo.validUntil
+        ? (lang === 'zh' ? `有效期至：${promo.validUntil}` : `Valid until: ${promo.validUntil}`)
+        : '';
+      return `<div class="promo-card">
+        <h3 class="promo-card-title">${escapeHtml(title)}</h3>
+        <p class="promo-card-desc">${escapeHtml(desc)}</p>
+        <div class="promo-lang-toggle">
+          <button class="promo-lang-btn active" data-lang="en"
+                  onclick="handlePromoLang(this,'en')">${escapeHtml(lblEn)}</button>
+          <button class="promo-lang-btn" data-lang="zh"
+                  onclick="handlePromoLang(this,'zh')">${escapeHtml(lblZh)}</button>
+        </div>
+        <div class="promo-poster-img" data-promo-panel="en" id="${escapeAttr(enPanelId)}">${enImg}</div>
+        <div class="promo-poster-img" data-promo-panel="zh" id="${escapeAttr(zhPanelId)}" style="display:none;">${zhImg}</div>
+        ${validUntil ? `<p class="promo-valid">${escapeHtml(validUntil)}</p>` : ''}
+      </div>`;
+    }).join('');
+  } catch {
+    wrap.innerHTML = '';
+  }
+}
+function handlePromoLang(btn, lang) {
+  const card = btn.closest('.promo-card');
+  if (!card) return;
+  card.querySelectorAll('.promo-lang-btn').forEach(b => b.classList.remove('active'));
+  card.querySelectorAll('[data-promo-panel]').forEach(p => {
+    p.style.display = p.getAttribute('data-promo-panel') === lang ? '' : 'none';
+  });
+  btn.classList.add('active');
+}
+/* ─── FAQ loader ───────────────────────────────────────────── */
+async function loadFAQ(containerId) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="loading-state">
+    <div class="loading-spinner"></div>
+    <p data-i18n="contact.faq_loading">Loading FAQ…</p>
+  </div>`;
+  try {
+    const res = await fetch('data/faq.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    _renderFAQ(wrap, data.categories || []);
+  } catch {
+    wrap.innerHTML = `<div class="error-state"><p data-i18n="common.error">Content could not be loaded.</p></div>`;
+  }
+}
+function _renderFAQ(wrap, categories) {
+  const lang = I18N.getLang();
+  if (!categories.length) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = categories.map(cat => {
+    const title = lang === 'zh' ? (cat.titleZh || cat.titleEn) : (cat.titleEn || '');
+    const items = (cat.items || []).map(item => {
+      const q = lang === 'zh' ? (item.questionZh || item.questionEn) : (item.questionEn || '');
+      const a = lang === 'zh' ? (item.answerZh   || item.answerEn)   : (item.answerEn   || '');
+      return `<div class="faq-item" id="${escapeAttr(item.id)}">
+        <button class="faq-question" aria-expanded="false">
+          <span>${escapeHtml(q)}</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-answer" role="region">
+          <div class="faq-answer-inner">${escapeHtml(a)}</div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="faq-category">
+      <h3 class="faq-category-title">${escapeHtml(title)}</h3>
+      <div class="faq-list">${items}</div>
+    </div>`;
+  }).join('');
+  // Re-init accordion (main.js function)
+  if (typeof initFAQAccordion === 'function') initFAQAccordion();
+}
+/* ─── Site contacts loader ────────────────────────────────── */
+async function loadSiteContacts(containerId) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  try {
+    const res = await fetch('data/site.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const lang     = I18N.getLang();
+    const contacts = (data.contacts || []).filter(c => c.enabled !== false);
+    if (!contacts.length) { wrap.innerHTML = ''; return; }
+    wrap.innerHTML = contacts.map(c => {
+      const label = lang === 'zh' ? (c.labelZh || c.labelEn) : (c.labelEn || '');
+      const value = lang === 'zh' ? (c.valueZh || c.valueEn) : (c.valueEn || '');
+      const icon  = escapeHtml(c.icon || '');
+      if (c.url) {
+        return `<a href="${escapeAttr(c.url)}" class="contact-method" aria-label="${escapeAttr(label)}">
+          <div class="contact-icon" aria-hidden="true">${icon}</div>
+          <div class="contact-info">
+            <span class="contact-label">${escapeHtml(label)}</span>
+            <span class="contact-value">${escapeHtml(value)}</span>
+          </div>
+        </a>`;
+      }
+      return `<div class="contact-method" style="cursor:default;">
+        <div class="contact-icon" aria-hidden="true">${icon}</div>
+        <div class="contact-info">
+          <span class="contact-label">${escapeHtml(label)}</span>
+          <span class="contact-value" style="font-size:13px;color:var(--clr-text-muted);">${escapeHtml(value)}</span>
+        </div>
+      </div>`;
+    }).join('');
+  } catch {
+    wrap.innerHTML = '';
+  }
+}
+/* ─── Aftercare loader ─────────────────────────────────────── */
+async function loadAftercare(containerId) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  wrap.innerHTML = `<div class="loading-state">
+    <div class="loading-spinner"></div>
+    <p data-i18n="aftercare.loading">Loading aftercare guide…</p>
+  </div>`;
+  try {
+    const res = await fetch('data/aftercare.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    _renderAftercare(wrap, data.sections || []);
+  } catch {
+    wrap.innerHTML = `<div class="error-state"><p data-i18n="common.error">Content could not be loaded.</p></div>`;
+  }
+}
+function _renderAftercare(wrap, sections) {
+  const lang = I18N.getLang();
+  if (!sections.length) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = `<div class="aftercare-sections">
+    ${sections.map(sec => {
+      const title = lang === 'zh' ? (sec.titleZh || sec.titleEn) : (sec.titleEn || '');
+      const items = (sec.items || []).map(item => {
+        const text = lang === 'zh' ? (item.textZh || item.textEn) : (item.textEn || '');
+        return `<div class="aftercare-item">
+          <span class="aftercare-dot" aria-hidden="true">✦</span>
+          <span>${escapeHtml(text)}</span>
+        </div>`;
+      }).join('');
+      return `<div class="aftercare-card reveal">
+        <div class="aftercare-card-header">
+          <div class="aftercare-card-icon" aria-hidden="true">${escapeHtml(sec.icon || '💅')}</div>
+          <h3 class="aftercare-card-title">${escapeHtml(title)}</h3>
+        </div>
+        <div class="aftercare-items">${items}</div>
+      </div>`;
+    }).join('')}
+  </div>`;
+  // Trigger scroll reveal for newly injected elements
+  if (typeof initScrollReveal === 'function') initScrollReveal();
+}
+/* ─── Re-render on language change ────────────────────────── */
+document.addEventListener('langchange', () => {
+  if (document.getElementById('faq-container'))
+    loadFAQ('faq-container');
+  if (document.getElementById('aftercare-container'))
+    loadAftercare('aftercare-container');
+  if (document.getElementById('services-grid'))
+    loadServices('services-grid');
+  if (document.getElementById('promos-container'))
+    loadPromotions('promos-container');
+  if (document.getElementById('home-promos-container'))
+    loadPromotions('home-promos-container');
+  if (document.getElementById('contact-methods-container'))
+    loadSiteContacts('contact-methods-container');
+  if (document.getElementById('reviews-grid'))
+    loadReviews('reviews-grid', false);
+  if (document.getElementById('home-reviews'))
+    loadReviews('home-reviews', true);
+});
+---FILE END: docs/assets/js/reviews.js---
+---FILE START: docs/assets/js/gallery.js---
+/**
+ * gallery.js — Gallery grid, filtering, lightbox + swipe
+ * Depends on: i18n.js, main.js (escapeHtml / escapeAttr)
+ */
+'use strict';
+let _galleryAll    = [];   // all items from gallery.json
+let _filtered      = [];   // after filter applied
+let _displayCount  = 12;   // how many are currently shown
+let _activeFilters = {};   // { group: value }
+let _lbIndex       = 0;    // current lightbox item index
+let _touchStartX   = 0;
+/* ─── Data loading ─────────────────────────────────────────── */
+async function loadGallery() {
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="loading-state" style="grid-column:1/-1">
+    <div class="loading-spinner"></div>
+    <p data-i18n="common.loading">Loading…</p>
+  </div>`;
+  try {
+    const res = await fetch('data/gallery.json');
+    if (!res.ok) throw new Error('gallery.json not found');
+    const data = await res.json();
+    _galleryAll = data.items || [];
+  } catch (err) {
+    grid.innerHTML = `<div class="error-state" style="grid-column:1/-1">
+      <p data-i18n="common.error">Content could not be loaded.</p>
+    </div>`;
+    return;
+  }
+  _filtered = [..._galleryAll];
+  _renderGrid();
+  _initFilters();
+}
+/* ─── Featured strip (home page) ──────────────────────────── */
+async function loadFeaturedStrip(targetId) {
+  const wrap = document.getElementById(targetId);
+  if (!wrap) return;
+  try {
+    const res = await fetch('data/gallery.json');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    const featured = (data.items || []).filter(i => i.featured).slice(0, 4);
+    wrap.innerHTML = featured.map((item, i) => _buildCard(item, i, featured)).join('');
+    wrap.querySelectorAll('.gallery-item').forEach((card, i) => {
+      card.addEventListener('click', () => window.location.href = 'gallery.html');
+    });
+  } catch {
+    wrap.innerHTML = '';
+  }
+}
+/* ─── Rendering ────────────────────────────────────────────── */
+function _renderGrid() {
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+  const visible = _filtered.slice(0, _displayCount);
+  if (visible.length === 0) {
+    const msg = I18N.t('gallery.no_results', 'No designs found for this filter.');
+    const countEl = document.getElementById('gallery-count');
+    if (countEl) countEl.textContent = '';
+    grid.innerHTML = `<div class="gallery-empty" style="grid-column:1/-1">
+      <div class="gallery-empty-icon">🔍</div>
+      <p>${escapeHtml(msg)}</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = visible.map((item, i) => _buildCard(item, i, visible)).join('');
+  // Update count line
+  const countEl = document.getElementById('gallery-count');
+  if (countEl) {
+    const lang    = I18N.getLang();
+    const showing = visible.length;
+    const total   = _filtered.length;
+    countEl.textContent = lang === 'zh'
+      ? `显示 ${showing} / ${total} 个作品`
+      : `Showing ${showing} of ${total} designs`;
+  }
+  // Attach click → lightbox
+  grid.querySelectorAll('.gallery-item').forEach((card, i) => {
+    card.addEventListener('click', () => openLightbox(i));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); }
+    });
+  });
+  // Load more button visibility
+  const btn = document.getElementById('load-more-btn');
+  if (btn) btn.style.display = _filtered.length > _displayCount ? 'inline-flex' : 'none';
+}
+function _buildCard(item, idx, list) {
+  const lang = I18N.getLang();
+  const alt  = lang === 'zh' ? (item.altZh || item.altEn || '') : (item.altEn || '');
+  const featuredLabel = I18N.t('common.featured', 'Featured');
+  const badge = item.featured
+    ? `<span class="badge-featured">${escapeHtml(featuredLabel)}</span>`
+    : '';
+  if (item.mockColor || !item.src) {
+    const color = item.mockColor || 'pink';
+    return `<div class="gallery-item mock-${color}"
+         role="button" tabindex="0"
+         aria-label="${escapeAttr(alt)}">
+      ${badge}
+      <span class="mock-label">${escapeHtml(alt)}</span>
+    </div>`;
+  }
+  return `<div class="gallery-item"
+       role="button" tabindex="0"
+       aria-label="${escapeAttr(alt)}">
+    ${badge}
+    <img src="${escapeAttr(item.thumb || item.src)}"
+         alt="${escapeAttr(alt)}"
+         loading="lazy"
+         onerror="this.closest('.gallery-item').classList.add('mock-pink');this.remove()">
+  </div>`;
+}
+/* ─── Filters ──────────────────────────────────────────────── */
+function _initFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const group = btn.getAttribute('data-group');
+      const value = btn.getAttribute('data-value');
+      if (value === 'all') {
+        _activeFilters = {};
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      } else {
+        // Remove "all" active state
+        const allBtn = document.querySelector('.filter-btn[data-value="all"]');
+        if (allBtn) allBtn.classList.remove('active');
+        if (_activeFilters[group] === value) {
+          // Toggle off
+          delete _activeFilters[group];
+          btn.classList.remove('active');
+        } else {
+          // Deactivate others in same group
+          document.querySelectorAll(`.filter-btn[data-group="${CSS.escape(group)}"]`)
+            .forEach(b => b.classList.remove('active'));
+          _activeFilters[group] = value;
+          btn.classList.add('active');
+        }
+        // If no filters remain, re-activate "all"
+        if (Object.keys(_activeFilters).length === 0) {
+          const allBtn2 = document.querySelector('.filter-btn[data-value="all"]');
+          if (allBtn2) allBtn2.classList.add('active');
+        }
+      }
+      _applyFilters();
+    });
+  });
+  // Default: "All" active
+  const allBtn = document.querySelector('.filter-btn[data-value="all"]');
+  if (allBtn) allBtn.classList.add('active');
+}
+function _applyFilters() {
+  _displayCount = 12;
+  _filtered = _galleryAll.filter(item => {
+    for (const [group, value] of Object.entries(_activeFilters)) {
+      switch (group) {
+        case 'service':
+          if (item.service !== value) return false;
+          break;
+        case 'style':
+          if (!item.style || !item.style.includes(value)) return false;
+          break;
+        case 'colour':
+          if (!item.colour || !item.colour.includes(value)) return false;
+          break;
+        case 'shape':
+          if (item.shape !== value) return false;
+          break;
+        case 'length':
+          if (item.length !== value) return false;
+          break;
+        case 'finish':
+          if (item.finish !== value) return false;
+          break;
+        case 'special':
+          if (value === 'featured' && !item.featured) return false;
+          break;
+      }
+    }
+    return true;
+  });
+  // Sort newest first if that special filter is active
+  if (_activeFilters['special'] === 'newest') {
+    _filtered.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  }
+  _renderGrid();
+}
+/* ─── Lightbox ─────────────────────────────────────────────── */
+function openLightbox(index) {
+  _lbIndex = index;
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  _renderLightboxItem();
+  lb.focus();
+}
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function _renderLightboxItem() {
+  const item = _filtered[_lbIndex];
+  if (!item) return;
+  const wrap = document.getElementById('lightbox-img-wrap');
+  if (!wrap) return;
+  const lang = I18N.getLang();
+  const alt  = lang === 'zh' ? (item.altZh || item.altEn || '') : (item.altEn || '');
+  if (item.mockColor || !item.src) {
+    const color = item.mockColor || 'pink';
+    wrap.innerHTML = `<div class="mock-${color}" style="width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:14px;color:rgba(0,0,0,.35);padding:16px;text-align:center;">
+      ${escapeHtml(alt)}
+    </div>`;
+  } else {
+    wrap.innerHTML = `<img src="${escapeAttr(item.src)}"
+      alt="${escapeAttr(alt)}" loading="lazy"
+      onerror="this.closest('#lightbox-img-wrap').classList.add('mock-pink')">`;
+  }
+}
+function _initLightbox() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  document.getElementById('lightbox-close')
+    ?.addEventListener('click', closeLightbox);
+  document.getElementById('lightbox-prev')
+    ?.addEventListener('click', () => {
+      _lbIndex = (_lbIndex - 1 + _filtered.length) % _filtered.length;
+      _renderLightboxItem();
+    });
+  document.getElementById('lightbox-next')
+    ?.addEventListener('click', () => {
+      _lbIndex = (_lbIndex + 1) % _filtered.length;
+      _renderLightboxItem();
+    });
+  // Close on backdrop click
+  lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape')     { e.preventDefault(); closeLightbox(); }
+    if (e.key === 'ArrowLeft')  { _lbIndex = (_lbIndex - 1 + _filtered.length) % _filtered.length; _renderLightboxItem(); }
+    if (e.key === 'ArrowRight') { _lbIndex = (_lbIndex + 1) % _filtered.length; _renderLightboxItem(); }
+  });
+  // Swipe
+  lb.addEventListener('touchstart', e => { _touchStartX = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - _touchStartX;
+    if (Math.abs(dx) < 50) return;
+    if (dx < 0) { _lbIndex = (_lbIndex + 1) % _filtered.length; }
+    else        { _lbIndex = (_lbIndex - 1 + _filtered.length) % _filtered.length; }
+    _renderLightboxItem();
+  }, { passive: true });
+}
+function _initLoadMore() {
+  const btn = document.getElementById('load-more-btn');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    _displayCount += 12;
+    _renderGrid();
+    btn.blur();
+  });
+}
+/* ─── Init ─────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', () => {
+  // Full gallery page
+  if (document.getElementById('gallery-grid')) {
+    loadGallery();
+    _initLightbox();
+    _initLoadMore();
+  }
+  // Featured strip on home page
+  if (document.getElementById('featured-strip')) {
+    loadFeaturedStrip('featured-strip');
+  }
+  // Re-render alt text on language change
+  document.addEventListener('langchange', () => {
+    if (_galleryAll.length > 0) _renderGrid();
+  });
+});
+---FILE END: docs/assets/js/gallery.js---
+---FILE START: docs/data/translations.json---
+{
+  "en": {
+    "nav": {
+      "home": "Home",
+      "gallery": "Gallery",
+      "services": "Services",
+      "studio": "Studio",
+      "about": "About",
+      "contact": "Contact",
+      "aftercare": "Nail Care"
+    },
+    "lang": { "toggle": "中文", "current": "EN" },
+    "home": {
+      "hero_heading": "Nail Art That Tells Your Story",
+      "hero_sub": "Handcrafted gel nails in a private, spotless studio — Richmond Hill",
+      "hero_cta_primary": "Explore Nail Art",
+      "hero_cta_secondary": "Ask About Availability",
+      "latest_title": "Latest Designs",
+      "latest_sub": "Fresh work straight from the studio",
+      "promo_title": "Current Promotion",
+      "reviews_title": "What Clients Say",
+      "reviews_sub": "Real words from real clients",
+      "studio_title": "A Clean, Private Studio",
+      "studio_sub": "Every tool is sterilized. Every surface is prepared for you.",
+      "studio_cta": "View Studio",
+      "cta_title": "Ready to Book?",
+      "cta_sub": "Send an inspiration photo or ask about availability.",
+      "cta_btn": "Contact Snowy"
+    },
+    "gallery": {
+      "title": "Nail Art Gallery",
+      "subtitle": "Browse designs by style, colour, shape and more",
+      "filter_all": "All",
+      "filter_newest": "Newest",
+      "filter_featured": "Featured",
+      "filter_service": "Service",
+      "filter_manicure": "Manicure",
+      "filter_pedicure": "Pedicure",
+      "filter_style": "Style",
+      "filter_floral": "Floral",
+      "filter_minimalist": "Minimalist",
+      "filter_glam": "Glam",
+      "filter_geometric": "Geometric",
+      "filter_kawaii": "Kawaii",
+      "filter_ombre": "Ombre",
+      "filter_romantic": "Romantic",
+      "filter_colour": "Colour",
+      "filter_pink": "Pink",
+      "filter_red": "Red",
+      "filter_nude": "Nude",
+      "filter_white": "White",
+      "filter_black": "Black",
+      "filter_purple": "Purple",
+      "filter_blue": "Blue",
+      "filter_green": "Green",
+      "filter_gold": "Gold",
+      "filter_shape": "Shape",
+      "filter_almond": "Almond",
+      "filter_oval": "Oval",
+      "filter_square": "Square",
+      "filter_coffin": "Coffin",
+      "filter_round": "Round",
+      "filter_length": "Length",
+      "filter_short": "Short",
+      "filter_medium": "Medium",
+      "filter_long": "Long",
+      "filter_finish": "Finish",
+      "filter_gel": "Gel",
+      "filter_acrylic": "Acrylic",
+      "filter_dip": "Dip Powder",
+      "filter_natural": "Natural",
+      "load_more": "Load More",
+      "no_results": "No designs match this filter. Try another combination.",
+      "lightbox_close": "Close",
+      "lightbox_prev": "Previous",
+      "lightbox_next": "Next"
+    },
+    "services": {
+      "title": "Services & Pricing",
+      "subtitle": "Handcrafted nail art for manicures and pedicures",
+      "section_services": "What We Offer",
+      "section_pricing": "Pricing",
+      "section_promos": "Current Promotions",
+      "pricing_note": "Pricing is shown on the poster below. Final price may vary by design complexity.",
+      "view_en": "English",
+      "view_zh": "中文",
+      "contact_cta": "Ask About a Service",
+      "no_promos": "No active promotions at this time. Check back soon!"
+    },
+    "studio": {
+      "title": "Safety & Studio",
+      "subtitle": "Your health and comfort are our highest priority",
+      "section_env": "Clean Environment",
+      "section_env_text": "Our private home studio is kept spotlessly clean. Surfaces are wiped between every appointment, and the air is freshened before you arrive.",
+      "section_sanitation": "Sanitation Process",
+      "section_tools": "Sterilized Tools",
+      "section_tools_text": "All metal implements are autoclave-sterilized. Buffers, files, and single-use items are discarded after each client.",
+      "section_gallery": "Studio Photos",
+      "step1_title": "Clean & Wipe Down",
+      "step1_desc": "All surfaces, lamps, and armrests are wiped with hospital-grade disinfectant before each appointment.",
+      "step2_title": "Sterilize Metal Tools",
+      "step2_desc": "Cuticle pushers, nippers, and other metal tools are autoclave-sterilized between every client.",
+      "step3_title": "Fresh Disposables",
+      "step3_desc": "Nail files, buffers, and cotton pads are single-use and discarded after every appointment.",
+      "step4_title": "Hand Hygiene",
+      "step4_desc": "Hands are washed and sanitized before touching any client's nails.",
+      "studio_promise": "Your safety is not an afterthought — it's built into every appointment."
+    },
+    "about": {
+      "title": "About Snowy Nail Studio",
+      "subtitle": "A personal nail studio in Richmond Hill",
+      "bio1": "Hi, I'm Snowy — a certified nail technician with a passion for creating beautiful, long-lasting nail art. I run a private home studio in Richmond Hill where every client receives my full, undivided attention.",
+      "bio2": "I specialize in gel manicures, intricate nail art, and custom designs. Whether you bring a reference photo or trust my creativity, I'll craft nails you'll love.",
+      "badge_certified": "Certified Technician",
+      "badge_private": "Private Studio",
+      "badge_bilingual": "EN · 中文",
+      "reviews_title": "Client Feedback",
+      "reviews_sub": "Real words from real clients",
+      "screenshot_translation_label": "Translation:"
+    },
+    "contact": {
+      "title": "Contact & FAQ",
+      "subtitle": "Get in touch or find answers below",
+      "section_contact": "Get in Touch",
+      "section_faq": "Frequently Asked Questions",
+      "section_policies": "Studio Policies",
+      "instagram_label": "Instagram",
+      "xiaohongshu_label": "小红书 (XHS)",
+      "wechat_label": "WeChat",
+      "cta_inspiration": "Send an Inspiration Photo",
+      "cta_availability": "Ask About Availability",
+      "cta_instagram": "Message on Instagram",
+      "cta_xhs": "Visit 小红书",
+      "faq_loading": "Loading FAQ…",
+      "cancellation_title": "Cancellation Policy",
+      "cancellation_text": "Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may result in a deposit forfeiture.",
+      "late_title": "Late Arrival Policy",
+      "late_text": "Please notify us if you will be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled.",
+      "contact_intro": "The best way to reach Snowy Nail Studio is through Instagram or 小红书. For Chinese-speaking clients, WeChat is also available."
+    },
+    "aftercare": {
+      "title": "Nail Care & Aftercare",
+      "subtitle": "Keep your nails beautiful between appointments",
+      "loading": "Loading aftercare guide…",
+      "tip_icon": "✦",
+      "intro": "Following these aftercare tips will help your nails last longer and stay healthier between appointments."
+    },
+    "footer": {
+      "tagline": "Handcrafted nail art · Richmond Hill",
+      "nav_title": "Pages",
+      "social_title": "Follow Us",
+      "copyright": "© 2025 Snowy Nail Studio. All rights reserved.",
+      "richmond_hill": "Richmond Hill, Ontario"
+    },
+    "common": {
+      "view_all": "View All",
+      "close": "Close",
+      "back": "Back",
+      "loading": "Loading…",
+      "error": "Content could not be loaded.",
+      "mock_note": "Placeholder — replace with real image",
+      "featured": "Featured",
+      "skip_nav": "Skip to content"
+    }
+  },
+  "zh": {
+    "nav": {
+      "home": "首页",
+      "gallery": "作品集",
+      "services": "服务与价格",
+      "studio": "工作室",
+      "about": "关于我们",
+      "contact": "联系我们",
+      "aftercare": "护甲指南"
+    },
+    "lang": { "toggle": "EN", "current": "中文" },
+    "home": {
+      "hero_heading": "专属你的美甲艺术",
+      "hero_sub": "精心制作的光疗美甲，私密洁净的工作室 — 列治文山",
+      "hero_cta_primary": "浏览作品",
+      "hero_cta_secondary": "询问预约",
+      "latest_title": "最新作品",
+      "latest_sub": "工作室新鲜出炉的作品",
+      "promo_title": "当前优惠",
+      "reviews_title": "客户评价",
+      "reviews_sub": "来自真实客户的真实评价",
+      "studio_title": "洁净私密的工作室",
+      "studio_sub": "每件工具均经过消毒处理，每个工位都为您专门准备。",
+      "studio_cta": "查看工作室",
+      "cta_title": "准备好预约了吗？",
+      "cta_sub": "发送灵感图或询问预约时间。",
+      "cta_btn": "联系 Snowy"
+    },
+    "gallery": {
+      "title": "美甲作品集",
+      "subtitle": "按风格、颜色、甲形等筛选作品",
+      "filter_all": "全部",
+      "filter_newest": "最新",
+      "filter_featured": "精选",
+      "filter_service": "服务类型",
+      "filter_manicure": "手部美甲",
+      "filter_pedicure": "足部美甲",
+      "filter_style": "风格",
+      "filter_floral": "花卉",
+      "filter_minimalist": "简约",
+      "filter_glam": "华丽",
+      "filter_geometric": "几何",
+      "filter_kawaii": "可爱",
+      "filter_ombre": "渐变",
+      "filter_romantic": "浪漫",
+      "filter_colour": "颜色",
+      "filter_pink": "粉色",
+      "filter_red": "红色",
+      "filter_nude": "裸色",
+      "filter_white": "白色",
+      "filter_black": "黑色",
+      "filter_purple": "紫色",
+      "filter_blue": "蓝色",
+      "filter_green": "绿色",
+      "filter_gold": "金色",
+      "filter_shape": "甲形",
+      "filter_almond": "杏形",
+      "filter_oval": "椭圆形",
+      "filter_square": "方形",
+      "filter_coffin": "棺材形",
+      "filter_round": "圆形",
+      "filter_length": "甲长",
+      "filter_short": "短",
+      "filter_medium": "中",
+      "filter_long": "长",
+      "filter_finish": "工艺",
+      "filter_gel": "光疗胶",
+      "filter_acrylic": "水晶甲",
+      "filter_dip": "浸粉",
+      "filter_natural": "天然甲",
+      "load_more": "加载更多",
+      "no_results": "没有符合条件的作品，请尝试其他筛选。",
+      "lightbox_close": "关闭",
+      "lightbox_prev": "上一张",
+      "lightbox_next": "下一张"
+    },
+    "services": {
+      "title": "服务与价格",
+      "subtitle": "手部与足部美甲定制服务",
+      "section_services": "服务项目",
+      "section_pricing": "价目表",
+      "section_promos": "当前优惠",
+      "pricing_note": "价格详见下方价目表，最终价格因设计复杂程度而有所不同。",
+      "view_en": "英文版",
+      "view_zh": "中文版",
+      "contact_cta": "询问服务详情",
+      "no_promos": "当前暂无优惠活动，请稍后查看！"
+    },
+    "studio": {
+      "title": "安全与工作室",
+      "subtitle": "您的健康与舒适是我们的首要考量",
+      "section_env": "洁净环境",
+      "section_env_text": "我们的私人家庭工作室保持一尘不染。每次预约之间都会擦拭消毒所有台面，并在您到来前进行空气净化。",
+      "section_sanitation": "消毒流程",
+      "section_tools": "经消毒的工具",
+      "section_tools_text": "所有金属工具均经过高压灭菌器消毒。一次性用品如磨皮块、指甲锉等在每位客户使用后立即丢弃。",
+      "section_gallery": "工作室实景",
+      "step1_title": "清洁与消毒台面",
+      "step1_desc": "每次预约前，所有台面、灯具和扶手均用医院级消毒剂擦拭消毒。",
+      "step2_title": "金属工具灭菌",
+      "step2_desc": "推皮器、剪钳等金属工具在每位客户之间进行高压灭菌处理。",
+      "step3_title": "一次性用品",
+      "step3_desc": "指甲锉、磨皮块和棉片均为一次性使用，每次预约后立即丢弃。",
+      "step4_title": "手部卫生",
+      "step4_desc": "在接触任何客户指甲之前，均进行洗手和消毒处理。",
+      "studio_promise": "您的安全不是事后才考虑的 — 它融入了每一次预约之中。"
+    },
+    "about": {
+      "title": "关于 Snowy 美甲工作室",
+      "subtitle": "列治文山私人美甲工作室",
+      "bio1": "您好，我是 Snowy — 一位持证美甲师，热爱创作美丽持久的美甲艺术。我在列治文山经营一间私人家庭工作室，每位客户都能获得我专属的全程关注。",
+      "bio2": "我擅长光疗美甲、精细指甲彩绘和定制设计。无论您带来参考图，还是信任我的创意，我都会为您打造满意的美甲作品。",
+      "badge_certified": "持证美甲师",
+      "badge_private": "私人工作室",
+      "badge_bilingual": "中英双语",
+      "reviews_title": "客户评价",
+      "reviews_sub": "来自真实客户的真实评价",
+      "screenshot_translation_label": "翻译："
+    },
+    "contact": {
+      "title": "联系我们与常见问题",
+      "subtitle": "与我们联系或查看下方解答",
+      "section_contact": "联系方式",
+      "section_faq": "常见问题",
+      "section_policies": "工作室政策",
+      "instagram_label": "Instagram",
+      "xiaohongshu_label": "小红书",
+      "wechat_label": "微信",
+      "cta_inspiration": "发送灵感图",
+      "cta_availability": "询问预约时间",
+      "cta_instagram": "Instagram 私信",
+      "cta_xhs": "访问小红书",
+      "faq_loading": "正在加载常见问题…",
+      "cancellation_title": "取消政策",
+      "cancellation_text": "请至少提前24小时通知取消或改期。逾期取消可能导致定金不予退还。",
+      "late_title": "迟到政策",
+      "late_text": "如您预计迟到超过10分钟，请提前通知我们。迟到超过15分钟可能需要重新安排预约时间。",
+      "contact_intro": "联系 Snowy 美甲工作室最便捷的方式是通过 Instagram 或小红书私信。中文客户也可通过微信联系。"
+    },
+    "aftercare": {
+      "title": "护甲指南",
+      "subtitle": "在每次预约之间保持美甲完美状态",
+      "loading": "正在加载护甲指南…",
+      "tip_icon": "✦",
+      "intro": "遵循以下护甲建议，可帮助您的美甲保持更长时间，并在预约之间保持健康。"
+    },
+    "footer": {
+      "tagline": "精心美甲艺术 · 列治文山",
+      "nav_title": "页面导航",
+      "social_title": "关注我们",
+      "copyright": "© 2025 Snowy Nail Studio 版权所有",
+      "richmond_hill": "安大略省列治文山"
+    },
+    "common": {
+      "view_all": "查看全部",
+      "close": "关闭",
+      "back": "返回",
+      "loading": "加载中…",
+      "error": "内容加载失败。",
+      "mock_note": "占位图 — 请替换为真实图片",
+      "featured": "精选",
+      "skip_nav": "跳转到内容"
+    }
+  }
+}
+---FILE END: docs/data/translations.json---
+---FILE START: docs/data/gallery.json---
+{
+  "_comment": "Gallery metadata. Place real images in docs/assets/images/gallery/. Use mockColor as CSS class until real images are available.",
+  "items": [
+    {
+      "id": "g001",
+      "src": "assets/images/gallery/g001.webp",
+      "thumb": "assets/images/gallery/g001.webp",
+      "altEn": "Soft pink almond gel nails with cherry blossom art",
+      "altZh": "粉色杏形光疗甲，樱花图案",
+      "style": ["floral", "romantic"],
+      "colour": ["pink", "white"],
+      "shape": "almond",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-07",
+      "mockColor": "pink"
+    },
+    {
+      "id": "g002",
+      "src": "assets/images/gallery/g002.webp",
+      "thumb": "assets/images/gallery/g002.webp",
+      "altEn": "Deep burgundy oval nails with gold foil accents",
+      "altZh": "深酒红色椭圆形指甲，金箔装饰",
+      "style": ["glam"],
+      "colour": ["red", "gold"],
+      "shape": "oval",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-07",
+      "mockColor": "red"
+    },
+    {
+      "id": "g003",
+      "src": "assets/images/gallery/g003.webp",
+      "thumb": "assets/images/gallery/g003.webp",
+      "altEn": "Clean nude coffin nails with minimalist line art",
+      "altZh": "裸色棺材形指甲，简约线条图案",
+      "style": ["minimalist"],
+      "colour": ["nude", "white"],
+      "shape": "coffin",
+      "length": "long",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-06",
+      "mockColor": "nude"
+    },
+    {
+      "id": "g004",
+      "src": "assets/images/gallery/g004.webp",
+      "thumb": "assets/images/gallery/g004.webp",
+      "altEn": "Purple ombre almond nails with holographic glitter",
+      "altZh": "紫色渐变杏形甲，全息闪粉",
+      "style": ["ombre", "glam"],
+      "colour": ["purple"],
+      "shape": "almond",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-06",
+      "mockColor": "purple"
+    },
+    {
+      "id": "g005",
+      "src": "assets/images/gallery/g005.webp",
+      "thumb": "assets/images/gallery/g005.webp",
+      "altEn": "White square nails with pastel geometric shapes",
+      "altZh": "白色方形甲，粉彩几何图案",
+      "style": ["geometric", "minimalist"],
+      "colour": ["white", "pink"],
+      "shape": "square",
+      "length": "short",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-06",
+      "mockColor": "white"
+    },
+    {
+      "id": "g006",
+      "src": "assets/images/gallery/g006.webp",
+      "thumb": "assets/images/gallery/g006.webp",
+      "altEn": "Navy blue oval nails with hand-painted stars",
+      "altZh": "深蓝色椭圆形甲，手绘星星图案",
+      "style": ["kawaii", "floral"],
+      "colour": ["blue", "white"],
+      "shape": "oval",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-05",
+      "mockColor": "blue"
+    },
+    {
+      "id": "g007",
+      "src": "assets/images/gallery/g007.webp",
+      "thumb": "assets/images/gallery/g007.webp",
+      "altEn": "Soft lavender round nails with dried flower art",
+      "altZh": "淡紫色圆形甲，干花图案",
+      "style": ["floral", "romantic"],
+      "colour": ["purple", "pink"],
+      "shape": "round",
+      "length": "short",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-05",
+      "mockColor": "lavender"
+    },
+    {
+      "id": "g008",
+      "src": "assets/images/gallery/g008.webp",
+      "thumb": "assets/images/gallery/g008.webp",
+      "altEn": "Gold glitter coffin nails with marble effect",
+      "altZh": "金色闪粉棺材形甲，大理石纹路",
+      "style": ["glam"],
+      "colour": ["gold", "white"],
+      "shape": "coffin",
+      "length": "long",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-05",
+      "mockColor": "gold"
+    },
+    {
+      "id": "g009",
+      "src": "assets/images/gallery/g009.webp",
+      "thumb": "assets/images/gallery/g009.webp",
+      "altEn": "Sage green short oval pedicure with floral accents",
+      "altZh": "鼠尾草绿色短椭圆形足甲，花卉装饰",
+      "style": ["floral", "minimalist"],
+      "colour": ["green", "white"],
+      "shape": "oval",
+      "length": "short",
+      "finish": "gel",
+      "service": "pedicure",
+      "featured": true,
+      "date": "2025-05",
+      "mockColor": "green"
+    },
+    {
+      "id": "g010",
+      "src": "assets/images/gallery/g010.webp",
+      "thumb": "assets/images/gallery/g010.webp",
+      "altEn": "Matte black square nails with chrome detail",
+      "altZh": "哑光黑色方形甲，镀铬细节",
+      "style": ["minimalist", "glam"],
+      "colour": ["black"],
+      "shape": "square",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-04",
+      "mockColor": "black"
+    },
+    {
+      "id": "g011",
+      "src": "assets/images/gallery/g011.webp",
+      "thumb": "assets/images/gallery/g011.webp",
+      "altEn": "Coral pink ombre pedicure with subtle shimmer",
+      "altZh": "珊瑚粉渐变足甲，细腻微闪",
+      "style": ["ombre"],
+      "colour": ["pink", "nude"],
+      "shape": "round",
+      "length": "short",
+      "finish": "gel",
+      "service": "pedicure",
+      "featured": false,
+      "date": "2025-04",
+      "mockColor": "coral"
+    },
+    {
+      "id": "g012",
+      "src": "assets/images/gallery/g012.webp",
+      "thumb": "assets/images/gallery/g012.webp",
+      "altEn": "Peach and white kawaii almond nails with bows",
+      "altZh": "蜜桃白色可爱杏形甲，蝴蝶结装饰",
+      "style": ["kawaii", "romantic"],
+      "colour": ["nude", "pink", "white"],
+      "shape": "almond",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-04",
+      "mockColor": "peach"
+    },
+    {
+      "id": "g013",
+      "src": "assets/images/gallery/g013.webp",
+      "thumb": "assets/images/gallery/g013.webp",
+      "altEn": "Teal geometric coffin nails with gold lines",
+      "altZh": "水鸭绿几何棺材形甲，金色线条",
+      "style": ["geometric"],
+      "colour": ["blue", "gold"],
+      "shape": "coffin",
+      "length": "long",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-03",
+      "mockColor": "teal"
+    },
+    {
+      "id": "g014",
+      "src": "assets/images/gallery/g014.webp",
+      "thumb": "assets/images/gallery/g014.webp",
+      "altEn": "Rose nude oval nails with hand-painted roses",
+      "altZh": "玫瑰裸色椭圆形甲，手绘玫瑰",
+      "style": ["floral", "romantic"],
+      "colour": ["pink", "nude"],
+      "shape": "oval",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-03",
+      "mockColor": "rose"
+    }
+  ]
+}
+---FILE END: docs/data/gallery.json---
+---FILE START: docs/data/reviews.json---
+{
+  "_comment": "Reviews data. type: 'text' | 'image'. For image type, provide image path OR leave blank for mock XHS conversation layout.",
+  "items": [
+    {
+      "id": "review-0001",
+      "type": "text",
+      "quoteZh": "做得非常仔细，环境也很干净！每次来都很满意，下次还来。",
+      "quoteEn": "The work was very detailed and the studio was very clean! I'm satisfied every time, and I'll definitely be back.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0002",
+      "type": "text",
+      "quoteZh": "Snowy 的手艺真的太棒了！我带了参考图，做出来比图片还好看。",
+      "quoteEn": "Snowy's technique is truly amazing! I brought a reference photo and the result looked even better than the picture.",
+      "displayName": "Client",
+      "source": "Instagram",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0003",
+      "type": "text",
+      "quoteZh": "私人工作室的感觉很好，专注度比店里高很多。光疗做得很持久，两周后还完好无损。",
+      "quoteEn": "The private studio atmosphere is wonderful — so much more focused attention than a salon. The gel lasted perfectly, still intact two weeks later.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0004",
+      "type": "image",
+      "image": "",
+      "quoteZh": "太好看了！做得超级细致，工作室也很舒适干净，下次还来！❤️",
+      "quoteEn": "So beautiful! The work is incredibly detailed, and the studio is comfortable and clean. I'll definitely come back! ❤️",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0005",
+      "type": "text",
+      "quoteZh": "中英文都可以沟通，解释了很多护甲的知识，非常专业。价格也很公道。",
+      "quoteEn": "Communication is easy in both English and Chinese. Snowy explained a lot about nail care — very professional. The pricing is also very fair.",
+      "displayName": "Client",
+      "source": "Google",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0006",
+      "type": "image",
+      "image": "",
+      "quoteZh": "第一次来就成功了！预约很方便，到了之后工具都消毒好了，感觉很放心。",
+      "quoteEn": "First visit was a great success! Booking was easy, and when I arrived all tools were already sterilized — felt very safe and reassured.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": false
+    }
+  ]
+}
+---FILE END: docs/data/reviews.json---
+---FILE START: docs/data/faq.json---
+{
+  "_comment": "FAQ content. Edit this file to add, remove or update questions without touching any HTML.",
+  "categories": [
+    {
+      "id": "booking",
+      "titleEn": "Booking & Appointments",
+      "titleZh": "预约与排期",
+      "items": [
+        {
+          "id": "faq-001",
+          "questionEn": "How far in advance should I book?",
+          "questionZh": "需要提前多久预约？",
+          "answerEn": "We recommend booking at least 3–5 days in advance, especially for weekends. For same-week availability, send a message directly — spots sometimes open up.",
+          "answerZh": "建议至少提前3至5天预约，尤其是周末。如需当周预约，可直接发送消息询问 — 有时会有临时空位。"
+        },
+        {
+          "id": "faq-002",
+          "questionEn": "Can I bring a design reference photo?",
+          "questionZh": "我可以带参考图吗？",
+          "answerEn": "Absolutely — bringing a reference photo is encouraged! You can send it ahead of time through Instagram or 小红书 so we can discuss it and prepare any special materials.",
+          "answerZh": "当然可以！非常欢迎您带参考图。您可以提前通过 Instagram 或小红书发送参考图，这样我们可以事先沟通并准备所需材料。"
+        },
+        {
+          "id": "faq-003",
+          "questionEn": "What is your cancellation policy?",
+          "questionZh": "取消政策是什么？",
+          "answerEn": "Please provide at least 24 hours notice if you need to cancel or reschedule. Late cancellations (less than 24 hours) may result in a deposit forfeiture.",
+          "answerZh": "如需取消或改期，请至少提前24小时通知。晚于24小时的取消可能导致定金不予退还。"
+        },
+        {
+          "id": "faq-004",
+          "questionEn": "What is your late policy?",
+          "questionZh": "迟到政策是什么？",
+          "answerEn": "Please let us know if you expect to be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled to avoid affecting other appointments.",
+          "answerZh": "如预计迟到超过10分钟，请提前告知我们。迟到超过15分钟可能需要重新安排预约时间，以免影响其他客户。"
+        }
+      ]
+    },
+    {
+      "id": "studio",
+      "titleEn": "Studio & Comfort",
+      "titleZh": "工作室与舒适度",
+      "items": [
+        {
+          "id": "faq-005",
+          "questionEn": "Is parking available?",
+          "questionZh": "有停车位吗？",
+          "answerEn": "Yes, free street parking is available near the studio. The exact address is provided after booking is confirmed.",
+          "answerZh": "是的，工作室附近有免费路边停车位。预约确认后将提供详细地址。"
+        },
+        {
+          "id": "faq-006",
+          "questionEn": "Are there pets in the home studio?",
+          "questionZh": "家庭工作室里有宠物吗？",
+          "answerEn": "There are no pets in the studio space. Please let us know in advance if you have any allergies or sensitivities.",
+          "answerZh": "工作室空间内没有宠物。如您有任何过敏或特殊需求，请提前告知。"
+        },
+        {
+          "id": "faq-007",
+          "questionEn": "What languages do you support?",
+          "questionZh": "你们支持哪些语言服务？",
+          "answerEn": "We communicate comfortably in both English and Mandarin Chinese (普通话). Our website is also available in both languages.",
+          "answerZh": "我们可以用英语和普通话进行流畅沟通，网站同样支持中英双语。"
+        }
+      ]
+    },
+    {
+      "id": "services",
+      "titleEn": "Services & Nails",
+      "titleZh": "服务与美甲",
+      "items": [
+        {
+          "id": "faq-008",
+          "questionEn": "Do you offer custom nail art?",
+          "questionZh": "你们提供定制美甲图案吗？",
+          "answerEn": "Yes! Custom nail art is our specialty. Bring any reference image and we'll work together to create something you love.",
+          "answerZh": "是的！定制美甲图案是我们的专长。请带上您喜欢的参考图，我们将共同打造您心仪的美甲。"
+        },
+        {
+          "id": "faq-009",
+          "questionEn": "Do you remove previous sets?",
+          "questionZh": "你们提供卸甲服务吗？",
+          "answerEn": "Yes, we offer professional removal of previous gel, acrylic, or dip powder sets. Please mention this when booking as it adds time to the appointment.",
+          "answerZh": "是的，我们提供专业卸除光疗胶、水晶甲或浸粉甲的服务。预约时请注明，因为卸甲需要额外时间。"
+        }
+      ]
+    }
+  ]
+}
+---FILE END: docs/data/faq.json---
+---FILE START: docs/data/aftercare.json---
+{
+  "_comment": "Aftercare content. Edit this file to update nail care advice without touching any HTML.",
+  "sections": [
+    {
+      "id": "first-24h",
+      "icon": "💧",
+      "titleEn": "First 24 Hours",
+      "titleZh": "前24小时",
+      "items": [
+        {
+          "id": "ac-001",
+          "textEn": "Avoid prolonged water exposure — skip dishwashing, long baths, and swimming.",
+          "textZh": "避免长时间接触水 — 洗碗、泡澡和游泳请暂缓。"
+        },
+        {
+          "id": "ac-002",
+          "textEn": "Avoid applying pressure directly to the tips of your nails.",
+          "textZh": "避免对指甲尖端施加直接压力。"
+        },
+        {
+          "id": "ac-003",
+          "textEn": "Allow the gel to fully cure before heavy activity.",
+          "textZh": "在进行繁重活动前，请确保光疗胶完全固化。"
+        }
+      ]
+    },
+    {
+      "id": "daily-care",
+      "icon": "✨",
+      "titleEn": "Daily Care",
+      "titleZh": "日常护理",
+      "items": [
+        {
+          "id": "ac-004",
+          "textEn": "Apply cuticle oil once or twice daily to keep nails and skin hydrated.",
+          "textZh": "每日涂抹一至两次护甲油，保持指甲和皮肤水润。"
+        },
+        {
+          "id": "ac-005",
+          "textEn": "Moisturize your hands regularly, especially after washing.",
+          "textZh": "经常给双手保湿，尤其是洗手之后。"
+        },
+        {
+          "id": "ac-006",
+          "textEn": "Avoid using your nails as tools — do not pry, pick, or scrape with them.",
+          "textZh": "避免用指甲作为工具 — 不要用指甲撬、抠或刮物品。"
+        }
+      ]
+    },
+    {
+      "id": "protection",
+      "icon": "🧤",
+      "titleEn": "Protection",
+      "titleZh": "日常防护",
+      "items": [
+        {
+          "id": "ac-007",
+          "textEn": "Wear protective gloves when cleaning, doing dishes, or using harsh chemicals.",
+          "textZh": "清洁、洗碗或使用强效化学品时，请戴上防护手套。"
+        },
+        {
+          "id": "ac-008",
+          "textEn": "Avoid prolonged contact with acetone-based products (e.g., nail polish remover).",
+          "textZh": "避免长时间接触含丙酮的产品（如卸甲水）。"
+        },
+        {
+          "id": "ac-009",
+          "textEn": "Apply sunscreen to your hands — UV exposure can fade nail colour over time.",
+          "textZh": "给双手涂抹防晒霜 — 紫外线照射会使指甲颜色随时间褪色。"
+        }
+      ]
+    },
+    {
+      "id": "damage-handling",
+      "icon": "🔧",
+      "titleEn": "If Something Goes Wrong",
+      "titleZh": "出现问题时",
+      "items": [
+        {
+          "id": "ac-010",
+          "textEn": "Do not peel, pick, or force-remove gel — this damages the natural nail underneath.",
+          "textZh": "不要撕、抠或强行卸除光疗胶 — 这会损伤下方的天然甲。"
+        },
+        {
+          "id": "ac-011",
+          "textEn": "If a nail lifts or chips, contact the studio — do not attempt to fix it yourself.",
+          "textZh": "如果指甲翘起或崩裂，请联系工作室 — 不要自行尝试修复。"
+        },
+        {
+          "id": "ac-012",
+          "textEn": "If you notice any pain, swelling, or irritation around your nails, consult a healthcare professional.",
+          "textZh": "如果您注意到指甲周围有疼痛、肿胀或刺激感，请咨询医疗专业人员。"
+        }
+      ]
+    },
+    {
+      "id": "removal",
+      "icon": "💅",
+      "titleEn": "Removal",
+      "titleZh": "卸甲",
+      "items": [
+        {
+          "id": "ac-013",
+          "textEn": "Professional removal is strongly recommended to protect your natural nails.",
+          "textZh": "强烈建议进行专业卸甲，以保护您的天然甲。"
+        },
+        {
+          "id": "ac-014",
+          "textEn": "Book a removal appointment when ready — we'll safely soak off or file down your set.",
+          "textZh": "准备好时请预约卸甲服务 — 我们将安全地浸泡或打磨卸除您的指甲。"
+        },
+        {
+          "id": "ac-015",
+          "textEn": "Allow your nails a short rest between sets if they feel thin or sensitive.",
+          "textZh": "如果指甲感觉变薄或敏感，请在两次做甲之间给指甲短暂休息时间。"
+        }
+      ]
+    }
+  ]
+}
+---FILE END: docs/data/aftercare.json---
+---FILE START: docs/data/promotions.json---
+{
+  "_comment": "Promotions data. Set active:false to hide a promotion. imageEn/imageZh paths are relative to docs/. Leave blank for mock poster display.",
+  "active": [
+    {
+      "id": "promo-001",
+      "titleEn": "New Client Special",
+      "titleZh": "新客优惠",
+      "descriptionEn": "First-time clients receive 15% off their first full-set gel manicure.",
+      "descriptionZh": "首次光顾的新客享受第一次全套光疗美甲九折优惠。",
+      "imageEn": "assets/images/posters/en/new-client-special-en.webp",
+      "imageZh": "assets/images/posters/zh/new-client-special-zh.webp",
+      "validUntil": "2025-12-31",
+      "active": true
+    },
+    {
+      "id": "promo-002",
+      "titleEn": "Summer Pedicure Add-On",
+      "titleZh": "夏日足甲加购优惠",
+      "descriptionEn": "Add a gel pedicure to any manicure appointment and save $10.",
+      "descriptionZh": "在任何美甲预约中加购光疗足甲，立享$10优惠。",
+      "imageEn": "assets/images/posters/en/summer-pedicure-en.webp",
+      "imageZh": "assets/images/posters/zh/summer-pedicure-zh.webp",
+      "validUntil": "2025-09-30",
+      "active": true
+    }
+  ],
+  "services": [
+    {
+      "id": "svc-001",
+      "icon": "💅",
+      "nameEn": "Gel Manicure",
+      "nameZh": "光疗美甲",
+      "descEn": "Long-lasting gel colour with or without nail art. Includes shaping, cuticle care, and top coat.",
+      "descZh": "持久光疗色彩，可添加指甲彩绘。包含修形、护理角质和封层。"
+    },
+    {
+      "id": "svc-002",
+      "icon": "🌸",
+      "nameEn": "Gel Pedicure",
+      "nameZh": "光疗足甲",
+      "descEn": "Soothing foot soak, nail shaping, cuticle work, and gel colour application.",
+      "descZh": "舒缓泡脚、修甲、护理角质和光疗颜色涂抹。"
+    },
+    {
+      "id": "svc-003",
+      "icon": "🎨",
+      "nameEn": "Nail Art",
+      "nameZh": "美甲彩绘",
+      "descEn": "Custom hand-painted designs, stamping, foils, gems, and 3D art — added to any service.",
+      "descZh": "定制手绘图案、印花、金箔、宝石和3D立体美甲 — 可添加至任何服务。"
+    },
+    {
+      "id": "svc-004",
+      "icon": "✨",
+      "nameEn": "Extensions",
+      "nameZh": "甲片延长",
+      "descEn": "Add length with gel or acrylic extensions, then customise with any design.",
+      "descZh": "使用光疗或水晶延长指甲，然后搭配任意图案定制。"
+    },
+    {
+      "id": "svc-005",
+      "icon": "🔄",
+      "nameEn": "Removal & Infill",
+      "nameZh": "卸甲与补甲",
+      "descEn": "Safe professional removal of gel, acrylic, or dip powder sets. Gel infills also available.",
+      "descZh": "安全专业地卸除光疗胶、水晶甲或浸粉甲。同时提供光疗补甲服务。"
+    },
+    {
+      "id": "svc-006",
+      "icon": "💎",
+      "nameEn": "Full Set Package",
+      "nameZh": "全套美甲套餐",
+      "descEn": "Manicure and pedicure combined at a bundled price. Perfect for special occasions.",
+      "descZh": "手足美甲组合套餐，优惠价格。非常适合特殊场合。"
+    }
+  ]
+}
+---FILE END: docs/data/promotions.json---
+---FILE START: docs/data/site.json---
+{
+  "business": {
+    "nameEn": "Snowy Nail Studio",
+    "nameZh": "Snowy美甲工作室",
+    "locationEn": "Richmond Hill, Ontario",
+    "locationZh": "安大略省列治文山"
+  },
+  "contacts": [
+    {
+      "id": "instagram",
+      "icon": "📸",
+      "labelEn": "Instagram",
+      "labelZh": "Instagram",
+      "valueEn": "@snowynailstudio",
+      "valueZh": "@snowynailstudio",
+      "url": "#",
+      "enabled": true
+    },
+    {
+      "id": "xhs",
+      "icon": "🌸",
+      "labelEn": "小红书 (XHS)",
+      "labelZh": "小红书",
+      "valueEn": "Snowy Nail Studio",
+      "valueZh": "Snowy Nail Studio",
+      "url": "#",
+      "enabled": true
+    },
+    {
+      "id": "wechat",
+      "icon": "💬",
+      "labelEn": "WeChat",
+      "labelZh": "微信",
+      "valueEn": "Ask for ID in DM",
+      "valueZh": "私信获取微信号",
+      "enabled": true
+    }
+  ]
+}
+---FILE END: docs/data/site.json---
+---FILE START: docs/index.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snowy Nail Studio | Richmond Hill</title>
+  <meta name="description" content="Handcrafted gel nail art in a private, spotless home studio in Richmond Hill, Ontario. Book your appointment today.">
+  <meta name="theme-color" content="#C4788A">
+  <!-- Open Graph -->
+  <meta property="og:title" content="Snowy Nail Studio | Richmond Hill">
+  <meta property="og:description" content="Handcrafted gel nail art in a private, spotless home studio in Richmond Hill.">
+  <meta property="og:type" content="website">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <section class="hero" aria-label="Hero">
+      <div class="hero-deco hero-deco-1" aria-hidden="true"></div>
+      <div class="hero-deco hero-deco-2" aria-hidden="true"></div>
+      <div class="hero-deco hero-deco-3" aria-hidden="true"></div>
+      <div class="hero-content">
+        <p class="highlight-tag">✦ Richmond Hill</p>
+        <h1 data-i18n="home.hero_heading">Nail Art That Tells Your Story</h1>
+        <p data-i18n="home.hero_sub">Handcrafted gel nails in a private, spotless studio — Richmond Hill</p>
+        <div class="hero-actions">
+          <a href="gallery.html" class="btn btn-primary btn-lg" data-i18n="home.hero_cta_primary">Explore Nail Art</a>
+          <a href="contact.html" class="btn btn-outline btn-lg" data-i18n="home.hero_cta_secondary">Ask About Availability</a>
+        </div>
+      </div>
+    </section>
+    <!-- â”€â”€ Latest designs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <section class="section reveal" aria-labelledby="latest-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Portfolio</p>
+          <h2 id="latest-heading" data-i18n="home.latest_title">Latest Designs</h2>
+          <p data-i18n="home.latest_sub">Fresh work straight from the studio</p>
+        </div>
+        <div class="featured-grid" id="featured-strip"></div>
+        <div style="text-align:center; margin-top:32px;">
+          <a href="gallery.html" class="btn btn-outline" data-i18n="common.view_all">View All</a>
+        </div>
+      </div>
+    </section>
+    <!-- â”€â”€ Promotion banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <section class="section section--alt reveal" aria-labelledby="promo-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Special Offer</p>
+          <h2 id="promo-heading" data-i18n="home.promo_title">Current Promotion</h2>
+        </div>
+        <div id="home-promo-wrap">
+          <!-- Injected by JS -->
+          <div class="promo-cards" id="home-promos-container"></div>
+        </div>
+      </div>
+    </section>
+    <!-- â”€â”€ Featured reviews â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <section class="section reveal" aria-labelledby="reviews-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Client Feedback</p>
+          <h2 id="reviews-heading" data-i18n="home.reviews_title">What Clients Say</h2>
+          <p data-i18n="home.reviews_sub">Real words from real clients</p>
+        </div>
+        <div class="reviews-grid" id="home-reviews"></div>
+        <div style="text-align:center; margin-top:32px;">
+          <a href="about.html" class="btn btn-ghost" data-i18n="common.view_all">View All</a>
+        </div>
+      </div>
+    </section>
+    <!-- â”€â”€ Studio preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <section class="section section--alt reveal" aria-labelledby="studio-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Clean &amp; Private</p>
+          <h2 id="studio-heading" data-i18n="home.studio_title">A Clean, Private Studio</h2>
+          <p data-i18n="home.studio_sub">Every tool is sterilized. Every surface is prepared for you.</p>
+        </div>
+        <div class="studio-grid" style="max-width:900px; margin-inline:auto;">
+          <div class="studio-photo">
+            <div class="studio-photo-mock">
+              <span class="studio-photo-mock-icon" aria-hidden="true">🏠</span>
+              <span>Studio Space</span>
+            </div>
+          </div>
+          <div class="studio-photo">
+            <div class="studio-photo-mock">
+              <span class="studio-photo-mock-icon" aria-hidden="true">🧴</span>
+              <span>Sterilized Tools</span>
+            </div>
+          </div>
+          <div class="studio-photo">
+            <div class="studio-photo-mock">
+              <span class="studio-photo-mock-icon" aria-hidden="true">✨</span>
+              <span>Workstation</span>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:32px;">
+          <a href="studio.html" class="btn btn-outline" data-i18n="home.studio_cta">View Studio</a>
+        </div>
+      </div>
+    </section>
+    <!-- â”€â”€ CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+    <section class="cta-section reveal" aria-labelledby="cta-heading">
+      <div class="container">
+        <h2 id="cta-heading" data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+          <a href="gallery.html" class="btn btn-outline btn-lg"
+             style="border-color:rgba(255,255,255,.5);color:white;"
+             data-i18n="home.hero_cta_primary">Explore Nail Art</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gallery.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReviews('home-reviews', true);
+      loadPromotions('home-promos-container');
+    });
+  </script>
+</body>
+</html>
+---FILE END: docs/index.html---
+---FILE START: docs/gallery.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nail Art Gallery | Snowy Nail Studio</title>
+  <meta name="description" content="Browse Snowy Nail Studio's portfolio of gel nail art. Filter by style, colour, shape, length, and service type.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="gallery.title">Nail Art Gallery</h1>
+        <p data-i18n="gallery.subtitle">Browse designs by style, colour, shape and more</p>
+      </div>
+    </div>
+    <!-- Gallery + filters -->
+    <section class="section section--sm">
+      <div class="container">
+        <!-- Filters -->
+        <div class="gallery-controls" role="search" aria-label="Gallery filters">
+          <!-- Quick filters -->
+          <div class="filter-row">
+            <button class="filter-btn" data-group="all" data-value="all" data-i18n="gallery.filter_all">All</button>
+            <button class="filter-btn" data-group="special" data-value="featured" data-i18n="gallery.filter_featured">Featured</button>
+            <button class="filter-btn" data-group="special" data-value="newest"   data-i18n="gallery.filter_newest">Newest</button>
+            <button class="filter-btn" data-group="service" data-value="manicure" data-i18n="gallery.filter_manicure">Manicure</button>
+            <button class="filter-btn" data-group="service" data-value="pedicure" data-i18n="gallery.filter_pedicure">Pedicure</button>
+          </div>
+          <!-- Style -->
+          <div style="margin-bottom:8px;">
+            <p class="filter-section-label" data-i18n="gallery.filter_style">Style</p>
+            <div class="filter-row">
+              <button class="filter-btn" data-group="style" data-value="floral"     data-i18n="gallery.filter_floral">Floral</button>
+              <button class="filter-btn" data-group="style" data-value="minimalist" data-i18n="gallery.filter_minimalist">Minimalist</button>
+              <button class="filter-btn" data-group="style" data-value="glam"       data-i18n="gallery.filter_glam">Glam</button>
+              <button class="filter-btn" data-group="style" data-value="geometric"  data-i18n="gallery.filter_geometric">Geometric</button>
+              <button class="filter-btn" data-group="style" data-value="kawaii"     data-i18n="gallery.filter_kawaii">Kawaii</button>
+              <button class="filter-btn" data-group="style" data-value="ombre"      data-i18n="gallery.filter_ombre">Ombre</button>
+              <button class="filter-btn" data-group="style" data-value="romantic"   data-i18n="gallery.filter_romantic">Romantic</button>
+            </div>
+          </div>
+          <!-- Colour -->
+          <div style="margin-bottom:8px;">
+            <p class="filter-section-label" data-i18n="gallery.filter_colour">Colour</p>
+            <div class="filter-row">
+              <button class="filter-btn" data-group="colour" data-value="pink"   data-i18n="gallery.filter_pink">Pink</button>
+              <button class="filter-btn" data-group="colour" data-value="red"    data-i18n="gallery.filter_red">Red</button>
+              <button class="filter-btn" data-group="colour" data-value="nude"   data-i18n="gallery.filter_nude">Nude</button>
+              <button class="filter-btn" data-group="colour" data-value="white"  data-i18n="gallery.filter_white">White</button>
+              <button class="filter-btn" data-group="colour" data-value="black"  data-i18n="gallery.filter_black">Black</button>
+              <button class="filter-btn" data-group="colour" data-value="purple" data-i18n="gallery.filter_purple">Purple</button>
+              <button class="filter-btn" data-group="colour" data-value="blue"   data-i18n="gallery.filter_blue">Blue</button>
+              <button class="filter-btn" data-group="colour" data-value="green"  data-i18n="gallery.filter_green">Green</button>
+              <button class="filter-btn" data-group="colour" data-value="gold"   data-i18n="gallery.filter_gold">Gold</button>
+            </div>
+          </div>
+          <!-- Shape + Length -->
+          <div style="margin-bottom:8px; display:flex; gap:16px; flex-wrap:wrap;">
+            <div>
+              <p class="filter-section-label" data-i18n="gallery.filter_shape">Shape</p>
+              <div class="filter-row">
+                <button class="filter-btn" data-group="shape" data-value="almond"  data-i18n="gallery.filter_almond">Almond</button>
+                <button class="filter-btn" data-group="shape" data-value="oval"    data-i18n="gallery.filter_oval">Oval</button>
+                <button class="filter-btn" data-group="shape" data-value="square"  data-i18n="gallery.filter_square">Square</button>
+                <button class="filter-btn" data-group="shape" data-value="coffin"  data-i18n="gallery.filter_coffin">Coffin</button>
+                <button class="filter-btn" data-group="shape" data-value="round"   data-i18n="gallery.filter_round">Round</button>
+              </div>
+            </div>
+            <div>
+              <p class="filter-section-label" data-i18n="gallery.filter_length">Length</p>
+              <div class="filter-row">
+                <button class="filter-btn" data-group="length" data-value="short"  data-i18n="gallery.filter_short">Short</button>
+                <button class="filter-btn" data-group="length" data-value="medium" data-i18n="gallery.filter_medium">Medium</button>
+                <button class="filter-btn" data-group="length" data-value="long"   data-i18n="gallery.filter_long">Long</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /gallery-controls -->
+        <!-- Results count -->
+        <p class="gallery-count" id="gallery-count" aria-live="polite"></p>
+        <!-- Grid -->
+        <div class="gallery-grid" id="gallery-grid" role="list" aria-label="Nail art gallery"></div>
+        <!-- Load more -->
+        <div class="gallery-load-more">
+          <button class="btn btn-outline" id="load-more-btn" style="display:none;"
+                  data-i18n="gallery.load_more">Load More</button>
+        </div>
+      </div>
+    </section>
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true"
+         aria-label="Image viewer" tabindex="-1">
+      <div class="lightbox-inner">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+        <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
+        <div class="lightbox-img-wrap" id="lightbox-img-wrap"></div>
+        <button class="lightbox-next" id="lightbox-next" aria-label="Next image">›</button>
+      </div>
+    </div>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gallery.js"></script>
+  <script src="assets/js/reviews.js"></script>
+</body>
+</html>
+---FILE END: docs/gallery.html---
+---FILE START: docs/services.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services & Pricing | Snowy Nail Studio</title>
+  <meta name="description" content="Snowy Nail Studio services, pricing, and current promotions. Gel manicures, pedicures, nail art, extensions, and removal.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="services.title">Services &amp; Pricing</h1>
+        <p data-i18n="services.subtitle">Handcrafted nail art for manicures and pedicures</p>
+      </div>
+    </div>
+    <!-- Services grid -->
+    <section class="section reveal" aria-labelledby="services-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">What We Offer</p>
+          <h2 id="services-heading" data-i18n="services.section_services">What We Offer</h2>
+        </div>
+        <div class="services-grid" id="services-grid">
+          <!-- Populated by reviews.js â†’ loadServices() -->
+          <div class="loading-state" style="grid-column:1/-1">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Pricing poster -->
+    <section class="section section--alt reveal" aria-labelledby="pricing-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Transparent Pricing</p>
+          <h2 id="pricing-heading" data-i18n="services.section_pricing">Pricing</h2>
+          <p data-i18n="services.pricing_note">Pricing is shown on the poster below. Final price may vary by design complexity.</p>
+        </div>
+        <div class="poster-wrap" style="max-width:680px; margin-inline:auto;">
+          <div class="poster-lang-toggle">
+            <button class="poster-tab active" data-panel="poster-en" data-i18n="services.view_en">English</button>
+            <button class="poster-tab"        data-panel="poster-zh" data-i18n="services.view_zh">中文</button>
+          </div>
+          <!-- English poster -->
+          <div class="poster-panel active" id="poster-en">
+            <div class="poster-mock">
+              <h3 class="poster-mock-title">Snowy Nail Studio</h3>
+              <p class="poster-mock-sub">Richmond Hill · Price List</p>
+              <div class="poster-mock-items">
+                <div class="poster-mock-row">
+                  <span>Gel Manicure (plain)</span>
+                  <span class="poster-mock-price">from $55</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Gel Manicure + Art</span>
+                  <span class="poster-mock-price">from $70</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Gel Pedicure (plain)</span>
+                  <span class="poster-mock-price">from $65</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Extensions</span>
+                  <span class="poster-mock-price">from $85</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span>Removal</span>
+                  <span class="poster-mock-price">from $15</span>
+                </div>
+              </div>
+              <p class="poster-mock-note">
+                Replace this card with your real pricing poster image.<br>
+                Upload to <code>docs/assets/images/posters/en/</code>
+              </p>
+            </div>
+          </div>
+          <!-- Chinese poster -->
+          <div class="poster-panel" id="poster-zh">
+            <div class="poster-mock">
+              <h3 class="poster-mock-title" style="font-family:var(--font-zh)">Snowy ç¾Ž甲工作室</h3>
+              <p class="poster-mock-sub" style="font-family:var(--font-zh)">åˆ—治文山 · ä»·ç›®è¡¨</p>
+              <div class="poster-mock-items">
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å…‰ç–—ç¾Ž甲ï¼ˆçº¯è‰²ï¼‰</span>
+                  <span class="poster-mock-price">èµ· $55</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å…‰ç–—ç¾Ž甲 + å½©ç»˜</span>
+                  <span class="poster-mock-price">èµ· $70</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å…‰ç–—è¶³甲ï¼ˆçº¯è‰²ï¼‰</span>
+                  <span class="poster-mock-price">èµ· $65</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">甲ç‰‡å»¶é•¿</span>
+                  <span class="poster-mock-price">èµ· $85</span>
+                </div>
+                <div class="poster-mock-row">
+                  <span style="font-family:var(--font-zh)">å¸甲</span>
+                  <span class="poster-mock-price">èµ· $15</span>
+                </div>
+              </div>
+              <p class="poster-mock-note" style="font-family:var(--font-zh)">
+                è¯·å°†æ­¤å ä½å›¾æ›¿æ¢ä¸ºçœŸå®žä»·ç›®è¡¨å›¾ç‰‡ã€‚<br>
+                ä¸Šä¼ è‡³ <code>docs/assets/images/posters/zh/</code>
+              </p>
+            </div>
+          </div>
+        </div><!-- /poster-wrap -->
+      </div>
+    </section>
+    <!-- Promotions -->
+    <section class="section reveal" aria-labelledby="promos-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Limited Time</p>
+          <h2 id="promos-heading" data-i18n="services.section_promos">Current Promotions</h2>
+        </div>
+        <div class="promo-cards" id="promos-container">
+          <div class="loading-state" style="grid-column:1/-1">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="services.contact_cta">Ask About a Service</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadServices('services-grid');
+      loadPromotions('promos-container');
+    });
+  </script>
+</body>
+</html>
+---FILE END: docs/services.html---
+---FILE START: docs/studio.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Safety &amp; Studio | Snowy Nail Studio</title>
+  <meta name="description" content="See inside Snowy Nail Studio's clean, private home studio in Richmond Hill. Learn about our sanitation process and sterilized tools.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="studio.title">Safety &amp; Studio</h1>
+        <p data-i18n="studio.subtitle">Your health and comfort are our highest priority</p>
+      </div>
+    </div>
+    <!-- Clean environment -->
+    <section class="section reveal" aria-labelledby="env-heading">
+      <div class="container">
+        <div style="display:grid; gap:48px; grid-template-columns:1fr; align-items:center;"
+             class="studio-two-col">
+          <div>
+            <p class="eyebrow" style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--clr-accent);margin-bottom:8px;">Environment</p>
+            <h2 id="env-heading" data-i18n="studio.section_env">Clean Environment</h2>
+            <div class="divider" style="margin-inline:0;"></div>
+            <p style="color:var(--clr-text-muted);line-height:1.8;" data-i18n="studio.section_env_text">
+              Our private home studio is kept spotlessly clean. Surfaces are wiped between every appointment, and the air is freshened before you arrive.
+            </p>
+          </div>
+          <div class="studio-grid">
+            <div class="studio-photo">
+              <div class="studio-photo-mock">
+                <span class="studio-photo-mock-icon" aria-hidden="true">🏠</span>
+                <span>Studio Interior</span>
+              </div>
+            </div>
+            <div class="studio-photo">
+              <div class="studio-photo-mock">
+                <span class="studio-photo-mock-icon" aria-hidden="true">🪴</span>
+                <span>Waiting Area</span>
+              </div>
+            </div>
+            <div class="studio-photo">
+              <div class="studio-photo-mock">
+                <span class="studio-photo-mock-icon" aria-hidden="true">💡</span>
+                <span>Nail Station</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Sanitation process -->
+    <section class="section section--alt reveal" aria-labelledby="sanitation-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Hygiene Protocol</p>
+          <h2 id="sanitation-heading" data-i18n="studio.section_sanitation">Sanitation Process</h2>
+        </div>
+        <div style="max-width:640px; margin-inline:auto;">
+          <div class="sanitation-steps">
+            <div class="sanitation-step">
+              <div class="step-num" aria-hidden="true">1</div>
+              <div class="step-body">
+                <h4 data-i18n="studio.step1_title">Clean &amp; Wipe Down</h4>
+                <p data-i18n="studio.step1_desc">All surfaces, lamps, and armrests are wiped with hospital-grade disinfectant before each appointment.</p>
+              </div>
+            </div>
+            <div class="sanitation-step">
+              <div class="step-num" aria-hidden="true">2</div>
+              <div class="step-body">
+                <h4 data-i18n="studio.step2_title">Sterilize Metal Tools</h4>
+                <p data-i18n="studio.step2_desc">Cuticle pushers, nippers, and other metal tools are autoclave-sterilized between every client.</p>
+              </div>
+            </div>
+            <div class="sanitation-step">
+              <div class="step-num" aria-hidden="true">3</div>
+              <div class="step-body">
+                <h4 data-i18n="studio.step3_title">Fresh Disposables</h4>
+                <p data-i18n="studio.step3_desc">Nail files, buffers, and cotton pads are single-use and discarded after every appointment.</p>
+              </div>
+            </div>
+            <div class="sanitation-step">
+              <div class="step-num" aria-hidden="true">4</div>
+              <div class="step-body">
+                <h4 data-i18n="studio.step4_title">Hand Hygiene</h4>
+                <p data-i18n="studio.step4_desc">Hands are washed and sanitized before touching any client's nails.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Sterilized tools -->
+    <section class="section reveal" aria-labelledby="tools-heading">
+      <div class="container">
+        <div style="display:grid; gap:48px; grid-template-columns:1fr; align-items:center;"
+             class="studio-two-col">
+          <div class="studio-grid">
+            <div class="studio-photo">
+              <div class="studio-photo-mock">
+                <span class="studio-photo-mock-icon" aria-hidden="true">🧴</span>
+                <span>Tool Sterilizer</span>
+              </div>
+            </div>
+            <div class="studio-photo">
+              <div class="studio-photo-mock">
+                <span class="studio-photo-mock-icon" aria-hidden="true">✂</span>
+                <span>Sterile Implements</span>
+              </div>
+            </div>
+            <div class="studio-photo">
+              <div class="studio-photo-mock">
+                <span class="studio-photo-mock-icon" aria-hidden="true">📦</span>
+                <span>Single-Use Supplies</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p class="eyebrow" style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--clr-accent);margin-bottom:8px;">Tools</p>
+            <h2 id="tools-heading" data-i18n="studio.section_tools">Sterilized Tools</h2>
+            <div class="divider" style="margin-inline:0;"></div>
+            <p style="color:var(--clr-text-muted);line-height:1.8;" data-i18n="studio.section_tools_text">
+              All metal implements are autoclave-sterilized. Buffers, files, and single-use items are discarded after each client.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Promise -->
+    <section class="section section--alt reveal">
+      <div class="container">
+        <div class="promise-box" style="max-width:720px; margin-inline:auto;">
+          <p data-i18n="studio.studio_promise">"Your safety is not an afterthought — it's built into every appointment."</p>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <!-- Two-column layout for larger screens -->
+  <style>
+    @media (min-width: 768px) {
+      .studio-two-col { grid-template-columns: 1fr 1fr !important; }
+    }
+  </style>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
+---FILE END: docs/studio.html---
+---FILE START: docs/about.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About &amp; Client Feedback | Snowy Nail Studio</title>
+  <meta name="description" content="Meet Snowy — certified nail technician in Richmond Hill. Read real client reviews including 小红书 conversation screenshots.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- About hero -->
+    <section class="section" style="background:linear-gradient(135deg,var(--clr-accent-xlight),var(--clr-surface-alt));"
+             aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-layout">
+          <!-- Photo -->
+          <div class="about-photo reveal">
+            <!-- Replace with: <img src="assets/images/snowy-portrait.webp" alt="Snowy, nail technician"> -->
+            <div class="about-photo-mock" aria-hidden="true">💅</div>
+          </div>
+          <!-- Bio -->
+          <div class="about-text reveal">
+            <p class="highlight-tag">Richmond Hill, Ontario</p>
+            <h1 id="about-heading" data-i18n="about.title">About Snowy Nail Studio</h1>
+            <div class="divider" style="margin-inline:0;"></div>
+            <p data-i18n="about.bio1">
+              Hi, I'm Snowy — a certified nail technician with a passion for creating beautiful, long-lasting nail art. I run a private home studio in Richmond Hill where every client receives my full, undivided attention.
+            </p>
+            <p data-i18n="about.bio2">
+              I specialize in gel manicures, intricate nail art, and custom designs. Whether you bring a reference photo or trust my creativity, I'll craft nails you'll love.
+            </p>
+            <div class="about-badges">
+              <span class="about-badge">🏅 <span data-i18n="about.badge_certified">Certified Technician</span></span>
+              <span class="about-badge">🏠 <span data-i18n="about.badge_private">Private Studio</span></span>
+              <span class="about-badge">🌐 <span data-i18n="about.badge_bilingual">EN · 中文</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Client reviews -->
+    <section class="section reveal" aria-labelledby="reviews-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Real Clients</p>
+          <h2 id="reviews-heading" data-i18n="about.reviews_title">Client Feedback</h2>
+          <p data-i18n="about.reviews_sub">Real words from real clients</p>
+        </div>
+        <div class="reviews-grid" id="reviews-grid">
+          <div class="loading-state" style="grid-column:1/-1">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+          <a href="gallery.html" class="btn btn-outline btn-lg"
+             style="border-color:rgba(255,255,255,.5);color:white;"
+             data-i18n="home.hero_cta_primary">Explore Nail Art</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReviews('reviews-grid', false);
+    });
+  </script>
+</body>
+</html>
+---FILE END: docs/about.html---
+---FILE START: docs/contact.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact &amp; FAQ | Snowy Nail Studio</title>
+  <meta name="description" content="Contact Snowy Nail Studio in Richmond Hill via Instagram, 小红书, or WeChat. Find answers to frequently asked questions.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="contact.title">Contact &amp; FAQ</h1>
+        <p data-i18n="contact.subtitle">Get in touch or find answers below</p>
+      </div>
+    </div>
+    <!-- Contact methods + CTAs -->
+    <section class="section reveal" aria-labelledby="contact-heading">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <p class="eyebrow">Reach Us</p>
+          <h2 id="contact-heading" data-i18n="contact.section_contact">Get in Touch</h2>
+          <p data-i18n="contact.contact_intro">The best way to reach us is through Instagram or 小红书. WeChat is also available for Chinese-speaking clients.</p>
+        </div>
+        <div class="contact-methods" id="contact-methods-container">
+          <div class="loading-state" style="min-height:80px;">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+        <!-- CTA buttons -->
+        <div class="contact-cta-grid" style="margin-top:32px;">
+          <a href="#" class="btn btn-primary" data-i18n="contact.cta_inspiration">Send an Inspiration Photo</a>
+          <a href="#" class="btn btn-outline" data-i18n="contact.cta_availability">Ask About Availability</a>
+          <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_instagram">Message on Instagram</a>
+          <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_xhs">Visit 小红书</a>
+        </div>
+      </div>
+    </section>
+    <!-- FAQ -->
+    <section class="section section--alt reveal" aria-labelledby="faq-heading">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-heading" data-i18n="contact.section_faq">Frequently Asked Questions</h2>
+        </div>
+        <div id="faq-container">
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <p data-i18n="contact.faq_loading">Loading FAQâ€¦</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Policies -->
+    <section class="section reveal" aria-labelledby="policies-heading">
+      <div class="container" style="max-width:760px;">
+        <div class="section-header">
+          <p class="eyebrow">Studio Policies</p>
+          <h2 id="policies-heading" data-i18n="contact.section_policies">Studio Policies</h2>
+        </div>
+        <div>
+          <div class="policy-box">
+            <h4 data-i18n="contact.cancellation_title">Cancellation Policy</h4>
+            <p data-i18n="contact.cancellation_text">Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may result in a deposit forfeiture.</p>
+          </div>
+          <div class="policy-box">
+            <h4 data-i18n="contact.late_title">Late Arrival Policy</h4>
+            <p data-i18n="contact.late_text">Please notify us if you will be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled to avoid affecting other appointments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadFAQ('faq-container');
+      loadSiteContacts('contact-methods-container');
+    });
+  </script>
+</body>
+</html>
+---FILE END: docs/contact.html---
+---FILE START: docs/aftercare.html---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nail Care &amp; Aftercare | Snowy Nail Studio</title>
+  <meta name="description" content="How to care for your gel nails after your appointment at Snowy Nail Studio. Tips for daily care, protection, and safe removal.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="aftercare.title">Nail Care &amp; Aftercare</h1>
+        <p data-i18n="aftercare.subtitle">Keep your nails beautiful between appointments</p>
+      </div>
+    </div>
+    <!-- Intro -->
+    <section class="section--sm" style="background:var(--clr-surface);">
+      <div class="container" style="max-width:680px; text-align:center;">
+        <p style="font-size:16px; color:var(--clr-text-muted); line-height:1.8;"
+           data-i18n="aftercare.intro">
+          Following these aftercare tips will help your nails last longer and stay healthier between appointments.
+        </p>
+      </div>
+    </section>
+    <!-- Aftercare sections (JSON-driven) -->
+    <section class="section section--alt" aria-labelledby="aftercare-heading">
+      <div class="container" style="max-width:760px;">
+        <h2 id="aftercare-heading" class="sr-only" data-i18n="aftercare.title">Nail Care Guide</h2>
+        <div id="aftercare-container">
+          <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <p data-i18n="aftercare.loading">Loading aftercare guideâ€¦</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+          <a href="gallery.html" class="btn btn-outline btn-lg"
+             style="border-color:rgba(255,255,255,.5);color:white;"
+             data-i18n="home.hero_cta_primary">Explore Nail Art</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAftercare('aftercare-container');
+    });
+  </script>
+</body>
+</html>
+---FILE END: docs/aftercare.html---
+---FILE START: tools/validate-content.js---
+#!/usr/bin/env node
+/**
+ * validate-content.js — Smoke + unit tests for Snowy Nail Studio static site.
+ * Run: node tools/validate-content.js
+ */
+'use strict';
+const fs   = require('fs');
+const path = require('path');
+const DOCS  = path.join(__dirname, '..', 'docs');
+const TOOLS = __dirname;
+let passed = 0;
+let failed = 0;
+let section = '';
+function startSection(name) {
+  section = name;
+  console.log(`\n\x1b[1m=== ${name} ===\x1b[0m`);
+}
+function assert(cond, name, detail) {
+  if (cond) {
+    console.log(`  \x1b[32m✓\x1b[0m ${name}`);
+    passed++;
+  } else {
+    console.error(`  \x1b[31m✗\x1b[0m ${name}${detail ? ` → ${detail}` : ''}`);
+    failed++;
+  }
+}
+function readJSON(relPath) {
+  const full = path.join(DOCS, relPath);
+  const raw  = fs.readFileSync(full, 'utf8');
+  return JSON.parse(raw);
+}
+function fileExists(relPath) {
+  return fs.existsSync(path.join(DOCS, relPath));
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-01  Critical files exist
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-01  Critical files');
+[
+  '.nojekyll', 'robots.txt', 'sitemap.xml',
+  'assets/ui/favicon.svg',
+  'assets/js/main.js', 'assets/js/reviews.js',
+  'assets/js/gallery.js', 'assets/js/i18n.js',
+  'assets/css/main.css',
+  'data/translations.json', 'data/gallery.json', 'data/faq.json',
+  'data/reviews.json', 'data/promotions.json', 'data/aftercare.json',
+  'data/site.json',
+  'index.html', 'gallery.html', 'services.html', 'studio.html',
+  'about.html', 'contact.html', 'aftercare.html',
+].forEach(f => assert(fileExists(f), `exists: docs/${f}`));
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-02  All JSON files are valid
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-02  JSON validity');
+[
+  'data/translations.json', 'data/gallery.json', 'data/faq.json',
+  'data/reviews.json', 'data/promotions.json', 'data/aftercare.json',
+  'data/site.json',
+].forEach(f => {
+  try {
+    readJSON(f);
+    assert(true, `valid JSON: ${f}`);
+  } catch (e) {
+    assert(false, `valid JSON: ${f}`, e.message);
+  }
+});
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-03  translations.json structure
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-03  translations.json');
+const t = readJSON('data/translations.json');
+assert('en' in t && 'zh' in t, 'has en + zh keys');
+const requiredGallery = [
+  'filter_all','filter_floral','filter_minimalist','filter_glam','filter_geometric',
+  'filter_kawaii','filter_ombre','filter_romantic','filter_colour',
+  'filter_pink','filter_red','filter_nude','filter_white','filter_black',
+  'filter_purple','filter_blue','filter_green','filter_gold',
+  'filter_shape','filter_length','filter_finish',
+  'no_results','load_more','lightbox_close',
+];
+requiredGallery.forEach(k => {
+  assert(t.en.gallery[k] !== undefined, `en.gallery.${k}`);
+  assert(t.zh.gallery[k] !== undefined, `zh.gallery.${k}`);
+});
+assert(t.en.common.skip_nav !== undefined, 'en.common.skip_nav');
+assert(t.zh.common.skip_nav !== undefined, 'zh.common.skip_nav');
+assert(t.en.common.error    !== undefined, 'en.common.error');
+assert(t.en.common.mock_note !== undefined, 'en.common.mock_note');
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-04  gallery.json structure
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-04  gallery.json');
+const gal = readJSON('data/gallery.json');
+assert(Array.isArray(gal.items), 'items is array');
+assert(gal.items.length >= 10, `has >= 10 items (got ${gal.items.length})`);
+const requiredItemKeys = ['id','altEn','altZh','style','colour','shape','length','finish','service','featured','date'];
+gal.items.forEach((item, i) => {
+  requiredItemKeys.forEach(k => {
+    if (!(k in item)) assert(false, `item[${i}].${k} present`, `id=${item.id}`);
+  });
+});
+assert(true, 'all item required keys present');
+const allStyles  = [...new Set(gal.items.flatMap(i => i.style || []))];
+const allColours = [...new Set(gal.items.flatMap(i => i.colour || []))];
+assert(allStyles.includes('romantic'),  `romantic style items exist (found: ${allStyles.join(', ')})`);
+assert(allColours.includes('gold'),     `gold colour items exist (found: ${allColours.join(', ')})`);
+assert(gal.items.some(i => i.featured), 'at least one featured item');
+// Each style value used in data has a translation key
+allStyles.forEach(s => {
+  const key = `filter_${s}`;
+  assert(t.en.gallery[key] !== undefined, `translation key exists for style "${s}"`);
+});
+allColours.forEach(c => {
+  const key = `filter_${c}`;
+  assert(t.en.gallery[key] !== undefined, `translation key exists for colour "${c}"`);
+});
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-05  faq.json structure
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-05  faq.json');
+const faq = readJSON('data/faq.json');
+assert(Array.isArray(faq.categories), 'categories is array');
+assert(faq.categories.length > 0, 'at least one category');
+faq.categories.forEach((cat, ci) => {
+  assert('titleEn' in cat && 'titleZh' in cat, `category[${ci}] has titleEn/titleZh`);
+  assert(Array.isArray(cat.items), `category[${ci}] has items array`);
+  cat.items.forEach((item, ii) => {
+    ['questionEn','questionZh','answerEn','answerZh','id'].forEach(k => {
+      assert(k in item, `faq[${ci}][${ii}].${k} present`);
+    });
+    assert(typeof item.id === 'string' && item.id.length > 0, `faq[${ci}][${ii}].id is non-empty string`);
+  });
+});
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-06  site.json contacts schema (V4 fix validation)
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-06  site.json contacts');
+const site = readJSON('data/site.json');
+assert(Array.isArray(site.contacts), 'contacts is array');
+site.contacts.forEach((c, i) => {
+  assert('id'      in c, `contact[${i}] has id`);
+  assert('labelEn' in c && 'labelZh' in c, `contact[${i}] has labelEn/labelZh`);
+  assert('valueEn' in c && 'valueZh' in c, `contact[${i}] has valueEn/valueZh`);
+  if ('url' in c) {
+    assert(typeof c.url === 'string' && c.url.length > 0, `contact[${i}] url is non-empty string`);
+  }
+});
+const wechat = site.contacts.find(c => c.id === 'wechat');
+assert(wechat !== undefined, 'wechat contact exists');
+assert(wechat && !('url' in wechat), 'wechat has no url (renders as div, not <a>)');
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-07  promotions.json + aftercare.json structure
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-07  promotions.json + aftercare.json');
+const promos = readJSON('data/promotions.json');
+assert(Array.isArray(promos.active),   'active is array');
+assert(Array.isArray(promos.services), 'services is array');
+if (promos.active.length > 0) {
+  const p = promos.active[0];
+  ['id','titleEn','titleZh','descriptionEn','descriptionZh','active'].forEach(k => {
+    assert(k in p, `promo[0].${k} present`);
+  });
+}
+if (promos.services.length > 0) {
+  const s = promos.services[0];
+  ['id','nameEn','nameZh','descEn','descZh'].forEach(k => {
+    assert(k in s, `service[0].${k} present`);
+  });
+}
+const care = readJSON('data/aftercare.json');
+assert(Array.isArray(care.sections), 'sections is array');
+if (care.sections.length > 0) {
+  const sec = care.sections[0];
+  assert('titleEn' in sec && 'titleZh' in sec, 'section has titleEn/titleZh');
+  assert(Array.isArray(sec.items), 'section has items array');
+  if (sec.items.length > 0) {
+    assert('textEn' in sec.items[0] && 'textZh' in sec.items[0], 'item has textEn/textZh');
+  }
+}
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-08  reviews.json structure
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-08  reviews.json');
+const revs = readJSON('data/reviews.json');
+assert(Array.isArray(revs.items), 'items is array');
+assert(revs.items.length > 0, 'at least one review');
+revs.items.forEach((r, i) => {
+  assert('type'   in r, `review[${i}] has type`);
+  assert('rating' in r, `review[${i}] has rating`);
+  assert(r.rating >= 1 && r.rating <= 5, `review[${i}] rating 1-5 (got ${r.rating})`);
+  if (r.type === 'text') {
+    assert('quoteEn' in r, `text review[${i}] has quoteEn`);
+  }
+  if (r.type === 'image') {
+    assert('quoteZh' in r, `image review[${i}] has quoteZh`);
+  }
+});
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-01  escapeHtml / escapeAttr (reimplemented from main.js source)
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-01  escapeHtml + escapeAttr');
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+function escapeAttr(s) {
+  return String(s == null ? '' : s)
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+assert(escapeHtml('<script>') === '&lt;script&gt;',  'escapeHtml: tags escaped');
+assert(escapeHtml('a & b')   === 'a &amp; b',        'escapeHtml: ampersand escaped');
+assert(escapeHtml(null)      === '',                  'escapeHtml: null → empty string');
+assert(escapeHtml(0)         === '0',                 'escapeHtml: number coerced');
+assert(escapeAttr('"hello"') === '&quot;hello&quot;', 'escapeAttr: double quotes escaped');
+assert(escapeAttr("it's")    === 'it&#39;s',          "escapeAttr: single quotes escaped");
+assert(escapeAttr(null)      === '',                  'escapeAttr: null → empty string');
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-02  Gallery filter logic (_applyFilters logic reimplemented)
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-02  Gallery filter logic');
+function applyFilters(items, activeFilters) {
+  return items.filter(item => {
+    for (const [group, value] of Object.entries(activeFilters)) {
+      switch (group) {
+        case 'service': if (item.service !== value) return false; break;
+        case 'style':   if (!item.style  || !item.style.includes(value))  return false; break;
+        case 'colour':  if (!item.colour || !item.colour.includes(value)) return false; break;
+        case 'shape':   if (item.shape  !== value) return false; break;
+        case 'length':  if (item.length !== value) return false; break;
+        case 'finish':  if (item.finish !== value) return false; break;
+        case 'special': if (value === 'featured' && !item.featured) return false; break;
+      }
+    }
+    return true;
+  });
+}
+const items = gal.items;
+const allResults = applyFilters(items, {});
+assert(allResults.length === items.length, `no filter → all items returned (${items.length})`);
+const pinkItems = applyFilters(items, { colour: 'pink' });
+assert(pinkItems.length > 0, `colour:pink → at least one result`);
+assert(pinkItems.every(i => i.colour.includes('pink')), 'colour:pink → all results have pink');
+const manItems = applyFilters(items, { service: 'manicure' });
+assert(manItems.length > 0, 'service:manicure → at least one result');
+assert(manItems.every(i => i.service === 'manicure'), 'service:manicure → all results correct');
+const romanticItems = applyFilters(items, { style: 'romantic' });
+assert(romanticItems.length > 0, `style:romantic → at least one result (got ${romanticItems.length})`);
+assert(romanticItems.every(i => i.style.includes('romantic')), 'style:romantic → all results correct');
+const goldItems = applyFilters(items, { colour: 'gold' });
+assert(goldItems.length > 0, `colour:gold → at least one result (got ${goldItems.length})`);
+const noResults = applyFilters(items, { colour: 'invisible' });
+assert(noResults.length === 0, 'colour:invisible → empty results');
+// Multi-filter: pink + almond
+const multiItems = applyFilters(items, { colour: 'pink', shape: 'almond' });
+assert(multiItems.every(i => i.colour.includes('pink') && i.shape === 'almond'),
+  `multi-filter colour:pink+shape:almond → correct (${multiItems.length} items)`);
+// Featured
+const featuredItems = applyFilters(items, { special: 'featured' });
+assert(featuredItems.length > 0, 'special:featured → at least one result');
+assert(featuredItems.every(i => i.featured === true), 'special:featured → all are featured');
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-03  JS static analysis (bug fix verification)
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-03  JS static analysis (bug fix verification)');
+const mainJs    = fs.readFileSync(path.join(DOCS, 'assets/js/main.js'),    'utf8');
+const reviewsJs = fs.readFileSync(path.join(DOCS, 'assets/js/reviews.js'), 'utf8');
+const galleryJs = fs.readFileSync(path.join(DOCS, 'assets/js/gallery.js'), 'utf8');
+// Bug 1 fix — check the specific bad onerror pattern is gone, not the private function itself
+assert(!reviewsJs.includes('this.replaceWith(buildMockXHS'), 'Bug1: bad onerror replaced');
+assert(reviewsJs.includes('snowyReviewFallback'),            'Bug1: snowyReviewFallback defined');
+assert(reviewsJs.includes('data-fallback-quote'),  'Bug1: data-fallback-quote attribute used');
+// Bug 2 fix
+assert(mainJs.includes('answer.scrollHeight'),     'Bug2: FAQ uses scrollHeight (not offsetHeight)');
+assert(!mainJs.includes('inner.offsetHeight'),     'Bug2: offsetHeight removed from FAQ');
+// Bug 3 fix
+assert(!mainJs.includes('initPromoToggle();'),     'Bug3: initPromoToggle() call removed from bootstrap');
+assert(!mainJs.includes('function initPromoToggle'), 'Bug3: initPromoToggle function removed');
+// Bug 5 fix
+assert(mainJs.includes('const initScrollReveal'), 'Bug5: public initScrollReveal alias in main.js');
+assert(reviewsJs.includes('initScrollReveal()') &&
+  !reviewsJs.includes('_initScrollReveal()'),    'Bug5: reviews.js uses public alias');
+// Bug 7 fix
+assert(mainJs.includes('aria-current'),           'Bug7: aria-current set in _setActiveLinks');
+// Bug 8 fix
+assert(mainJs.includes('main-content'),           'Bug8: main-content id set in bootstrap');
+// V3 fix
+assert(reviewsJs.includes('home-promos-container'), 'V3: home-promos-container in langchange listener');
+// New features
+assert(mainJs.includes('skip-link'),              'Feature: skip-link in NAV_HTML');
+assert(mainJs.includes('_updateCopyrightYear'),   'Feature: copyright year auto-update');
+assert(mainJs.includes('footer-copyright'),       'Feature: footer-copyright class');
+assert(!mainJs.includes('data-i18n="footer.copyright"'), 'Feature: copyright no longer i18n-bound');
+assert(reviewsJs.includes('loadSiteContacts'),    'Feature: loadSiteContacts defined');
+assert(galleryJs.includes('gallery-count'),       'Feature: gallery count line updated');
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-04  HTML structure checks
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-04  HTML structure');
+const galleryHtml = fs.readFileSync(path.join(DOCS, 'gallery.html'), 'utf8');
+assert(galleryHtml.includes('data-value="romantic"'),   'gallery.html: romantic filter button');
+assert(galleryHtml.includes('gallery.filter_romantic'), 'gallery.html: romantic i18n key');
+assert(galleryHtml.includes('gallery.filter_gold'),     'gallery.html: gold uses correct i18n key');
+assert(!galleryHtml.includes('"gallery.filter_colour">Gold'), 'gallery.html: gold no longer uses wrong key');
+assert(galleryHtml.includes('id="gallery-count"'),      'gallery.html: gallery-count element');
+assert(galleryHtml.includes('aria-live="polite"'),      'gallery.html: gallery-count has aria-live');
+const contactHtml = fs.readFileSync(path.join(DOCS, 'contact.html'), 'utf8');
+assert(contactHtml.includes('id="contact-methods-container"'), 'contact.html: dynamic container id');
+assert(contactHtml.includes('loadSiteContacts('),              'contact.html: loadSiteContacts called');
+assert(!contactHtml.includes('@snowynailstudio'),               'contact.html: no hardcoded handle');
+assert(!contactHtml.includes('aria-label="Instagram"') ||
+  contactHtml.includes('contact-methods-container'),           'contact.html: static entries replaced');
+const mainCss = fs.readFileSync(path.join(DOCS, 'assets/css/main.css'), 'utf8');
+assert(mainCss.includes('.skip-link'),     'main.css: .skip-link styles present');
+assert(mainCss.includes('.skip-link:focus'), 'main.css: .skip-link:focus styles present');
+assert(mainCss.includes('.gallery-count'), 'main.css: .gallery-count styles present');
+// All HTML pages reference main.css
+['index.html','gallery.html','services.html','studio.html','about.html','contact.html','aftercare.html'].forEach(page => {
+  const html = fs.readFileSync(path.join(DOCS, page), 'utf8');
+  assert(html.includes('assets/css/main.css'), `${page}: links main.css`);
+  assert(html.includes('assets/js/i18n.js'),   `${page}: loads i18n.js`);
+  assert(html.includes('assets/js/main.js'),   `${page}: loads main.js`);
+  assert(html.includes('id="nav-placeholder"'), `${page}: has nav-placeholder`);
+  assert(html.includes('id="footer-placeholder"'), `${page}: has footer-placeholder`);
+});
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-05  Translation completeness (every EN key has ZH counterpart)
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-05  Translation completeness (EN ↔ ZH parity)');
+function flatKeys(obj, prefix = '') {
+  const keys = [];
+  for (const [k, v] of Object.entries(obj)) {
+    const full = prefix ? `${prefix}.${k}` : k;
+    if (v && typeof v === 'object') keys.push(...flatKeys(v, full));
+    else keys.push(full);
+  }
+  return keys;
+}
+const enKeys = flatKeys(t.en).sort();
+const zhKeys = flatKeys(t.zh).sort();
+const missingInZh = enKeys.filter(k => !zhKeys.includes(k));
+const missingInEn = zhKeys.filter(k => !enKeys.includes(k));
+assert(missingInZh.length === 0, `all EN keys present in ZH (missing: ${missingInZh.join(', ') || 'none'})`);
+assert(missingInEn.length === 0, `all ZH keys present in EN (missing: ${missingInEn.join(', ') || 'none'})`);
+// ─────────────────────────────────────────────────────────────────────────────
+// Summary
+// ─────────────────────────────────────────────────────────────────────────────
+console.log(`\n${'─'.repeat(50)}`);
+console.log(`\x1b[1mResults: \x1b[32m${passed} passed\x1b[0m, ${failed > 0 ? '\x1b[31m' : ''}${failed} failed\x1b[0m`);
+if (failed > 0) process.exit(1);
+---FILE END: tools/validate-content.js---
+---FILE START: tools/fix-encoding.js---
+#!/usr/bin/env node
+/**
+ * fix-encoding.js
+ * Repairs HTML files whose UTF-8 emoji/special-chars were corrupted when
+ * PowerShell 5.1's Get-Content (Windows-1252 default) read them and
+ * re-wrote them as UTF-8 of the wrongly-decoded characters.
+ *
+ * Each entry: [garbled-unicode-string, correct-replacement]
+ * The garbled strings are composed of the Unicode code-points that
+ * result from interpreting each original UTF-8 byte through CP-1252.
+ */
+'use strict';
+const fs   = require('fs');
+const path = require('path');
+const DOCS = path.join(__dirname, '..', 'docs');
+// ── Garbled → Correct mapping ────────────────────────────────────────────────
+// Source emoji / char → UTF-8 bytes → CP1252 misread → re-encoded as UTF-8
+// The left side uses JS Unicode escapes so control chars are safe.
+const FIXES = [
+  // 4-byte emoji (F0 9F xx yy)
+  // 0x9F in CP-1252 = U+0178 (Ÿ, capital Y-diaeresis)
+  ['\u00F0\u0178\u00A7\u00B4', '🧴'],  // U+1F9F4  F0 9F A7 B4
+  ['\u00F0\u0178\u00AA\u00B4', '🪴'],  // U+1FAB4  F0 9F AA B4
+  ['\u00F0\u0178\u2019\u00A1', '💡'],  // U+1F4A1  F0 9F 92 A1  (0x92=U+2019 in CP1252)
+  ['\u00F0\u0178\u2019\u2026', '💅'],  // U+1F485  F0 9F 92 85  (0x85=U+2026)
+  ['\u00F0\u0178\u201C\u00A6', '📦'],  // U+1F4E6  F0 9F 93 A6  (0x93=U+201C)
+  ['\u00F0\u0178\u008F\u00A0', '🏠'],  // U+1F3E0  F0 9F 8F A0  (0x8F=ctrl U+008F, A0=NBSP)
+  ['\u00F0\u0178\u008F\u2026', '🏅'],  // U+1F3C5  F0 9F 8F 85
+  ['\u00F0\u0178\u0152\u0090', '🌐'],  // U+1F310  F0 9F 8C 90  (0x8C=U+0152 Œ, 0x90=ctrl)
+  // 3-byte special characters (E2 xx yy)
+  // 0x9C in CP-1252 = U+0153 (œ)
+  ['\u00E2\u0153\u00A6', '✦'],   // U+2726  E2 9C A6
+  ['\u00E2\u0153\u00A8', '✨'],   // U+2728  E2 9C A8
+  ['\u00E2\u0153\u2022', '✕'],   // U+2715  E2 9C 95  (0x95=U+2022 bullet in CP1252)
+  ['\u00E2\u0153\u201A', '✂'],   // U+2702  E2 9C 82  (0x82=U+201A in CP1252)
+  // 0x80 in CP-1252 = U+20AC (€)
+  ['\u00E2\u20AC\u00B9', '‹'],  // U+2039  E2 80 B9
+  ['\u00E2\u20AC\u00BA', '›'],  // U+203A  E2 80 BA
+  ['\u00E2\u20AC\u201D', '—'],  // U+2014  E2 80 94  (0x94=U+201D in CP1252)
+  ['\u00E2\u20AC\u2122', '™'],  // U+2122  E2 80 99  (0x99=U+2122)
+  ['\u00E2\u20AC\u2026', '\u2026'],  // U+2026 (ellipsis itself, appearing doubled)
+  ['\u00E2\u20AC\u2018', '\u2018'],  // U+2018 left single quote
+  // 2-byte chars (C2 xx or C3 xx)
+  ['\u00C2\u00B7',  '·'],    // U+00B7  C2 B7  (middle dot)
+  ['\u00C2\u00A9',  '©'],    // U+00A9  C2 A9  (copyright)
+  ['\u00C2\u00AB',  '«'],    // U+00AB
+  ['\u00C2\u00BB',  '»'],    // U+00BB
+  ['\u00C2\u00A0',  '\u00A0'],  // NBSP re-encoded (idempotent but safe)
+  // Common Chinese characters that appear in services.html mock & meta descriptions
+  // 中 U+4E2D: E4 B8 AD → ä+¸+\x8AD? Let me fix the visible ones:
+  // 中文 (zhōngwén) = U+4E2D U+6587
+  // 4E2D: E4 B8 AD → ä (U+00E4) + ¸ (U+00B8) + \xAD (soft hyphen U+00AD)
+  ['\u00E4\u00B8\u00AD', '中'],
+  // 6587: E6 96 87 → æ (U+00E6) + – (U+2013, 0x96 in CP1252) + ‡ (U+2021, 0x87)
+  ['\u00E6\u2013\u2021', '文'],
+  // 小 U+5C0F: E5 B0 8F → å+°+U+008F(ctrl)
+  ['\u00E5\u00B0\u008F', '小'],
+  // 红 U+7EA2: E7 BA A2 → ç+º+¢
+  ['\u00E7\u00BA\u00A2', '红'],
+  // 书 U+4E66: E4 B9 A6 → ä+¹+¦
+  ['\u00E4\u00B9\u00A6', '书'],
+  // 美 U+7F8E: E7 BE 8E → ç+¾+U+008E(ctrl)
+  ['\u00E7\u00BE\u008E', '美'],
+  // 甲 U+7532: E7 94 B2 → ç+\x94(U+201D)+²
+  ['\u00E7\u201D\u00B2', '甲'],
+  // 工 U+5DE5: E5 B7 A5 → å+·+¥
+  ['\u00E5\u00B7\u00A5', '工'],
+  // 作 U+4F5C: E4 BD 9C → ä+½+\x9C(U+0153 in CP1252)
+  ['\u00E4\u00BD\u0153', '作'],
+  // 室 U+5BA4: E5 AE A4 → å+®+¤
+  ['\u00E5\u00AE\u00A4', '室'],
+  // 列 U+5217: E5 88 97 → å+\x88(ctrl U+0088)+\x97(U+2014 —)
+  ['\u00E5\u0088\u2014', '列'],
+  // 治 U+6CBB: E6 B2 BB → æ+²+»
+  ['\u00E6\u00B2\u00BB', '治'],
+  // 文 U+6587 already above
+  // 山 U+5C71: E5 B1 B1 → å+±+±
+  ['\u00E5\u00B1\u00B1', '山'],
+  // 价 U+4EF7: E4 BB B7 → ä+»+·  (wait, B7=· but also the garbled ·)
+  // skip price-list chars since it's mock content
+  // Specific em-dash / quote fixes in body text
+  ['\u00E2\u20AC\u201C', '\u2013'],  // en-dash U+2013 E2 80 93 → â+€+\x93(U+201C)
+  // actually 0x93 in CP1252 = U+201C (left double quote), so:
+  // U+2013 en-dash E28093 → â + € + U+201C (")
+  // Let me correct that:
+];
+// Extra fix: the variation selector for ✂️
+// U+FE0F = EF B8 8F → ï(U+00EF) + ¸(U+00B8) + U+008F(ctrl)
+// We'll just strip it from the ✂ we already fixed above (it's optional)
+const STRIP = [
+  '\u00EF\u00B8\u008F',  // variation selector-16 (garbled)
+];
+// ── Apply fixes ──────────────────────────────────────────────────────────────
+const htmlFiles = fs.readdirSync(DOCS)
+  .filter(f => f.endsWith('.html'))
+  .map(f => path.join(DOCS, f));
+let totalFixed = 0;
+for (const file of htmlFiles) {
+  let content = fs.readFileSync(file, 'utf8');
+  const original = content;
+  for (const [garbled, correct] of FIXES) {
+    while (content.includes(garbled)) {
+      content = content.split(garbled).join(correct);
+    }
+  }
+  for (const strip of STRIP) {
+    while (content.includes(strip)) {
+      content = content.split(strip).join('');
+    }
+  }
+  if (content !== original) {
+    fs.writeFileSync(file, content, 'utf8');
+    const name = path.basename(file);
+    console.log(`Fixed: ${name}`);
+    totalFixed++;
+  }
+}
+console.log(`\nDone. ${totalFixed} file(s) repaired.`);
+console.log('\nNOTE: To enable Chinese language switching, serve over HTTP:');
+console.log('  npx serve "docs"   then open http://localhost:3000');
+---FILE END: tools/fix-encoding.js---

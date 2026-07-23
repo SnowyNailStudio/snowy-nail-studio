@@ -1,0 +1,67 @@
+{
+  "_comment": "Reviews data. type: 'text' | 'image'. For image type, provide image path OR leave blank for mock XHS conversation layout.",
+  "items": [
+    {
+      "id": "review-0001",
+      "type": "text",
+      "quoteZh": "做得非常仔细，环境也很干净！每次来都很满意，下次还来。",
+      "quoteEn": "The work was very detailed and the studio was very clean! I'm satisfied every time, and I'll definitely be back.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0002",
+      "type": "text",
+      "quoteZh": "Snowy 的手艺真的太棒了！我带了参考图，做出来比图片还好看。",
+      "quoteEn": "Snowy's technique is truly amazing! I brought a reference photo and the result looked even better than the picture.",
+      "displayName": "Client",
+      "source": "Instagram",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0003",
+      "type": "text",
+      "quoteZh": "私人工作室的感觉很好，专注度比店里高很多。光疗做得很持久，两周后还完好无损。",
+      "quoteEn": "The private studio atmosphere is wonderful — so much more focused attention than a salon. The gel lasted perfectly, still intact two weeks later.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0004",
+      "type": "image",
+      "image": "",
+      "quoteZh": "太好看了！做得超级细致，工作室也很舒适干净，下次还来！❤️",
+      "quoteEn": "So beautiful! The work is incredibly detailed, and the studio is comfortable and clean. I'll definitely come back! ❤️",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": true
+    },
+    {
+      "id": "review-0005",
+      "type": "text",
+      "quoteZh": "中英文都可以沟通，解释了很多护甲的知识，非常专业。价格也很公道。",
+      "quoteEn": "Communication is easy in both English and Chinese. Snowy explained a lot about nail care — very professional. The pricing is also very fair.",
+      "displayName": "Client",
+      "source": "Google",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0006",
+      "type": "image",
+      "image": "",
+      "quoteZh": "第一次来就成功了！预约很方便，到了之后工具都消毒好了，感觉很放心。",
+      "quoteEn": "First visit was a great success! Booking was easy, and when I arrived all tools were already sterilized — felt very safe and reassured.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": false
+    }
+  ]
+}

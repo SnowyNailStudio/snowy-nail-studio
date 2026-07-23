@@ -1,0 +1,77 @@
+{
+  "_comment": "Promotions data. Set active:false to hide a promotion. imageEn/imageZh paths are relative to docs/. Leave blank for mock poster display.",
+  "active": [
+    {
+      "id": "promo-001",
+      "titleEn": "New Client Special",
+      "titleZh": "新客优惠",
+      "descriptionEn": "First-time clients receive 15% off their first full-set gel manicure.",
+      "descriptionZh": "首次光顾的新客享受第一次全套光疗美甲九折优惠。",
+      "imageEn": "assets/images/posters/en/new-client-special-en.webp",
+      "imageZh": "assets/images/posters/zh/new-client-special-zh.webp",
+      "validUntil": "2025-12-31",
+      "active": true
+    },
+    {
+      "id": "promo-002",
+      "titleEn": "Summer Pedicure Add-On",
+      "titleZh": "夏日足甲加购优惠",
+      "descriptionEn": "Add a gel pedicure to any manicure appointment and save $10.",
+      "descriptionZh": "在任何美甲预约中加购光疗足甲，立享$10优惠。",
+      "imageEn": "assets/images/posters/en/summer-pedicure-en.webp",
+      "imageZh": "assets/images/posters/zh/summer-pedicure-zh.webp",
+      "validUntil": "2025-09-30",
+      "active": true
+    }
+  ],
+  "services": [
+    {
+      "id": "svc-001",
+      "icon": "💅",
+      "nameEn": "Gel Manicure",
+      "nameZh": "光疗美甲",
+      "descEn": "Long-lasting gel colour with or without nail art. Includes shaping, cuticle care, and top coat.",
+      "descZh": "持久光疗色彩，可添加指甲彩绘。包含修形、护理角质和封层。"
+    },
+    {
+      "id": "svc-002",
+      "icon": "🌸",
+      "nameEn": "Gel Pedicure",
+      "nameZh": "光疗足甲",
+      "descEn": "Soothing foot soak, nail shaping, cuticle work, and gel colour application.",
+      "descZh": "舒缓泡脚、修甲、护理角质和光疗颜色涂抹。"
+    },
+    {
+      "id": "svc-003",
+      "icon": "🎨",
+      "nameEn": "Nail Art",
+      "nameZh": "美甲彩绘",
+      "descEn": "Custom hand-painted designs, stamping, foils, gems, and 3D art — added to any service.",
+      "descZh": "定制手绘图案、印花、金箔、宝石和3D立体美甲 — 可添加至任何服务。"
+    },
+    {
+      "id": "svc-004",
+      "icon": "✨",
+      "nameEn": "Extensions",
+      "nameZh": "甲片延长",
+      "descEn": "Add length with gel or acrylic extensions, then customise with any design.",
+      "descZh": "使用光疗或水晶延长指甲，然后搭配任意图案定制。"
+    },
+    {
+      "id": "svc-005",
+      "icon": "🔄",
+      "nameEn": "Removal & Infill",
+      "nameZh": "卸甲与补甲",
+      "descEn": "Safe professional removal of gel, acrylic, or dip powder sets. Gel infills also available.",
+      "descZh": "安全专业地卸除光疗胶、水晶甲或浸粉甲。同时提供光疗补甲服务。"
+    },
+    {
+      "id": "svc-006",
+      "icon": "💎",
+      "nameEn": "Full Set Package",
+      "nameZh": "全套美甲套餐",
+      "descEn": "Manicure and pedicure combined at a bundled price. Perfect for special occasions.",
+      "descZh": "手足美甲组合套餐，优惠价格。非常适合特殊场合。"
+    }
+  ]
+}

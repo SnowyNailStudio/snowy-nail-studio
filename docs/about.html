@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About &amp; Client Feedback | Snowy Nail Studio</title>
+  <meta name="description" content="Meet Snowy — certified nail technician in Richmond Hill. Read real client reviews including 小红书 conversation screenshots.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- About hero -->
+    <section class="section" style="background:linear-gradient(135deg,var(--clr-accent-xlight),var(--clr-surface-alt));"
+             aria-labelledby="about-heading">
+      <div class="container">
+        <div class="about-layout">
+          <!-- Photo -->
+          <div class="about-photo reveal">
+            <!-- Replace with: <img src="assets/images/snowy-portrait.webp" alt="Snowy, nail technician"> -->
+            <div class="about-photo-mock" aria-hidden="true">💅</div>
+          </div>
+          <!-- Bio -->
+          <div class="about-text reveal">
+            <p class="highlight-tag">Richmond Hill, Ontario</p>
+            <h1 id="about-heading" data-i18n="about.title">About Snowy Nail Studio</h1>
+            <div class="divider" style="margin-inline:0;"></div>
+            <p data-i18n="about.bio1">
+              Hi, I'm Snowy — a certified nail technician with a passion for creating beautiful, long-lasting nail art. I run a private home studio in Richmond Hill where every client receives my full, undivided attention.
+            </p>
+            <p data-i18n="about.bio2">
+              I specialize in gel manicures, intricate nail art, and custom designs. Whether you bring a reference photo or trust my creativity, I'll craft nails you'll love.
+            </p>
+            <div class="about-badges">
+              <span class="about-badge">🏅 <span data-i18n="about.badge_certified">Certified Technician</span></span>
+              <span class="about-badge">🏠 <span data-i18n="about.badge_private">Private Studio</span></span>
+              <span class="about-badge">🌐 <span data-i18n="about.badge_bilingual">EN · 中文</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Client reviews -->
+    <section class="section reveal" aria-labelledby="reviews-heading">
+      <div class="container">
+        <div class="section-header">
+          <p class="eyebrow">Real Clients</p>
+          <h2 id="reviews-heading" data-i18n="about.reviews_title">Client Feedback</h2>
+          <p data-i18n="about.reviews_sub">Real words from real clients</p>
+        </div>
+        <div class="reviews-grid" id="reviews-grid">
+          <div class="loading-state" style="grid-column:1/-1">
+            <div class="loading-spinner"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+          <a href="gallery.html" class="btn btn-outline btn-lg"
+             style="border-color:rgba(255,255,255,.5);color:white;"
+             data-i18n="home.hero_cta_primary">Explore Nail Art</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/reviews.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadReviews('reviews-grid', false);
+    });
+  </script>
+</body>
+</html>

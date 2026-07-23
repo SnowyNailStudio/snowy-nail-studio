@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nail Art Gallery | Snowy Nail Studio</title>
+  <meta name="description" content="Browse Snowy Nail Studio's portfolio of gel nail art. Filter by style, colour, shape, length, and service type.">
+  <meta name="theme-color" content="#C4788A">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <!-- Page hero -->
+    <div class="page-hero">
+      <div class="container">
+        <h1 data-i18n="gallery.title">Nail Art Gallery</h1>
+        <p data-i18n="gallery.subtitle">Browse designs by style, colour, shape and more</p>
+      </div>
+    </div>
+    <!-- Gallery + filters -->
+    <section class="section section--sm">
+      <div class="container">
+        <!-- Filters -->
+        <div class="gallery-controls" role="search" aria-label="Gallery filters">
+          <!-- Quick filters -->
+          <div class="filter-row">
+            <button class="filter-btn" data-group="all" data-value="all" data-i18n="gallery.filter_all">All</button>
+            <button class="filter-btn" data-group="special" data-value="featured" data-i18n="gallery.filter_featured">Featured</button>
+            <button class="filter-btn" data-group="special" data-value="newest"   data-i18n="gallery.filter_newest">Newest</button>
+            <button class="filter-btn" data-group="service" data-value="manicure" data-i18n="gallery.filter_manicure">Manicure</button>
+            <button class="filter-btn" data-group="service" data-value="pedicure" data-i18n="gallery.filter_pedicure">Pedicure</button>
+          </div>
+          <!-- Style -->
+          <div style="margin-bottom:8px;">
+            <p class="filter-section-label" data-i18n="gallery.filter_style">Style</p>
+            <div class="filter-row">
+              <button class="filter-btn" data-group="style" data-value="floral"     data-i18n="gallery.filter_floral">Floral</button>
+              <button class="filter-btn" data-group="style" data-value="minimalist" data-i18n="gallery.filter_minimalist">Minimalist</button>
+              <button class="filter-btn" data-group="style" data-value="glam"       data-i18n="gallery.filter_glam">Glam</button>
+              <button class="filter-btn" data-group="style" data-value="geometric"  data-i18n="gallery.filter_geometric">Geometric</button>
+              <button class="filter-btn" data-group="style" data-value="kawaii"     data-i18n="gallery.filter_kawaii">Kawaii</button>
+              <button class="filter-btn" data-group="style" data-value="ombre"      data-i18n="gallery.filter_ombre">Ombre</button>
+              <button class="filter-btn" data-group="style" data-value="romantic"   data-i18n="gallery.filter_romantic">Romantic</button>
+            </div>
+          </div>
+          <!-- Colour -->
+          <div style="margin-bottom:8px;">
+            <p class="filter-section-label" data-i18n="gallery.filter_colour">Colour</p>
+            <div class="filter-row">
+              <button class="filter-btn" data-group="colour" data-value="pink"   data-i18n="gallery.filter_pink">Pink</button>
+              <button class="filter-btn" data-group="colour" data-value="red"    data-i18n="gallery.filter_red">Red</button>
+              <button class="filter-btn" data-group="colour" data-value="nude"   data-i18n="gallery.filter_nude">Nude</button>
+              <button class="filter-btn" data-group="colour" data-value="white"  data-i18n="gallery.filter_white">White</button>
+              <button class="filter-btn" data-group="colour" data-value="black"  data-i18n="gallery.filter_black">Black</button>
+              <button class="filter-btn" data-group="colour" data-value="purple" data-i18n="gallery.filter_purple">Purple</button>
+              <button class="filter-btn" data-group="colour" data-value="blue"   data-i18n="gallery.filter_blue">Blue</button>
+              <button class="filter-btn" data-group="colour" data-value="green"  data-i18n="gallery.filter_green">Green</button>
+              <button class="filter-btn" data-group="colour" data-value="gold"   data-i18n="gallery.filter_gold">Gold</button>
+            </div>
+          </div>
+          <!-- Shape + Length -->
+          <div style="margin-bottom:8px; display:flex; gap:16px; flex-wrap:wrap;">
+            <div>
+              <p class="filter-section-label" data-i18n="gallery.filter_shape">Shape</p>
+              <div class="filter-row">
+                <button class="filter-btn" data-group="shape" data-value="almond"  data-i18n="gallery.filter_almond">Almond</button>
+                <button class="filter-btn" data-group="shape" data-value="oval"    data-i18n="gallery.filter_oval">Oval</button>
+                <button class="filter-btn" data-group="shape" data-value="square"  data-i18n="gallery.filter_square">Square</button>
+                <button class="filter-btn" data-group="shape" data-value="coffin"  data-i18n="gallery.filter_coffin">Coffin</button>
+                <button class="filter-btn" data-group="shape" data-value="round"   data-i18n="gallery.filter_round">Round</button>
+              </div>
+            </div>
+            <div>
+              <p class="filter-section-label" data-i18n="gallery.filter_length">Length</p>
+              <div class="filter-row">
+                <button class="filter-btn" data-group="length" data-value="short"  data-i18n="gallery.filter_short">Short</button>
+                <button class="filter-btn" data-group="length" data-value="medium" data-i18n="gallery.filter_medium">Medium</button>
+                <button class="filter-btn" data-group="length" data-value="long"   data-i18n="gallery.filter_long">Long</button>
+              </div>
+            </div>
+          </div>
+        </div><!-- /gallery-controls -->
+        <!-- Results count -->
+        <p class="gallery-count" id="gallery-count" aria-live="polite"></p>
+        <!-- Grid -->
+        <div class="gallery-grid" id="gallery-grid" role="list" aria-label="Nail art gallery"></div>
+        <!-- Load more -->
+        <div class="gallery-load-more">
+          <button class="btn btn-outline" id="load-more-btn" style="display:none;"
+                  data-i18n="gallery.load_more">Load More</button>
+        </div>
+      </div>
+    </section>
+    <!-- Lightbox -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true"
+         aria-label="Image viewer" tabindex="-1">
+      <div class="lightbox-inner">
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
+        <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
+        <div class="lightbox-img-wrap" id="lightbox-img-wrap"></div>
+        <button class="lightbox-next" id="lightbox-next" aria-label="Next image">›</button>
+      </div>
+    </div>
+    <!-- CTA -->
+    <section class="cta-section">
+      <div class="container">
+        <h2 data-i18n="home.cta_title">Ready to Book?</h2>
+        <p data-i18n="home.cta_sub">Send an inspiration photo or ask about availability.</p>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-white btn-lg" data-i18n="home.cta_btn">Contact Snowy</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/gallery.js"></script>
+  <script src="assets/js/reviews.js"></script>
+</body>
+</html>

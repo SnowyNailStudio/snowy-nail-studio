@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+Thumbs.db
+# Editor
+.vscode/
+*.code-workspace
+# Node (tools)
+node_modules/
+npm-debug.log*
+# Temp
+*.tmp
+*.bak

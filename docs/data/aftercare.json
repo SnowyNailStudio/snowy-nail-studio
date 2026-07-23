@@ -1,0 +1,120 @@
+{
+  "_comment": "Aftercare content. Edit this file to update nail care advice without touching any HTML.",
+  "sections": [
+    {
+      "id": "first-24h",
+      "icon": "💧",
+      "titleEn": "First 24 Hours",
+      "titleZh": "前24小时",
+      "items": [
+        {
+          "id": "ac-001",
+          "textEn": "Avoid prolonged water exposure — skip dishwashing, long baths, and swimming.",
+          "textZh": "避免长时间接触水 — 洗碗、泡澡和游泳请暂缓。"
+        },
+        {
+          "id": "ac-002",
+          "textEn": "Avoid applying pressure directly to the tips of your nails.",
+          "textZh": "避免对指甲尖端施加直接压力。"
+        },
+        {
+          "id": "ac-003",
+          "textEn": "Allow the gel to fully cure before heavy activity.",
+          "textZh": "在进行繁重活动前，请确保光疗胶完全固化。"
+        }
+      ]
+    },
+    {
+      "id": "daily-care",
+      "icon": "✨",
+      "titleEn": "Daily Care",
+      "titleZh": "日常护理",
+      "items": [
+        {
+          "id": "ac-004",
+          "textEn": "Apply cuticle oil once or twice daily to keep nails and skin hydrated.",
+          "textZh": "每日涂抹一至两次护甲油，保持指甲和皮肤水润。"
+        },
+        {
+          "id": "ac-005",
+          "textEn": "Moisturize your hands regularly, especially after washing.",
+          "textZh": "经常给双手保湿，尤其是洗手之后。"
+        },
+        {
+          "id": "ac-006",
+          "textEn": "Avoid using your nails as tools — do not pry, pick, or scrape with them.",
+          "textZh": "避免用指甲作为工具 — 不要用指甲撬、抠或刮物品。"
+        }
+      ]
+    },
+    {
+      "id": "protection",
+      "icon": "🧤",
+      "titleEn": "Protection",
+      "titleZh": "日常防护",
+      "items": [
+        {
+          "id": "ac-007",
+          "textEn": "Wear protective gloves when cleaning, doing dishes, or using harsh chemicals.",
+          "textZh": "清洁、洗碗或使用强效化学品时，请戴上防护手套。"
+        },
+        {
+          "id": "ac-008",
+          "textEn": "Avoid prolonged contact with acetone-based products (e.g., nail polish remover).",
+          "textZh": "避免长时间接触含丙酮的产品（如卸甲水）。"
+        },
+        {
+          "id": "ac-009",
+          "textEn": "Apply sunscreen to your hands — UV exposure can fade nail colour over time.",
+          "textZh": "给双手涂抹防晒霜 — 紫外线照射会使指甲颜色随时间褪色。"
+        }
+      ]
+    },
+    {
+      "id": "damage-handling",
+      "icon": "🔧",
+      "titleEn": "If Something Goes Wrong",
+      "titleZh": "出现问题时",
+      "items": [
+        {
+          "id": "ac-010",
+          "textEn": "Do not peel, pick, or force-remove gel — this damages the natural nail underneath.",
+          "textZh": "不要撕、抠或强行卸除光疗胶 — 这会损伤下方的天然甲。"
+        },
+        {
+          "id": "ac-011",
+          "textEn": "If a nail lifts or chips, contact the studio — do not attempt to fix it yourself.",
+          "textZh": "如果指甲翘起或崩裂，请联系工作室 — 不要自行尝试修复。"
+        },
+        {
+          "id": "ac-012",
+          "textEn": "If you notice any pain, swelling, or irritation around your nails, consult a healthcare professional.",
+          "textZh": "如果您注意到指甲周围有疼痛、肿胀或刺激感，请咨询医疗专业人员。"
+        }
+      ]
+    },
+    {
+      "id": "removal",
+      "icon": "💅",
+      "titleEn": "Removal",
+      "titleZh": "卸甲",
+      "items": [
+        {
+          "id": "ac-013",
+          "textEn": "Professional removal is strongly recommended to protect your natural nails.",
+          "textZh": "强烈建议进行专业卸甲，以保护您的天然甲。"
+        },
+        {
+          "id": "ac-014",
+          "textEn": "Book a removal appointment when ready — we'll safely soak off or file down your set.",
+          "textZh": "准备好时请预约卸甲服务 — 我们将安全地浸泡或打磨卸除您的指甲。"
+        },
+        {
+          "id": "ac-015",
+          "textEn": "Allow your nails a short rest between sets if they feel thin or sensitive.",
+          "textZh": "如果指甲感觉变薄或敏感，请在两次做甲之间给指甲短暂休息时间。"
+        }
+      ]
+    }
+  ]
+}

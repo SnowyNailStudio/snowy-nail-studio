@@ -1,0 +1,343 @@
+{
+  "_comment": "Gallery metadata. Place real images in docs/assets/images/gallery/. Use mockColor as CSS class until real images are available.",
+  "items": [
+    {
+      "id": "g001-blue-cat-eye-rhinestone",
+      "src": "assets/images/gallery/g001-blue-cat-eye-rhinestone.webp",
+      "thumb": "assets/images/gallery/g001-blue-cat-eye-rhinestone.webp",
+      "altEn": "Blue cat-eye gel manicure with glitter accent nails and rhinestone charm",
+      "altZh": "蓝色猫眼光疗甲，银闪渐变配水钻饰品",
+      "style": [
+        "cat-eye",
+        "glitter",
+        "rhinestone",
+        "accent"
+      ],
+      "colour": [
+        "blue",
+        "silver",
+        "white"
+      ],
+      "shape": "oval",
+      "length": "short",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-07",
+      "season": [
+        "winter"
+      ],
+      "mockColor": ""
+    },
+    {
+      "id": "g002-champagne-pearl",
+      "src": "assets/images/gallery/g002-champagne-pearl.webp",
+      "thumb": "assets/images/gallery/g002-champagne-pearl.webp",
+      "altEn": "Elegant champagne pearl almond gel nails with subtle shimmer",
+      "altZh": "香槟珠光杏仁甲，简约高级光疗美甲",
+      "style": [
+        "minimalist",
+        "pearl",
+        "glazed"
+      ],
+      "colour": [
+        "champagne",
+        "nude"
+      ],
+      "shape": "almond",
+      "length": "long",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-07",
+      "season": [
+        "all-season",
+        "bridal"
+      ],
+      "mockColor": ""
+    },
+    {
+      "id": "g003-yellow-french-floral",
+      "src": "assets/images/gallery/g003-yellow-french-floral.webp",
+      "thumb": "assets/images/gallery/g003-yellow-french-floral.webp",
+      "altEn": "Pastel yellow French almond nails with 3D floral nail art",
+      "altZh": "淡黄色法式杏仁甲配立体花朵雕花",
+      "style": [
+        "french",
+        "3d-floral",
+        "romantic"
+      ],
+      "colour": [
+        "yellow",
+        "pink",
+        "green",
+        "nude"
+      ],
+      "shape": "almond",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-06",
+      "season": [
+        "spring"
+      ],
+      "mockColor": ""
+    },
+    {
+      "id": "g004-silver-cat-eye-minimal",
+      "src": "assets/images/gallery/g004-silver-cat-eye-minimal.webp",
+      "thumb": "assets/images/gallery/g004-silver-cat-eye-minimal.webp",
+      "altEn": "Short silver cat-eye manicure with soft shimmer",
+      "altZh": "银色猫眼短款光疗美甲",
+      "style": [
+        "cat-eye",
+        "minimalist"
+      ],
+      "colour": [
+        "silver",
+        "white"
+      ],
+      "shape": "round",
+      "length": "short",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-06",
+      "season": [
+        "winter",
+        "all-season"
+      ],
+      "mockColor": ""
+    },
+    {
+      "id": "g005-blue-butterfly",
+      "src": "assets/images/gallery/g005-blue-butterfly.webp",
+      "thumb": "assets/images/gallery/g005-blue-butterfly.webp",
+      "altEn": "Dark blue butterfly gel manicure with matte finish",
+      "altZh": "深蓝蝴蝶磨砂光疗美甲",
+      "style": [
+        "butterfly",
+        "matte",
+        "minimalist"
+      ],
+      "colour": [
+        "blue",
+        "navy"
+      ],
+      "shape": "square",
+      "length": "short",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-06",
+      "season": [
+        "autumn",
+        "winter"
+      ],
+      "mockColor": ""
+    },
+    {
+      "id": "g006-glass-chrome-extension",
+      "src": "assets/images/gallery/g006-glass-chrome-extension.webp",
+      "thumb": "assets/images/gallery/g006-glass-chrome-extension.webp",
+      "altEn": "Long stiletto nude chrome nails with iridescent glass foil",
+      "altZh": "裸粉色尖甲配冰透玻璃纸镜面效果",
+      "style": [
+        "glass",
+        "chrome",
+        "foil",
+        "gradient"
+      ],
+      "colour": [
+        "nude",
+        "silver",
+        "pink"
+      ],
+      "shape": "stiletto",
+      "length": "long",
+      "finish": "gel",
+      "service": "extensions",
+      "featured": true,
+      "date": "2025-05",
+      "season": [
+        "winter",
+        "bridal"
+      ],
+      "mockColor": ""
+    },
+    {
+      "id": "g007",
+      "src": "assets/images/gallery/g007.webp",
+      "thumb": "assets/images/gallery/g007.webp",
+      "altEn": "Soft lavender round nails with dried flower art",
+      "altZh": "淡紫色圆形甲，干花图案",
+      "style": [
+        "floral",
+        "romantic"
+      ],
+      "colour": [
+        "purple",
+        "pink"
+      ],
+      "shape": "round",
+      "length": "short",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-05",
+      "mockColor": "lavender"
+    },
+    {
+      "id": "g008",
+      "src": "assets/images/gallery/g008.webp",
+      "thumb": "assets/images/gallery/g008.webp",
+      "altEn": "Gold glitter coffin nails with marble effect",
+      "altZh": "金色闪粉棺材形甲，大理石纹路",
+      "style": [
+        "glam"
+      ],
+      "colour": [
+        "gold",
+        "white"
+      ],
+      "shape": "coffin",
+      "length": "long",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-05",
+      "mockColor": "gold"
+    },
+    {
+      "id": "g009",
+      "src": "assets/images/gallery/g009.webp",
+      "thumb": "assets/images/gallery/g009.webp",
+      "altEn": "Sage green short oval pedicure with floral accents",
+      "altZh": "鼠尾草绿色短椭圆形足甲，花卉装饰",
+      "style": [
+        "floral",
+        "minimalist"
+      ],
+      "colour": [
+        "green",
+        "white"
+      ],
+      "shape": "oval",
+      "length": "short",
+      "finish": "gel",
+      "service": "pedicure",
+      "featured": true,
+      "date": "2025-05",
+      "mockColor": "green"
+    },
+    {
+      "id": "g010",
+      "src": "assets/images/gallery/g010.webp",
+      "thumb": "assets/images/gallery/g010.webp",
+      "altEn": "Matte black square nails with chrome detail",
+      "altZh": "哑光黑色方形甲，镀铬细节",
+      "style": [
+        "minimalist",
+        "glam"
+      ],
+      "colour": [
+        "black"
+      ],
+      "shape": "square",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-04",
+      "mockColor": "black"
+    },
+    {
+      "id": "g011",
+      "src": "assets/images/gallery/g011.webp",
+      "thumb": "assets/images/gallery/g011.webp",
+      "altEn": "Coral pink ombre pedicure with subtle shimmer",
+      "altZh": "珊瑚粉渐变足甲，细腻微闪",
+      "style": [
+        "ombre"
+      ],
+      "colour": [
+        "pink",
+        "nude"
+      ],
+      "shape": "round",
+      "length": "short",
+      "finish": "gel",
+      "service": "pedicure",
+      "featured": false,
+      "date": "2025-04",
+      "mockColor": "coral"
+    },
+    {
+      "id": "g012",
+      "src": "assets/images/gallery/g012.webp",
+      "thumb": "assets/images/gallery/g012.webp",
+      "altEn": "Peach and white kawaii almond nails with bows",
+      "altZh": "蜜桃白色可爱杏形甲，蝴蝶结装饰",
+      "style": [
+        "kawaii",
+        "romantic"
+      ],
+      "colour": [
+        "nude",
+        "pink",
+        "white"
+      ],
+      "shape": "almond",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-04",
+      "mockColor": "peach"
+    },
+    {
+      "id": "g013",
+      "src": "assets/images/gallery/g013.webp",
+      "thumb": "assets/images/gallery/g013.webp",
+      "altEn": "Teal geometric coffin nails with gold lines",
+      "altZh": "水鸭绿几何棺材形甲，金色线条",
+      "style": [
+        "geometric"
+      ],
+      "colour": [
+        "blue",
+        "gold"
+      ],
+      "shape": "coffin",
+      "length": "long",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": false,
+      "date": "2025-03",
+      "mockColor": "teal"
+    },
+    {
+      "id": "g014",
+      "src": "assets/images/gallery/g014.webp",
+      "thumb": "assets/images/gallery/g014.webp",
+      "altEn": "Rose nude oval nails with hand-painted roses",
+      "altZh": "玫瑰裸色椭圆形甲，手绘玫瑰",
+      "style": [
+        "floral",
+        "romantic"
+      ],
+      "colour": [
+        "pink",
+        "nude"
+      ],
+      "shape": "oval",
+      "length": "medium",
+      "finish": "gel",
+      "service": "manicure",
+      "featured": true,
+      "date": "2025-03",
+      "mockColor": "rose"
+    }
+  ]
+}
