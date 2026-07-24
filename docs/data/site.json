@@ -4,6 +4,21 @@
     "nameZh": "Snowy美甲工作室",
     "locationEn": "Richmond Hill, Ontario",
     "locationZh": "安大略省列治文山"
+    ,"hours": {
+      "timezone": "America/Toronto",
+      "openHour": "09:00",
+      "closeHour": "22:00",
+      "days": {
+        "mon": { "open": "09:00", "close": "22:00" },
+        "tue": { "open": "09:00", "close": "22:00" },
+        "wed": { "open": "09:00", "close": "22:00" },
+        "thu": { "open": "09:00", "close": "22:00" },
+        "fri": { "open": "09:00", "close": "22:00" },
+        "sat": { "open": "09:00", "close": "22:00" },
+        "sun": { "open": "09:00", "close": "22:00" }
+      }
+    },
+    "availabilityEndpoint": "data/availability.json"
   },
   "contacts": [
     {

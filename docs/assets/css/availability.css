@@ -1,0 +1,11 @@
+/* Minimal availability styles */
+.availability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.availability-day { border: 1px solid var(--clr-border, #eee); padding: 12px; border-radius:8px; background: var(--clr-surface, #fff); }
+.availability-day-label { font-weight:600; margin-bottom:8px; }
+.availability-slots { display:flex; flex-wrap:wrap; gap:8px; }
+.availability-slot { padding:6px 8px; border-radius:6px; font-size:13px; background:var(--clr-muted, #f7f7f7); }
+.availability-slot.booked { background:#f8d7da; color:#721c24; }
+.availability-slot.free { background:#d4edda; color:#155724; }
+.loading-state { min-height:64px; display:flex; align-items:center; justify-content:center; }
+.loading-spinner { width:28px; height:28px; border-radius:50%; border:3px solid rgba(0,0,0,0.1); border-top-color:var(--clr-primary, #c4788a); animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }

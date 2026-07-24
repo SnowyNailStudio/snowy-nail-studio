@@ -155,4 +155,14 @@ Filter usage, page views, and contact link clicks are the primary metrics per th
 | Update aftercare | Edit `docs/data/aftercare.json` |
 | Add promotion | Update `docs/data/promotions.json` + upload poster images |
 | Update pricing | Upload new poster to `docs/assets/images/posters/`, update poster source in `services.html` |
-| Change UI text / translation | Edit `docs/data/translations.json` |
+ | Change UI text / translation | Edit `docs/data/translations.json` |
+---
+## Availability / Business hours
+The site supports an availability view powered by a cached FreeBusy JSON (Apps Script). To update hours or the endpoint:
+
+- Edit weekly hours in `docs/data/site.json` under `business.hours.days` (keys: `mon`,`tue`,`wed`,`thu`,`fri`,`sat`,`sun`). Each day uses `"open": "HH:MM"` and `"close": "HH:MM"` (24-hour format).
+- The site fetches `docs/data/availability.json` by default (sample cached FreeBusy output). To point to a remote Apps Script endpoint, change `business.availabilityEndpoint` in `docs/data/site.json` to the full URL returning the JSON shape `{ "timezone":"...", "busy": [{"start":"...","end":"..."}] }`.
+
+Notes:
+- Hourly blocks are marked Booked if any portion of the hour overlaps a `busy` interval.
+- The availability page (`docs/availability.html`) renders a 60-day view and auto-scrolls to today.

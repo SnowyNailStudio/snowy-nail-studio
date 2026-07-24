@@ -21,6 +21,7 @@ const NAV_HTML = `
       <a href="gallery.html"   class="nav-link" data-i18n="nav.gallery">Gallery</a>
       <a href="services.html"  class="nav-link" data-i18n="nav.services">Services</a>
       <a href="studio.html"    class="nav-link" data-i18n="nav.studio">Studio</a>
+      <a href="availability.html" class="nav-link" data-i18n="nav.availability">Availability</a>
       <a href="about.html"     class="nav-link" data-i18n="nav.about">About</a>
       <a href="contact.html"   class="nav-link" data-i18n="nav.contact">Contact</a>
       <a href="aftercare.html" class="nav-link" data-i18n="nav.aftercare">Nail Care</a>
@@ -41,6 +42,7 @@ const NAV_HTML = `
   <a href="gallery.html"   class="nav-link" data-i18n="nav.gallery">Gallery</a>
   <a href="services.html"  class="nav-link" data-i18n="nav.services">Services</a>
   <a href="studio.html"    class="nav-link" data-i18n="nav.studio">Studio</a>
+  <a href="availability.html" class="nav-link" data-i18n="nav.availability">Availability</a>
   <a href="about.html"     class="nav-link" data-i18n="nav.about">About</a>
   <a href="contact.html"   class="nav-link" data-i18n="nav.contact">Contact</a>
   <a href="aftercare.html" class="nav-link" data-i18n="nav.aftercare">Nail Care</a>
