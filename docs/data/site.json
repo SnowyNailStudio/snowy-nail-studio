@@ -18,7 +18,7 @@
         "sun": { "open": "09:00", "close": "22:00" }
       }
     },
-    "availabilityEndpoint": "data/availability.json"
+    "availabilityEndpoint": "https://script.google.com/macros/s/AKfycbwGt9o-Ior0THZaVy2a8mIAwt2VAHeSvJoizFyCr_5ULRzkjQNkdeIT13h9RPJTNbPLGw/exec"
   },
   "contacts": [
     {

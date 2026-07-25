@@ -21,15 +21,14 @@ async function loadAvailability(containerId, opts = {}) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
   wrap.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div></div>`;
-  const endpoint = opts.endpoint || (window.SNOWY && window.SNOWY.availabilityEndpoint) || 'data/availability.json';
+  const defaultEndpoint = 'data/availability.json';
   try {
-    const [siteRes, avRes] = await Promise.all([
-      fetch('data/site.json'),
-      fetch(endpoint)
-    ]);
+    const siteRes = await fetch('data/site.json');
     if (!siteRes.ok) throw new Error('site.json not found');
-    if (!avRes.ok) throw new Error('availability data not found');
     const site = await siteRes.json();
+    const endpoint = opts.endpoint || (window.SNOWY && window.SNOWY.availabilityEndpoint) || (site.business && site.business.availabilityEndpoint) || defaultEndpoint;
+    const avRes = await fetch(endpoint);
+    if (!avRes.ok) throw new Error('availability data not found');
     const av = await avRes.json();
     const hours = (site.business && site.business.hours) || { openHour: '09:00', closeHour: '22:00' };
     const tz = hours.timezone || av.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
