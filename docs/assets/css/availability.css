@@ -1,11 +1,14 @@
 /* Minimal availability styles */
-.availability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-.availability-day { border: 1px solid var(--clr-border, #eee); padding: 12px; border-radius:8px; background: var(--clr-surface, #fff); }
-.availability-day-label { font-weight:600; margin-bottom:8px; }
-.availability-slots { display:flex; flex-wrap:wrap; gap:8px; }
-.availability-slot { padding:6px 8px; border-radius:6px; font-size:13px; background:var(--clr-muted, #f7f7f7); }
-.availability-slot.booked { background:#f8d7da; color:#721c24; }
-.availability-slot.free { background:#d4edda; color:#155724; }
-.loading-state { min-height:64px; display:flex; align-items:center; justify-content:center; }
-.loading-spinner { width:28px; height:28px; border-radius:50%; border:3px solid rgba(0,0,0,0.1); border-top-color:var(--clr-primary, #c4788a); animation: spin 1s linear infinite; }
+.availability-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.availability-day { border: 1px solid var(--clr-border, #eee); padding: 14px; border-radius: 10px; background: var(--clr-surface, #fff); }
+.availability-day-label { font-weight: 600; margin-bottom: 10px; }
+.availability-slots { display: flex; flex-wrap: wrap; gap: 8px; }
+.availability-slot { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.2; white-space: nowrap; }
+.availability-slot--available { min-width: 50px; background: #dcefe0; color: #245c35; }
+.availability-slot--available-muted { min-width: 50px; background: #f0f0f0; color: #6d6d6d; }
+.availability-slot--booked-range { background: #f5dadd; color: #8b3041; padding-left: 14px; padding-right: 14px; }
+.availability-heading { margin-bottom: 16px; }
+.error-state { padding: 18px; border: 1px solid rgba(181, 91, 107, 0.2); border-radius: 10px; background: #fff0f2; color: #6f2f40; }
+.loading-state { min-height: 64px; display: flex; align-items: center; justify-content: center; }
+.loading-spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(0,0,0,0.1); border-top-color: var(--clr-primary, #c4788a); animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
