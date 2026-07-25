@@ -62,14 +62,23 @@ snowy-nail-studio/
 ---
 ## Adding real content
 ### Gallery photos
-1. Optimize photos to `.webp` (recommended: 800×1067 px, < 200 KB).
+
+**Recommended:** Use the Cursor `@gallery-upload` skill for bilingual auto-tagging, image optimization, and JSON updates. Say "upload gallery" in Agent chat.
+
+**Manual workflow:**
+1. Optimize photos to `.webp` (recommended: 800×1067 px, < 200 KB):
+   ```bash
+   npm install
+   node tools/optimize-gallery-image.js content/gallery/photo.jpg docs/assets/images/gallery/g015-slug.webp
+   node tools/gallery-next-id.js "descriptive slug words"
+   ```
 2. Place files in `docs/assets/images/gallery/`.
 3. Open `docs/data/gallery.json` and add or update entries:
    ```json
    {
-     "id": "g015",
-     "src": "assets/images/gallery/g015.webp",
-     "thumb": "assets/images/gallery/g015.webp",
+     "id": "g015-cherry-blossom",
+     "src": "assets/images/gallery/g015-cherry-blossom.webp",
+     "thumb": "assets/images/gallery/g015-cherry-blossom.webp",
      "altEn": "Description in English",
      "altZh": "中文描述",
      "style": ["floral"],
@@ -149,7 +158,8 @@ Filter usage, page views, and contact link clicks are the primary metrics per th
 ## Maintenance workflow
 | Task | Action |
 |---|---|
-| Add nail art photo | Add to `docs/assets/images/gallery/`, update `docs/data/gallery.json` |
+| Upload gallery photo | In Cursor, say **upload gallery** or invoke `@gallery-upload` skill |
+| Add nail art photo (manual) | Add to `docs/assets/images/gallery/`, update `docs/data/gallery.json` |
 | Add review | Update `docs/data/reviews.json` |
 | Update FAQ | Edit `docs/data/faq.json` |
 | Update aftercare | Edit `docs/data/aftercare.json` |

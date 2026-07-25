@@ -1,0 +1,13 @@
+{
+  "name": "snowy-nail-studio",
+  "private": true,
+  "description": "Snowy Nail Studio static site — content tools",
+  "scripts": {
+    "validate": "node tools/validate-content.js",
+    "gallery:next-id": "node tools/gallery-next-id.js",
+    "gallery:optimize": "node tools/optimize-gallery-image.js"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.5"
+  }
+}

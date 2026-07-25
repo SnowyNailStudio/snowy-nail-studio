@@ -34,6 +34,10 @@
             <div class="loading-spinner"></div>
           </div>
         </div>
+        <!-- Business hours summary -->
+        <div id="business-hours-container" style="margin-top:18px;">
+          <!-- populated by loadBusinessHours() -->
+        </div>
         <!-- CTA buttons -->
         <div class="contact-cta-grid" style="margin-top:32px;">
           <a href="#" class="btn btn-primary" data-i18n="contact.cta_inspiration">Send an Inspiration Photo</a>
@@ -87,10 +91,11 @@
   <script src="assets/js/main.js"></script>
   <script src="assets/js/reviews.js"></script>
   <script src="assets/js/availability.js"></script>
-  <script>
+    <script>
     document.addEventListener('DOMContentLoaded', () => {
       loadFAQ('faq-container');
       loadSiteContacts('contact-methods-container');
+      if (typeof loadBusinessHours === 'function') loadBusinessHours('business-hours-container');
       if (typeof loadAvailability === 'function') loadAvailability('availability-preview');
     });
   </script>
