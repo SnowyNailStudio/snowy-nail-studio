@@ -286,6 +286,50 @@ async function loadSiteContacts(containerId) {
     wrap.innerHTML = '';
   }
 }
+/* ─── Business hours summary ───────────────────────────────── */
+async function loadBusinessHours(containerId) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+  try {
+    const res = await fetch('data/site.json');
+    if (!res.ok) throw new Error('site.json not found');
+    const data = await res.json();
+    const hours = (data.business && data.business.hours) || { openHour: '09:00', closeHour: '22:00', days: {} };
+    const days = hours.days || {};
+    const lang = I18N.getLang();
+    const sameAll = ['mon','tue','wed','thu','fri','sat','sun'].every(d => days[d] && days[d].open === hours.openHour && days[d].close === hours.closeHour);
+    function fmt(hm) {
+      const [h, m] = (hm || '').split(':').map(Number);
+      if (isNaN(h)) return hm;
+      if (lang === 'zh') return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+      const am = h < 12;
+      const h12 = ((h + 11) % 12) + 1;
+      return `${h12}${m ? ':' + String(m).padStart(2,'0') : ''} ${am ? 'AM' : 'PM'}`;
+    }
+    if (sameAll) {
+      const rangeLabel = lang === 'zh' ? '周一–周日' : 'Mon–Sun';
+      wrap.innerHTML = `<div class="business-hours">
+        <h4>${escapeHtml(I18N.t('contact.hours_heading', 'Business Hours'))}</h4>
+        <div class="business-hours-line">${escapeHtml(rangeLabel)}: ${escapeHtml(fmt(hours.openHour))} – ${escapeHtml(fmt(hours.closeHour))}</div>
+      </div>`;
+      return;
+    }
+    // Fallback: render each day
+    const dayNamesEn = { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' };
+    const dayNamesZh = { mon: '周一', tue: '周二', wed: '周三', thu: '周四', fri: '周五', sat: '周六', sun: '周日' };
+    const names = lang === 'zh' ? dayNamesZh : dayNamesEn;
+    const lines = [];
+    ['mon','tue','wed','thu','fri','sat','sun'].forEach(d => {
+      const dd = days[d];
+      if (dd && dd.open && dd.close) {
+        lines.push(`<div class="business-hours-line">${escapeHtml(names[d])}: ${escapeHtml(fmt(dd.open))} – ${escapeHtml(fmt(dd.close))}</div>`);
+      }
+    });
+    wrap.innerHTML = `<div class="business-hours"><h4>${escapeHtml(I18N.t('contact.hours_heading', 'Business Hours'))}</h4>${lines.join('\n')}</div>`;
+  } catch (e) {
+    wrap.innerHTML = '';
+  }
+}
 /* ─── Aftercare loader ─────────────────────────────────────── */
 async function loadAftercare(containerId) {
   const wrap = document.getElementById(containerId);
@@ -342,6 +386,8 @@ document.addEventListener('langchange', () => {
     loadPromotions('home-promos-container');
   if (document.getElementById('contact-methods-container'))
     loadSiteContacts('contact-methods-container');
+  if (document.getElementById('business-hours-container'))
+    loadBusinessHours('business-hours-container');
   if (document.getElementById('availability-preview') || document.getElementById('availability-grid')) {
     if (typeof loadAvailability === 'function') {
       if (document.getElementById('availability-preview')) loadAvailability('availability-preview');

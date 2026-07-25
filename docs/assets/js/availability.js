@@ -43,7 +43,7 @@ async function loadAvailability(containerId, opts = {}) {
     const heading = document.createElement('div');
     heading.className = 'availability-heading';
     const hTitle = document.createElement('h3');
-    hTitle.textContent = I18N.t('contact.hours_heading', 'Business Hours');
+    hTitle.textContent = I18N.t('availability.hours_heading', I18N.t('contact.hours_heading', 'Business Hours'));
     heading.appendChild(hTitle);
     grid.appendChild(heading);
 
@@ -63,10 +63,13 @@ async function loadAvailability(containerId, opts = {}) {
         const slotEnd = new Date(slotStart.getTime());
         slotEnd.setHours(h + 1);
         const isBooked = busy.some(b => _overlap(slotStart.getTime(), slotEnd.getTime(), b.start.getTime(), b.end.getTime()));
+        const slotStatus = isBooked
+          ? I18N.t('availability.booked', 'Booked')
+          : I18N.t('availability.available', 'Available');
         const slot = document.createElement('div');
         slot.className = 'availability-slot' + (isBooked ? ' booked' : ' free');
-        slot.setAttribute('aria-label', `${_formatHourLabel(h)} - ${isBooked ? I18N.t('contact.closed','Booked') : I18N.t('contact.open_now','Available')}`);
-        slot.textContent = _formatHourLabel(h) + (isBooked ? ' · ' + I18N.t('contact.closed','Booked') : '');
+        slot.setAttribute('aria-label', `${_formatHourLabel(h)} - ${slotStatus}`);
+        slot.textContent = _formatHourLabel(h) + (isBooked ? ' · ' + slotStatus : '');
         slots.appendChild(slot);
       }
       dayCard.appendChild(slots);

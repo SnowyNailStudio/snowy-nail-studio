@@ -106,14 +106,16 @@ const allColours = [...new Set(gal.items.flatMap(i => i.colour || []))];
 assert(allStyles.includes('romantic'),  `romantic style items exist (found: ${allStyles.join(', ')})`);
 assert(allColours.includes('gold'),     `gold colour items exist (found: ${allColours.join(', ')})`);
 assert(gal.items.some(i => i.featured), 'at least one featured item');
-// Each style value used in data has a translation key
+// Each style value used in data has a translation key in both languages
 allStyles.forEach(s => {
   const key = `filter_${s}`;
-  assert(t.en.gallery[key] !== undefined, `translation key exists for style "${s}"`);
+  assert(t.en.gallery[key] !== undefined, `en.gallery translation key exists for style "${s}"`);
+  assert(t.zh.gallery[key] !== undefined, `zh.gallery translation key exists for style "${s}"`);
 });
 allColours.forEach(c => {
   const key = `filter_${c}`;
-  assert(t.en.gallery[key] !== undefined, `translation key exists for colour "${c}"`);
+  assert(t.en.gallery[key] !== undefined, `en.gallery translation key exists for colour "${c}"`);
+  assert(t.zh.gallery[key] !== undefined, `zh.gallery translation key exists for colour "${c}"`);
 });
 // ─────────────────────────────────────────────────────────────────────────────
 // SMOKE-05  faq.json structure

@@ -10,3 +10,6 @@ npm-debug.log*
 # Temp
 *.tmp
 *.bak
+# Gallery staging (raw uploads — keep .gitkeep)
+content/gallery/*
+!content/gallery/.gitkeep
