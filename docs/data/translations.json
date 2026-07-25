@@ -99,7 +99,9 @@
       "subtitle": "View open hourly blocks and plan your appointment.",
       "hours_heading": "Business Hours",
       "available": "Available",
-      "booked": "Booked"
+      "booked": "Booked",
+      "unavailable_heading": "Live availability is temporarily unavailable.",
+      "unavailable_description": "Please contact Snowy Nail Studio to confirm your appointment time."
     },
     "services": {
       "title": "Services & Pricing",
@@ -294,7 +296,9 @@
       "subtitle": "查看可预约时段并安排您的预约。",
       "hours_heading": "营业时间",
       "available": "可预约",
-      "booked": "已预约"
+      "booked": "已预约",
+      "unavailable_heading": "实时预约时间暂时无法显示。",
+      "unavailable_description": "请联系 Snowy 美甲工作室确认可预约时间。"
     },
     "services": {
       "title": "服务与价格",
