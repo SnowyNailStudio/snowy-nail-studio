@@ -342,6 +342,12 @@ document.addEventListener('langchange', () => {
     loadPromotions('home-promos-container');
   if (document.getElementById('contact-methods-container'))
     loadSiteContacts('contact-methods-container');
+  if (document.getElementById('availability-preview') || document.getElementById('availability-grid')) {
+    if (typeof loadAvailability === 'function') {
+      if (document.getElementById('availability-preview')) loadAvailability('availability-preview');
+      if (document.getElementById('availability-grid')) loadAvailability('availability-grid', { days: 60 });
+    }
+  }
   if (document.getElementById('reviews-grid'))
     loadReviews('reviews-grid', false);
   if (document.getElementById('home-reviews'))

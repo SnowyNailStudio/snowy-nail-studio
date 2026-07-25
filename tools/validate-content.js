@@ -42,9 +42,10 @@ startSection('SMOKE-01  Critical files');
   'assets/js/main.js', 'assets/js/reviews.js',
   'assets/js/gallery.js', 'assets/js/i18n.js',
   'assets/css/main.css',
+  'assets/js/availability.js', 'assets/css/availability.css',
   'data/translations.json', 'data/gallery.json', 'data/faq.json',
   'data/reviews.json', 'data/promotions.json', 'data/aftercare.json',
-  'data/site.json',
+  'data/site.json', 'data/availability.json',
   'index.html', 'gallery.html', 'services.html', 'studio.html',
   'about.html', 'contact.html', 'aftercare.html',
 ].forEach(f => assert(fileExists(f), `exists: docs/${f}`));
@@ -55,7 +56,7 @@ startSection('SMOKE-02  JSON validity');
 [
   'data/translations.json', 'data/gallery.json', 'data/faq.json',
   'data/reviews.json', 'data/promotions.json', 'data/aftercare.json',
-  'data/site.json',
+  'data/site.json', 'data/availability.json',
 ].forEach(f => {
   try {
     readJSON(f);
@@ -148,6 +149,14 @@ site.contacts.forEach((c, i) => {
 const wechat = site.contacts.find(c => c.id === 'wechat');
 assert(wechat !== undefined, 'wechat contact exists');
 assert(wechat && !('url' in wechat), 'wechat has no url (renders as div, not <a>)');
+// business.hours validation (optional but recommended)
+assert(site.business && site.business.hours, 'site.business.hours exists');
+if (site.business && site.business.hours && site.business.hours.days) {
+  ['mon','tue','wed','thu','fri','sat','sun'].forEach(d => {
+    const dd = site.business.hours.days[d];
+    assert(dd && (typeof dd.open === 'string') && (typeof dd.close === 'string'), `business.hours.days.${d} has open/close`);
+  });
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // SMOKE-07  promotions.json + aftercare.json structure
 // ─────────────────────────────────────────────────────────────────────────────
@@ -195,6 +204,24 @@ revs.items.forEach((r, i) => {
     assert('quoteZh' in r, `image review[${i}] has quoteZh`);
   }
 });
+// ─────────────────────────────────────────────────────────────────────────────
+// SMOKE-09  availability.json schema
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('SMOKE-09  availability.json');
+try {
+  const avail = readJSON('data/availability.json');
+  assert(typeof avail.timezone === 'string' && avail.timezone.length > 0, 'availability.timezone present');
+  assert(Array.isArray(avail.busy), 'availability.busy is array');
+  avail.busy.forEach((b, i) => {
+    assert(typeof b.start === 'string' && typeof b.end === 'string', `busy[${i}].start/end strings`);
+    const s = new Date(b.start);
+    const e = new Date(b.end);
+    assert(!isNaN(s.getTime()) && !isNaN(e.getTime()) && s < e, `busy[${i}] parseable and start < end`);
+  });
+} catch (e) {
+  assert(false, 'valid JSON: data/availability.json', e.message);
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // UNIT-01  escapeHtml / escapeAttr (reimplemented from main.js source)
 // ─────────────────────────────────────────────────────────────────────────────

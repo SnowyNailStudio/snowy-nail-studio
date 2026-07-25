@@ -5,6 +5,7 @@
       "gallery": "Gallery",
       "services": "Services",
       "studio": "Studio",
+      "availability": "Availability",
       "about": "About",
       "contact": "Contact",
       "aftercare": "Nail Care"
@@ -121,6 +122,11 @@
     "contact": {
       "title": "Contact & FAQ",
       "subtitle": "Get in touch or find answers below",
+      "hours_heading": "Business Hours",
+      "open_now": "Open now",
+      "closed": "Closed",
+      "next_available": "Next available",
+      "hours_label": "Hours",
       "section_contact": "Get in Touch",
       "section_faq": "Frequently Asked Questions",
       "section_policies": "Studio Policies",
@@ -169,6 +175,7 @@
       "gallery": "作品集",
       "services": "服务与价格",
       "studio": "工作室",
+      "availability": "预约时间",
       "about": "关于我们",
       "contact": "联系我们",
       "aftercare": "护甲指南"
@@ -285,6 +292,11 @@
     "contact": {
       "title": "联系我们与常见问题",
       "subtitle": "与我们联系或查看下方解答",
+      "hours_heading": "营业时间",
+      "open_now": "正在营业",
+      "closed": "已打烊",
+      "next_available": "下一个可预约时间",
+      "hours_label": "营业时间",
       "section_contact": "联系方式",
       "section_faq": "常见问题",
       "section_policies": "工作室政策",

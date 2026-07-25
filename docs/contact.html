@@ -37,9 +37,13 @@
         <!-- CTA buttons -->
         <div class="contact-cta-grid" style="margin-top:32px;">
           <a href="#" class="btn btn-primary" data-i18n="contact.cta_inspiration">Send an Inspiration Photo</a>
-          <a href="#" class="btn btn-outline" data-i18n="contact.cta_availability">Ask About Availability</a>
+          <a href="availability.html" class="btn btn-outline" data-i18n="contact.cta_availability">Ask About Availability</a>
           <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_instagram">Message on Instagram</a>
           <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_xhs">Visit 小红书</a>
+        </div>
+        <!-- Availability preview -->
+        <div id="availability-preview" style="margin-top:28px;">
+          <!-- availability loader will populate this container -->
         </div>
       </div>
     </section>
@@ -82,10 +86,12 @@
   <script src="assets/js/i18n.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/reviews.js"></script>
+  <script src="assets/js/availability.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       loadFAQ('faq-container');
       loadSiteContacts('contact-methods-container');
+      if (typeof loadAvailability === 'function') loadAvailability('availability-preview');
     });
   </script>
 </body>

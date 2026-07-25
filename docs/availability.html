@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Availability | Snowy Nail Studio</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/availability.css">
+</head>
+<body>
+  <div id="nav-placeholder"></div>
+  <main class="page-content">
+    <div class="page-hero">
+      <div class="container">
+        <h1>Availability</h1>
+        <p>View open hourly blocks and plan your appointment.</p>
+      </div>
+    </div>
+    <section class="section">
+      <div class="container">
+        <div id="availability-grid"></div>
+      </div>
+    </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/availability.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await I18N.init();
+      if (typeof loadAvailability === 'function') {
+        loadAvailability('availability-grid', { days: 60, autoScroll: true });
+      }
+    });
+  </script>
+</body>
+</html>
