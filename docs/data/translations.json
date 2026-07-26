@@ -125,6 +125,9 @@
       "section_tools": "Sterilized Tools",
       "section_tools_text": "All metal implements are autoclave-sterilized. Buffers, files, and single-use items are discarded after each client.",
       "section_gallery": "Studio Photos",
+      "photo_interior": "Studio Interior",
+      "photo_waiting": "Waiting Area",
+      "photo_station": "Nail Station",
       "step1_title": "Clean & Wipe Down",
       "step1_desc": "All surfaces, lamps, and armrests are wiped with hospital-grade disinfectant before each appointment.",
       "step2_title": "Sterilize Metal Tools",
@@ -331,6 +334,9 @@
       "step3_desc": "指甲锉、磨皮块和棉片均为一次性使用，每次预约后立即丢弃。",
       "step4_title": "手部卫生",
       "step4_desc": "在接触任何客户指甲之前，均进行洗手和消毒处理。",
+      "photo_interior": "工作室内景",
+      "photo_waiting": "候客区",
+      "photo_station": "美甲工作台",
       "studio_promise": "您的安全不是事后才考虑的 — 它融入了每一次预约之中。"
     },
     "about": {

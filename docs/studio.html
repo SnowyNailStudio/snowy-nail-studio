@@ -36,21 +36,33 @@
           </div>
           <div class="studio-grid">
             <div class="studio-photo">
+              <picture>
+                <source type="image/webp" srcset="assets/images/studio/interior-thumb.webp 600w, assets/images/studio/interior.webp 1200w" sizes="(max-width: 640px) 100vw, 400px">
+                <img src="assets/images/studio/interior.jpg" srcset="assets/images/studio/interior-thumb.jpg 600w, assets/images/studio/interior.jpg 1200w" sizes="(max-width: 640px) 100vw, 400px" alt="Studio Interior">
+              </picture>
               <div class="studio-photo-mock">
                 <span class="studio-photo-mock-icon" aria-hidden="true">🏠</span>
-                <span>Studio Interior</span>
+                <span data-i18n="studio.photo_interior">Studio Interior</span>
               </div>
             </div>
             <div class="studio-photo">
+              <picture>
+                <source type="image/webp" srcset="assets/images/studio/waiting-thumb.webp 600w, assets/images/studio/waiting.webp 1200w" sizes="(max-width: 640px) 100vw, 400px">
+                <img src="assets/images/studio/waiting.jpg" srcset="assets/images/studio/waiting-thumb.jpg 600w, assets/images/studio/waiting.jpg 1200w" sizes="(max-width: 640px) 100vw, 400px" alt="Waiting Area">
+              </picture>
               <div class="studio-photo-mock">
                 <span class="studio-photo-mock-icon" aria-hidden="true">🪴</span>
-                <span>Waiting Area</span>
+                <span data-i18n="studio.photo_waiting">Waiting Area</span>
               </div>
             </div>
             <div class="studio-photo">
+              <picture>
+                <source type="image/webp" srcset="assets/images/studio/station-thumb.webp 600w, assets/images/studio/station.webp 1200w" sizes="(max-width: 640px) 100vw, 400px">
+                <img src="assets/images/studio/station.jpg" srcset="assets/images/studio/station-thumb.jpg 600w, assets/images/studio/station.jpg 1200w" sizes="(max-width: 640px) 100vw, 400px" alt="Nail Station">
+              </picture>
               <div class="studio-photo-mock">
                 <span class="studio-photo-mock-icon" aria-hidden="true">💡</span>
-                <span>Nail Station</span>
+                <span data-i18n="studio.photo_station">Nail Station</span>
               </div>
             </div>
           </div>
@@ -161,6 +173,7 @@
     }
   </style>
   <script src="assets/js/i18n.js"></script>
+  <script src="assets/js/studio.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>
