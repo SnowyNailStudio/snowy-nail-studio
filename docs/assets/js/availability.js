@@ -203,9 +203,9 @@ async function loadAvailability(containerId, opts = {}) {
 
       const hourlyStatuses = getHourlyStatuses(dayDate, busy, openH, closeH);
       const displayItems = buildHybridAvailabilityItems(hourlyStatuses);
-      const hasVisibleSlots = displayItems.some((item) => item.type === 'available' || item.type === 'booked');
+      const hasAvailableSlots = displayItems.some((item) => item.type === 'available');
 
-      if (hasVisibleSlots) {
+      if (hasAvailableSlots) {
         renderHybridAvailability(slots, displayItems);
       } else {
         const fullyBooked = document.createElement('div');
