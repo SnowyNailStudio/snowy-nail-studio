@@ -34,7 +34,7 @@
     {
       "id": "review-0004",
       "type": "image",
-      "image": "",
+      "image": "assets/images/reviews/review-0004.jpg",
       "quoteZh": "太好看了！做得超级细致，工作室也很舒适干净，下次还来！❤️",
       "quoteEn": "So beautiful! The work is incredibly detailed, and the studio is comfortable and clean. I'll definitely come back! ❤️",
       "displayName": "Client",
@@ -55,11 +55,71 @@
     {
       "id": "review-0006",
       "type": "image",
-      "image": "",
+      "image": "assets/images/reviews/review-0006.jpg",
       "quoteZh": "第一次来就成功了！预约很方便，到了之后工具都消毒好了，感觉很放心。",
       "quoteEn": "First visit was a great success! Booking was easy, and when I arrived all tools were already sterilized — felt very safe and reassured.",
       "displayName": "Client",
       "source": "小红书",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0007",
+      "type": "text",
+      "quoteZh": "这个工作室环境非常好，服务态度也很热情。非常满意我的新指甲！",
+      "quoteEn": "The studio environment is excellent, and the service is very friendly. I'm so happy with my new nails!",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0008",
+      "type": "text",
+      "quoteZh": "设计很独特，颜色搭配也很漂亮。Snowy 真的很专业。",
+      "quoteEn": "The design is unique and the color combination is beautiful. Snowy is really professional.",
+      "displayName": "Client",
+      "source": "Instagram",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0009",
+      "type": "text",
+      "quoteZh": "从预约到完成，整个过程都很顺利。指甲做得比想象中还好。",
+      "quoteEn": "From booking to completion, the whole process was smooth. My nails turned out even better than I imagined.",
+      "displayName": "Client",
+      "source": "Google",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0010",
+      "type": "text",
+      "quoteZh": "Snowy 很细心，颜色和形状都调整得很到位。非常推荐。",
+      "quoteEn": "Snowy was very attentive, and the color and shape were adjusted perfectly. Highly recommend.",
+      "displayName": "Client",
+      "source": "小红书",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0011",
+      "type": "text",
+      "quoteZh": "每次做完指甲都很满意，持久度也很不错。下次还会再来。",
+      "quoteEn": "I'm satisfied every time I get my nails done, and they last really well. I'll definitely come back.",
+      "displayName": "Client",
+      "source": "Instagram",
+      "rating": 5,
+      "featured": false
+    },
+    {
+      "id": "review-0012",
+      "type": "text",
+      "quoteZh": "价格合理，效果非常好。服务也很专业，强烈推荐给想做美甲的朋友。",
+      "quoteEn": "The price is fair and the results are excellent. The service is also professional. I highly recommend it to friends who want nails done.",
+      "displayName": "Client",
+      "source": "Google",
       "rating": 5,
       "featured": false
     }
