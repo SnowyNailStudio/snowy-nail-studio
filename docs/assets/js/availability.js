@@ -23,10 +23,9 @@ function _getHourlyStatus(date, hour, busyPeriods, bufferHours = 3, closingHour 
   const slotStart = new Date(date);
   slotStart.setHours(hour, 0, 0, 0);
 
-  const slotEnd = new Date(date);
+  const slotEnd = new Date(slotStart);
   slotEnd.setHours(hour + 1, 0, 0, 0);
 
-  // Check if hour is booked (has priority over buffer)
   const isBooked = busyPeriods.some((busyPeriod) => {
     const busyStart = busyPeriod.start instanceof Date ? busyPeriod.start : new Date(busyPeriod.start);
     const busyEnd = busyPeriod.end instanceof Date ? busyPeriod.end : new Date(busyPeriod.end);
@@ -34,28 +33,26 @@ function _getHourlyStatus(date, hour, busyPeriods, bufferHours = 3, closingHour 
   });
 
   if (isBooked) {
-    return { hour, isBooked: true, isBuffer: false };
+    return { hour, slotStart, slotEnd, type: 'booked' };
   }
 
-  // Check if within last 3 hours before closing (less than 3 hours remaining)
-  const hoursRemainingBeforeClose = closingHour - hour;
-  if (hoursRemainingBeforeClose < 3 && hoursRemainingBeforeClose > 0) {
-    return { hour, isBooked: false, isBuffer: true };
-  }
-
-  // Check if hour is within buffer period (3 hours before any booking)
   const isBuffer = busyPeriods.some((busyPeriod) => {
     const busyStart = busyPeriod.start instanceof Date ? busyPeriod.start : new Date(busyPeriod.start);
-    
     const bufferEndTime = busyStart.getTime();
     const bufferStartTime = bufferEndTime - (bufferHours * 60 * 60 * 1000);
-    
     const slotStartTime = slotStart.getTime();
-    
     return slotStartTime >= bufferStartTime && slotStartTime < bufferEndTime;
   });
 
-  return { hour, isBooked: false, isBuffer };
+  if (isBuffer) {
+    return { hour, slotStart, slotEnd, type: 'hidden' };
+  }
+
+  if (hour >= closingHour - 2) {
+    return { hour, slotStart, slotEnd, type: 'hidden' };
+  }
+
+  return { hour, slotStart, slotEnd, type: 'available' };
 }
 
 function getHourlyStatuses(date, busyPeriods, openingHour = 9, closingHour = 22) {
@@ -69,79 +66,54 @@ function getHourlyStatuses(date, busyPeriods, openingHour = 9, closingHour = 22)
   return statuses;
 }
 
-function buildHybridAvailabilityItems(hourlyStatuses, openingHour = 9, closingHour = 22) {
+function buildHybridAvailabilityItems(hourlyStatuses) {
   const items = [];
-  const bookedStarts = hourlyStatuses
-    .filter((status) => status.isBooked)
-    .map((status) => status.slotStart.getTime());
-
-  const classify = (status) => {
-    if (status.isBooked) return 'booked';
-    const slotStartTime = status.slotStart.getTime();
-    const isBuffer = bookedStarts.some(
-      (bookingTime) => bookingTime > slotStartTime && bookingTime - slotStartTime <= 1000 * 60 * 60 * 3
-    );
-    if (isBuffer) return 'available-muted';
-    if (status.hour >= closingHour - 2) return 'available-muted';
-    return 'available';
-  };
-
-  const statuses = hourlyStatuses.map((status) => ({
-    ...status,
-    classification: classify(status),
-  }));
-
-  const lookupHasAvailableGap = (fromIndex) => {
-    for (let i = fromIndex; i < statuses.length; i += 1) {
-      if (statuses[i].classification === 'available') return true;
-      if (statuses[i].classification === 'booked') return false;
-    }
-    return false;
-  };
-
   let index = 0;
 
   while (index < hourlyStatuses.length) {
     const current = hourlyStatuses[index];
 
-    if (current.isBooked) {
-      // Merge consecutive booked hours
+    if (current.type === 'booked') {
       const rangeStart = current.hour;
       let rangeEnd = current.hour + 1;
-
       index += 1;
 
-      while (
-        index < hourlyStatuses.length &&
-        hourlyStatuses[index].isBooked
-      ) {
-        rangeEnd = hourlyStatuses[index].hour + 1;
-        index += 1;
+      while (index < hourlyStatuses.length) {
+        const next = hourlyStatuses[index];
+
+        if (next.type === 'booked') {
+          rangeEnd = next.hour + 1;
+          index += 1;
+          continue;
+        }
+
+        if (next.type === 'hidden') {
+          let lookAhead = index + 1;
+          let hasAvailableBetween = false;
+
+          while (lookAhead < hourlyStatuses.length && hourlyStatuses[lookAhead].type !== 'booked') {
+            if (hourlyStatuses[lookAhead].type === 'available') {
+              hasAvailableBetween = true;
+              break;
+            }
+            lookAhead += 1;
+          }
+
+          if (lookAhead < hourlyStatuses.length && !hasAvailableBetween && hourlyStatuses[lookAhead].type === 'booked') {
+            rangeEnd = hourlyStatuses[lookAhead].hour + 1;
+            index = lookAhead + 1;
+            continue;
+          }
+        }
+
+        break;
       }
 
-      items.push({
-        type: 'booked',
-        start: rangeStart,
-        end: rangeEnd
-      });
-    } else if (current.isBuffer) {
-      // Keep buffer hours separate (no merging)
-      items.push({
-        type: 'buffer',
-        hour: current.hour
-      });
-
-    if (current.classification === 'available' || current.classification === 'available-muted') {
-      items.push({ type: current.classification, hour: current.hour });
-      index += 1;
+      items.push({ type: 'booked', start: rangeStart, end: rangeEnd });
     } else {
-      // Keep available hours separate (no merging)
-      items.push({
-        type: 'available',
-        hour: current.hour
-      });
-
-    index += 1;
+      items.push({ type: current.type, hour: current.hour });
+      index += 1;
+    }
   }
 
   return items;
@@ -166,14 +138,6 @@ function renderHybridAvailability(container, items) {
 
     if (item.type === 'available') {
       element.classList.add('availability-slot--available');
-      element.textContent = _formatHourLabel(item.hour);
-      element.setAttribute('aria-label', `${_formatHourLabel(item.hour)} ${I18N.t('availability.available', 'Available')}`);
-    } else if (item.type === 'buffer') {
-      element.classList.add('availability-slot--buffer');
-      element.textContent = _formatHourLabel(item.hour);
-      element.setAttribute('aria-label', `${_formatHourLabel(item.hour)} ${I18N.t('availability.buffer', 'Unavailable (booking buffer)')}`);
-    } else if (item.type === 'available-muted') {
-      element.classList.add('availability-slot--available-muted');
       element.textContent = _formatHourLabel(item.hour);
       element.setAttribute('aria-label', `${_formatHourLabel(item.hour)} ${I18N.t('availability.available', 'Available')}`);
     } else {
@@ -239,9 +203,9 @@ async function loadAvailability(containerId, opts = {}) {
 
       const hourlyStatuses = getHourlyStatuses(dayDate, busy, openH, closeH);
       const displayItems = buildHybridAvailabilityItems(hourlyStatuses);
-      const hasAvailableSlots = displayItems.some((item) => item.type === 'available');
+      const hasVisibleSlots = displayItems.some((item) => item.type === 'available' || item.type === 'booked');
 
-      if (hasAvailableSlots) {
+      if (hasVisibleSlots) {
         renderHybridAvailability(slots, displayItems);
       } else {
         const fullyBooked = document.createElement('div');
