@@ -53,8 +53,8 @@ function buildHybridAvailabilityItems(hourlyStatuses, openingHour = 9, closingHo
     const isBuffer = bookedStarts.some(
       (bookingTime) => bookingTime > slotStartTime && bookingTime - slotStartTime <= 1000 * 60 * 60 * 3
     );
-    if (isBuffer) return 'buffer';
-    if (status.hour >= 20) return 'hidden';
+    if (isBuffer) return 'available-muted';
+    if (status.hour >= closingHour - 2) return 'available-muted';
     return 'available';
   };
 
@@ -103,21 +103,13 @@ function buildHybridAvailabilityItems(hourlyStatuses, openingHour = 9, closingHo
       continue;
     }
 
-    if (current.classification !== 'available') {
+    if (current.classification === 'available' || current.classification === 'available-muted') {
+      items.push({ type: current.classification, hour: current.hour });
       index += 1;
       continue;
     }
 
-    const segmentStart = current.hour;
     index += 1;
-    while (index < statuses.length && statuses[index].classification === 'available') {
-      index += 1;
-    }
-    const segmentEnd = statuses[index - 1].hour + 1;
-
-    for (let hour = segmentStart; hour < segmentEnd; hour += 1) {
-      items.push({ type: 'available', hour });
-    }
   }
 
   return items;
@@ -135,7 +127,7 @@ function renderHybridAvailability(container, items) {
   container.innerHTML = '';
 
   items.forEach((item) => {
-    if (item.type === 'hidden' || item.type === 'available-muted') return;
+    if (item.type === 'hidden') return;
 
     const element = document.createElement('span');
     element.className = 'availability-slot';
