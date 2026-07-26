@@ -130,7 +130,7 @@ function renderHybridAvailability(container, items) {
   container.innerHTML = '';
 
   items.forEach((item) => {
-    if (item.type === 'hidden') return;
+    if (item.type === 'hidden' || item.type === 'available-muted') return;
 
     const element = document.createElement('span');
     element.className = 'availability-slot';
@@ -191,7 +191,7 @@ async function loadAvailability(containerId, opts = {}) {
     grid.appendChild(heading);
 
     const now = new Date();
-    for (let d = 0; d < days; d++) {
+    for (let d = 1; d <= days; d++) {
       const dayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
       const dayCard = document.createElement('div');
       dayCard.className = 'availability-day';
@@ -210,7 +210,16 @@ async function loadAvailability(containerId, opts = {}) {
 
       const hourlyStatuses = getHourlyStatuses(dayDate, busy, openH, closeH);
       const displayItems = buildHybridAvailabilityItems(hourlyStatuses);
-      renderHybridAvailability(slots, displayItems);
+      const hasAvailableSlots = displayItems.some((item) => item.type === 'available');
+
+      if (hasAvailableSlots) {
+        renderHybridAvailability(slots, displayItems);
+      } else {
+        const fullyBooked = document.createElement('div');
+        fullyBooked.className = 'availability-fully-booked';
+        fullyBooked.textContent = I18N.t('availability.fully_booked', 'Fully Booked');
+        slots.appendChild(fullyBooked);
+      }
 
       dayCard.appendChild(slots);
       grid.appendChild(dayCard);

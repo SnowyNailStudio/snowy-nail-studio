@@ -8,6 +8,7 @@
 .availability-slot--buffer { min-width: 50px; background: #e8e8e8; color: #666; }
 .availability-slot--available-muted { min-width: 50px; background: #f0f0f0; color: #6d6d6d; }
 .availability-slot--booked-range { background: #f5dadd; color: #8b3041; padding-left: 14px; padding-right: 14px; }
+.availability-fully-booked { font-weight: 700; color: #8b3041; }
 .availability-heading { margin-bottom: 16px; }
 .error-state { padding: 18px; border: 1px solid rgba(181, 91, 107, 0.2); border-radius: 10px; background: #fff0f2; color: #6f2f40; }
 .loading-state { min-height: 64px; display: flex; align-items: center; justify-content: center; }
