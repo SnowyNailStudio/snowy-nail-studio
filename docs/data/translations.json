@@ -100,6 +100,7 @@
       "hours_heading": "Business Hours",
       "available": "Available",
       "booked": "Booked",
+      "buffer": "Unavailable (booking buffer)",
       "unavailable_heading": "Live availability is temporarily unavailable.",
       "unavailable_description": "Please contact Snowy Nail Studio to confirm your appointment time."
     },
@@ -297,6 +298,7 @@
       "hours_heading": "营业时间",
       "available": "可预约",
       "booked": "已预约",
+      "buffer": "暂不可预约（预约缓冲）",
       "unavailable_heading": "实时预约时间暂时无法显示。",
       "unavailable_description": "请联系 Snowy 美甲工作室确认可预约时间。"
     },
