@@ -5,8 +5,7 @@
 .availability-slots { display: flex; flex-wrap: wrap; gap: 8px; }
 .availability-slot { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.2; white-space: nowrap; }
 .availability-slot--available { min-width: 50px; background: #dcefe0; color: #245c35; }
-.availability-slot--buffer { min-width: 50px; background: #e8e8e8; color: #666; }
-.availability-slot--available-muted { min-width: 50px; background: #f0f0f0; color: #6d6d6d; }
+.availability-slot--available-muted { min-width: 50px; background: #f4f4f4; color: #6f6f6f; border: 1px solid rgba(0, 0, 0, 0.06); }
 .availability-slot--booked-range { background: #f5dadd; color: #8b3041; padding-left: 14px; padding-right: 14px; }
 .availability-fully-booked { font-weight: 700; color: #8b3041; }
 .availability-heading { margin-bottom: 16px; }

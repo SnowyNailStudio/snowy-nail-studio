@@ -71,6 +71,34 @@ function getHourlyStatuses(date, busyPeriods, openingHour = 9, closingHour = 22)
 
 function buildHybridAvailabilityItems(hourlyStatuses, openingHour = 9, closingHour = 22) {
   const items = [];
+  const bookedStarts = hourlyStatuses
+    .filter((status) => status.isBooked)
+    .map((status) => status.slotStart.getTime());
+
+  const classify = (status) => {
+    if (status.isBooked) return 'booked';
+    const slotStartTime = status.slotStart.getTime();
+    const isBuffer = bookedStarts.some(
+      (bookingTime) => bookingTime > slotStartTime && bookingTime - slotStartTime <= 1000 * 60 * 60 * 3
+    );
+    if (isBuffer) return 'available-muted';
+    if (status.hour >= closingHour - 2) return 'available-muted';
+    return 'available';
+  };
+
+  const statuses = hourlyStatuses.map((status) => ({
+    ...status,
+    classification: classify(status),
+  }));
+
+  const lookupHasAvailableGap = (fromIndex) => {
+    for (let i = fromIndex; i < statuses.length; i += 1) {
+      if (statuses[i].classification === 'available') return true;
+      if (statuses[i].classification === 'booked') return false;
+    }
+    return false;
+  };
+
   let index = 0;
 
   while (index < hourlyStatuses.length) {
@@ -103,6 +131,8 @@ function buildHybridAvailabilityItems(hourlyStatuses, openingHour = 9, closingHo
         hour: current.hour
       });
 
+    if (current.classification === 'available' || current.classification === 'available-muted') {
+      items.push({ type: current.classification, hour: current.hour });
       index += 1;
     } else {
       // Keep available hours separate (no merging)
@@ -111,8 +141,7 @@ function buildHybridAvailabilityItems(hourlyStatuses, openingHour = 9, closingHo
         hour: current.hour
       });
 
-      index += 1;
-    }
+    index += 1;
   }
 
   return items;
@@ -130,7 +159,7 @@ function renderHybridAvailability(container, items) {
   container.innerHTML = '';
 
   items.forEach((item) => {
-    if (item.type === 'hidden' || item.type === 'available-muted') return;
+    if (item.type === 'hidden') return;
 
     const element = document.createElement('span');
     element.className = 'availability-slot';
