@@ -66,6 +66,7 @@ function _buildImageCard(review) {
   const lang   = I18N.getLang();
   const quoteZh = review.quoteZh || '';
   const quoteEn = review.quoteEn || '';
+  const orientation = review.orientation === 'portrait' ? 'portrait' : 'landscape';
   const tlabel  = lang === 'zh'
     ? I18N.t('about.screenshot_translation_label', '翻译：')
     : 'Translation:';
@@ -78,7 +79,7 @@ function _buildImageCard(review) {
     : _buildMockXHS(quoteZh);
   const zhBlock = quoteZh
     ? `<p class="review-original-zh">"${escapeHtml(quoteZh)}"</p>` : '';
-  return `<div class="review-card review-card--image">
+  return `<div class="review-card review-card--image review-card--image-${orientation}">
     <div class="review-screenshot">${screenshotHTML}</div>
     <div class="review-translation">
       ${zhBlock}
