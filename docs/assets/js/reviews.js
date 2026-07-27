@@ -13,6 +13,8 @@ function _compareReviewsById(a, b) {
   return getNumericId(a) - getNumericId(b);
 }
 
+// Sort from left to right in the grid: lower review IDs appear first.
+
 /* ─── Load ─────────────────────────────────────────────────── */
 async function loadReviews(targetId, featuredOnly) {
   const container = document.getElementById(targetId);
