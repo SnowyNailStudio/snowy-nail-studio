@@ -4,6 +4,15 @@
  */
 'use strict';
 let _reviewsData = [];
+
+function _compareReviewsById(a, b) {
+  const getNumericId = (review) => {
+    const match = String(review?.id || '').match(/(\d+)$/);
+    return match ? parseInt(match[1], 10) : Number.MAX_SAFE_INTEGER;
+  };
+  return getNumericId(a) - getNumericId(b);
+}
+
 /* ─── Load ─────────────────────────────────────────────────── */
 async function loadReviews(targetId, featuredOnly) {
   const container = document.getElementById(targetId);
@@ -22,9 +31,11 @@ async function loadReviews(targetId, featuredOnly) {
     </div>`;
     return;
   }
-  const items = featuredOnly
+  const items = (featuredOnly
     ? _reviewsData.filter(r => r.featured)
-    : _reviewsData;
+    : _reviewsData)
+    .slice()
+    .sort(_compareReviewsById);
   _renderReviews(container, items);
 }
 /* ─── Render ───────────────────────────────────────────────── */
