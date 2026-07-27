@@ -9,7 +9,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": true,
+      "featured": false,
       "image": "assets/images/reviews/review-0001.jpg",
       "orientation": "portrait"
     },
@@ -21,7 +21,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": true,
+      "featured": false,
       "image": "assets/images/reviews/review-0002.jpg",
       "orientation": "landscape"
     },
@@ -33,7 +33,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": true,
+      "featured": false,
       "image": "assets/images/reviews/review-0003.jpg",
       "orientation": "landscape"
     },
@@ -46,7 +46,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": true,
+      "featured": false,
       "orientation": "portrait"
     },
     {
@@ -57,7 +57,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": true,
+      "featured": false,
       "image": "assets/images/reviews/review-0005.jpg",
       "orientation": "landscape"
     },
@@ -93,7 +93,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": false,
+      "featured": true,
       "image": "assets/images/reviews/review-0008.jpg",
       "orientation": "landscape"
     },
@@ -153,7 +153,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": false,
+      "featured": true,
       "image": "assets/images/reviews/review-0013.jpg",
       "orientation": "landscape"
     },
@@ -213,7 +213,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": false,
+      "featured": true,
       "image": "assets/images/reviews/review-0018.jpg",
       "orientation": "portrait"
     },
@@ -225,7 +225,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": false,
+      "featured": true,
       "image": "assets/images/reviews/review-0019.jpg",
       "orientation": "portrait"
     },
@@ -237,7 +237,7 @@
       "displayName": "Client",
       "source": "小红书",
       "rating": 5,
-      "featured": false,
+      "featured": true,
       "image": "assets/images/reviews/review-0020.jpg",
       "orientation": "portrait"
     },
