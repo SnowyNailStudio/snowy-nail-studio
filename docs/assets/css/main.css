@@ -643,6 +643,43 @@ p { line-height: 1.75; }
 .review-card--image {
   min-height: 90px;
 }
+.review-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+  grid-column: 1 / -1;
+}
+.review-page-btn {
+  min-width: 36px;
+  height: 36px;
+  border: 1px solid var(--clr-border);
+  border-radius: 999px;
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all var(--t-fast);
+}
+.review-page-btn:hover:not(:disabled),
+.review-page-btn.active {
+  background: var(--clr-accent);
+  border-color: var(--clr-accent);
+  color: var(--clr-white);
+}
+.review-page-btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+@media (max-width: 480px) {
+  .review-page-btn {
+    min-width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+}
 /* Mock XHS conversation */
 .xhs-mock {
   width: 100%; height: 100%;

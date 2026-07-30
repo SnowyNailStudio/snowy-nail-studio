@@ -4,6 +4,8 @@
  */
 'use strict';
 let _reviewsData = [];
+const REVIEW_PAGE_SIZE = 6;
+let _reviewPage = 1;
 
 function _compareReviewsById(a, b) {
   const getNumericId = (review) => {
@@ -38,15 +40,42 @@ async function loadReviews(targetId, featuredOnly) {
     : _reviewsData)
     .slice()
     .sort(_compareReviewsById);
-  _renderReviews(container, items);
+  _reviewPage = 1;
+  _renderReviews(container, items, featuredOnly);
 }
 /* ─── Render ───────────────────────────────────────────────── */
-function _renderReviews(container, items) {
+function _renderReviews(container, items, featuredOnly) {
   if (!items.length) {
     container.innerHTML = '<p style="text-align:center;color:var(--clr-text-muted);padding:2rem;">No reviews yet.</p>';
     return;
   }
-  container.innerHTML = items.map(_buildReviewCard).join('');
+
+  const totalPages = Math.max(1, Math.ceil(items.length / REVIEW_PAGE_SIZE));
+  _reviewPage = Math.min(Math.max(1, _reviewPage), totalPages);
+  const startIndex = (_reviewPage - 1) * REVIEW_PAGE_SIZE;
+  const pageItems = items.slice(startIndex, startIndex + REVIEW_PAGE_SIZE);
+  const cardsHTML = pageItems.map(_buildReviewCard).join('');
+  const paginationHTML = totalPages > 1
+    ? `<div class="review-pagination" style="grid-column:1/-1">
+        <button class="review-page-btn" type="button" data-review-page="${_reviewPage - 1}" ${_reviewPage === 1 ? 'disabled' : ''} aria-label="Previous page">←</button>
+        ${Array.from({ length: totalPages }, (_, index) => {
+            const pageNum = index + 1;
+            return `<button class="review-page-btn${pageNum === _reviewPage ? ' active' : ''}" type="button" data-review-page="${pageNum}">${pageNum}</button>`;
+          }).join('')}
+        <button class="review-page-btn" type="button" data-review-page="${_reviewPage + 1}" ${_reviewPage === totalPages ? 'disabled' : ''} aria-label="Next page">→</button>
+      </div>`
+    : '';
+
+  container.innerHTML = `${cardsHTML}${paginationHTML}`;
+
+  container.querySelectorAll('.review-page-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const nextPage = Number(btn.getAttribute('data-review-page'));
+      if (!Number.isFinite(nextPage) || nextPage < 1 || nextPage > totalPages) return;
+      _reviewPage = nextPage;
+      _renderReviews(container, items, featuredOnly);
+    });
+  });
 }
 function _buildReviewCard(review) {
   return review.type === 'image'
