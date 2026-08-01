@@ -1,5 +1,21 @@
 {
   "en": {
+    "meta": {
+      "home": { "title": "Snowy Nail Studio | Richmond Hill", "description": "Handcrafted gel nail art in a private, spotless home studio in Richmond Hill, Ontario. Book your appointment today." },
+      "gallery": { "title": "Nail Art Gallery | Snowy Nail Studio", "description": "Browse Snowy Nail Studio's portfolio of gel nail art. Filter by style, colour, shape, length, and service type." },
+      "services": { "title": "Services & Pricing | Snowy Nail Studio", "description": "Snowy Nail Studio services, pricing, and current promotions. Gel manicures, pedicures, nail art, extensions, and removal." },
+      "studio": { "title": "Safety & Studio | Snowy Nail Studio", "description": "See inside Snowy Nail Studio's clean, private home studio in Richmond Hill. Learn about our sanitation process and sterilized tools." },
+      "availability": { "title": "Availability | Snowy Nail Studio", "description": "View upcoming appointment availability at Snowy Nail Studio in Richmond Hill." },
+      "about": { "title": "About & Client Feedback | Snowy Nail Studio", "description": "Meet Snowy, a certified nail technician in Richmond Hill, and read real client reviews." },
+      "contact": { "title": "Contact & FAQ | Snowy Nail Studio", "description": "Contact Snowy Nail Studio in Richmond Hill via Instagram, Xiaohongshu, or WeChat, and read frequently asked questions." },
+      "aftercare": { "title": "Nail Care & Aftercare | Snowy Nail Studio", "description": "Learn how to care for your gel nails after your appointment, including daily care, protection, and safe removal." }
+    },
+    "eyebrow": {
+      "portfolio": "Portfolio", "special_offer": "Special Offer", "client_feedback": "Client Feedback", "clean_private": "Clean & Private",
+      "real_clients": "Real Clients", "reach_us": "Reach Us", "questions": "Questions", "studio_policies": "Studio Policies",
+      "what_we_offer": "What We Offer", "transparent_pricing": "Transparent Pricing", "limited_time": "Limited Time",
+      "environment": "Environment", "hygiene_protocol": "Hygiene Protocol", "tools": "Tools"
+    },
     "nav": {
       "home": "Home",
       "gallery": "Gallery",
@@ -19,6 +35,7 @@
       "hero_sub": "Handcrafted gel nails in a private, spotless studio — Richmond Hill",
       "hero_cta_primary": "Explore Nail Art",
       "hero_cta_secondary": "Ask About Availability",
+      "location_tag": "✦ Richmond Hill",
       "latest_title": "Latest Designs",
       "latest_sub": "Fresh work straight from the studio",
       "promo_title": "Current Promotion",
@@ -84,7 +101,11 @@
       "filter_marble": "Marble",
       "filter_hand-painted": "Hand-Painted",
       "showing_count": "Showing {showing} of {total} designs",
-      "page_label": "Page {page}"
+      "page_label": "Page {page}",
+      "filters_label": "Gallery filters",
+      "grid_label": "Nail art gallery",
+      "pages_label": "Gallery pages",
+      "viewer_label": "Image viewer"
     },
     "availability": {
       "title": "Availability",
@@ -94,7 +115,17 @@
       "booked": "Booked",
       "buffer": "Unavailable (booking buffer)",
       "unavailable_heading": "Live availability is temporarily unavailable.",
-      "unavailable_description": "Please contact Snowy Nail Studio to confirm your appointment time."
+      "unavailable_description": "Please contact Snowy Nail Studio to confirm your appointment time.",
+      "start_date": "Start date",
+      "end_date": "End date",
+      "filter": "Filter",
+      "reset": "Reset",
+      "save_screenshot": "Save screenshot",
+      "fully_booked": "Fully booked",
+      "no_range_results": "No availability matches your selected date range.",
+      "screenshot_error": "Unable to capture screenshot. Please use your device screenshot function.",
+      "share_title": "Availability screenshot",
+      "share_text": "Save this availability screenshot to Photos."
     },
     "services": {
       "title": "Services & Pricing",
@@ -128,7 +159,10 @@
       "step3_desc": "Nail files, buffers, and cotton pads are single-use and discarded after every appointment.",
       "step4_title": "Hand Hygiene",
       "step4_desc": "Hands are washed and sanitized before touching any client's nails.",
-      "studio_promise": "Your safety is not an afterthought — it's built into every appointment."
+      "studio_promise": "Your safety is not an afterthought — it's built into every appointment.",
+      "photo_sterilizer": "Tool Sterilizer",
+      "photo_implements": "Sterile Implements",
+      "photo_disposables": "Single-Use Supplies"
     },
     "about": {
       "title": "About Snowy Nail Studio",
@@ -140,7 +174,12 @@
       "badge_bilingual": "EN · 中文",
       "reviews_title": "Client Feedback",
       "reviews_sub": "Real words from real clients",
-      "screenshot_translation_label": "Translation:"
+      "screenshot_translation_label": "Translation:",
+      "no_reviews": "No reviews yet.",
+      "previous_page": "Previous page",
+      "next_page": "Next page",
+      "stars_label": "{rating} stars",
+      "customer_review_screenshot": "Customer review screenshot"
     },
     "contact": {
       "title": "Contact & FAQ",
@@ -189,10 +228,34 @@
       "error": "Content could not be loaded.",
       "mock_note": "Placeholder — replace with real image",
       "featured": "Featured",
-      "skip_nav": "Skip to content"
+      "skip_nav": "Skip to content",
+      "main_navigation": "Main navigation",
+      "home_link": "Snowy Nail Studio home",
+      "switch_language": "Switch language",
+      "open_menu": "Open menu",
+      "close_menu": "Close menu",
+      "mobile_navigation": "Mobile navigation",
+      "back_to_top": "Back to top",
+      "hero": "Hero"
     }
   },
   "zh": {
+    "meta": {
+      "home": { "title": "Snowy 美甲工作室 | 列治文山", "description": "位于安大略省列治文山的私密洁净家庭美甲工作室，提供精心制作的光疗美甲，欢迎预约。" },
+      "gallery": { "title": "美甲作品集 | Snowy 美甲工作室", "description": "浏览 Snowy 美甲工作室的光疗美甲作品，并按风格、颜色、甲形、长度和服务类型筛选。" },
+      "services": { "title": "服务与价格 | Snowy 美甲工作室", "description": "查看光疗手甲、足甲、美甲彩绘、延长甲、卸甲服务、价格与当前优惠。" },
+      "studio": { "title": "安全与工作室 | Snowy 美甲工作室", "description": "了解 Snowy 美甲工作室洁净私密的环境、消毒流程和工具灭菌标准。" },
+      "availability": { "title": "预约时间 | Snowy 美甲工作室", "description": "查看 Snowy 美甲工作室近期可预约时间。" },
+      "about": { "title": "关于我们与客户评价 | Snowy 美甲工作室", "description": "认识列治文山持证美甲师 Snowy，并阅读真实客户评价。" },
+      "contact": { "title": "联系我们与常见问题 | Snowy 美甲工作室", "description": "通过 Instagram、小红书或微信联系 Snowy 美甲工作室，并查看常见问题。" },
+      "aftercare": { "title": "护甲指南 | Snowy 美甲工作室", "description": "了解光疗美甲后的日常护理、防护和安全卸甲方法。" }
+    },
+    "eyebrow": {
+      "portfolio": "作品精选", "special_offer": "特别优惠", "client_feedback": "客户反馈", "clean_private": "洁净私密",
+      "real_clients": "真实客户", "reach_us": "联系我们", "questions": "问题解答", "studio_policies": "工作室政策",
+      "what_we_offer": "服务项目", "transparent_pricing": "透明价格", "limited_time": "限时优惠",
+      "environment": "工作室环境", "hygiene_protocol": "卫生流程", "tools": "工具"
+    },
     "nav": {
       "home": "首页",
       "gallery": "作品集",
@@ -212,6 +275,7 @@
       "hero_sub": "精心制作的光疗美甲，私密洁净的工作室 — 列治文山",
       "hero_cta_primary": "浏览作品",
       "hero_cta_secondary": "询问预约",
+      "location_tag": "✦ 列治文山",
       "latest_title": "最新作品",
       "latest_sub": "工作室新鲜出炉的作品",
       "promo_title": "当前优惠",
@@ -277,7 +341,11 @@
       "filter_marble": "大理石纹",
       "filter_hand-painted": "手绘",
       "showing_count": "显示 {showing} / {total} 个作品",
-      "page_label": "第 {page} 页"
+      "page_label": "第 {page} 页",
+      "filters_label": "作品筛选",
+      "grid_label": "美甲作品集",
+      "pages_label": "作品分页",
+      "viewer_label": "图片查看器"
     },
     "availability": {
       "title": "预约时间",
@@ -287,7 +355,17 @@
       "booked": "已预约",
       "buffer": "暂不可预约（预约缓冲）",
       "unavailable_heading": "实时预约时间暂时无法显示。",
-      "unavailable_description": "请联系 Snowy 美甲工作室确认可预约时间。"
+      "unavailable_description": "请联系 Snowy 美甲工作室确认可预约时间。",
+      "start_date": "开始日期",
+      "end_date": "结束日期",
+      "filter": "筛选",
+      "reset": "重置",
+      "save_screenshot": "保存截图",
+      "fully_booked": "已约满",
+      "no_range_results": "所选日期范围内暂无可预约时间。",
+      "screenshot_error": "无法生成截图，请使用设备自带的截图功能。",
+      "share_title": "预约时间截图",
+      "share_text": "将此预约时间截图保存到照片。"
     },
     "services": {
       "title": "服务与价格",
@@ -321,7 +399,10 @@
       "photo_interior": "工作室内景",
       "photo_waiting": "候客区",
       "photo_station": "美甲工作台",
-      "studio_promise": "您的安全不是事后才考虑的 — 它融入了每一次预约之中。"
+      "studio_promise": "您的安全不是事后才考虑的 — 它融入了每一次预约之中。",
+      "photo_sterilizer": "工具灭菌器",
+      "photo_implements": "已灭菌工具",
+      "photo_disposables": "一次性用品"
     },
     "about": {
       "title": "关于 Snowy 美甲工作室",
@@ -333,7 +414,12 @@
       "badge_bilingual": "中英双语",
       "reviews_title": "客户评价",
       "reviews_sub": "来自真实客户的真实评价",
-      "screenshot_translation_label": "翻译："
+      "screenshot_translation_label": "翻译：",
+      "no_reviews": "暂无客户评价。",
+      "previous_page": "上一页",
+      "next_page": "下一页",
+      "stars_label": "{rating} 星",
+      "customer_review_screenshot": "客户评价截图"
     },
     "contact": {
       "title": "联系我们与常见问题",
@@ -382,7 +468,15 @@
       "error": "内容加载失败。",
       "mock_note": "占位图 — 请替换为真实图片",
       "featured": "精选",
-      "skip_nav": "跳转到内容"
+      "skip_nav": "跳转到内容",
+      "main_navigation": "主导航",
+      "home_link": "Snowy 美甲工作室首页",
+      "switch_language": "切换语言",
+      "open_menu": "打开菜单",
+      "close_menu": "关闭菜单",
+      "mobile_navigation": "移动端导航",
+      "back_to_top": "返回顶部",
+      "hero": "首页主视觉"
     }
   }
 }

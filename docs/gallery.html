@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nail Art Gallery | Snowy Nail Studio</title>
-  <meta name="description" content="Browse Snowy Nail Studio's portfolio of gel nail art. Filter by style, colour, shape, length, and service type.">
+  <title data-i18n="meta.gallery.title">Nail Art Gallery | Snowy Nail Studio</title>
+  <meta name="description" content="Browse Snowy Nail Studio's portfolio of gel nail art. Filter by style, colour, shape, length, and service type." data-i18n-content="meta.gallery.description">
   <meta name="theme-color" content="#C4788A">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +25,7 @@
     <section class="section section--sm">
       <div class="container">
         <!-- Filters -->
-        <div class="gallery-controls" role="search" aria-label="Gallery filters">
+        <div class="gallery-controls" role="search" aria-label="Gallery filters" data-i18n-aria-label="gallery.filters_label">
           <!-- Quick filters -->
           <div class="filter-row">
             <button class="filter-btn" data-group="all" data-value="all" data-i18n="gallery.filter_all">All</button>
@@ -89,19 +89,19 @@
         <!-- Results count -->
         <p class="gallery-count" id="gallery-count" aria-live="polite"></p>
         <!-- Grid -->
-        <div class="gallery-grid" id="gallery-grid" role="list" aria-label="Nail art gallery"></div>
+        <div class="gallery-grid" id="gallery-grid" role="list" aria-label="Nail art gallery" data-i18n-aria-label="gallery.grid_label"></div>
         <!-- Pagination -->
-        <nav class="gallery-pagination" id="gallery-pagination" aria-label="Gallery pages"></nav>
+        <nav class="gallery-pagination" id="gallery-pagination" aria-label="Gallery pages" data-i18n-aria-label="gallery.pages_label"></nav>
       </div>
     </section>
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox" role="dialog" aria-modal="true"
-         aria-label="Image viewer" tabindex="-1">
+         aria-label="Image viewer" data-i18n-aria-label="gallery.viewer_label" tabindex="-1">
       <div class="lightbox-inner">
-        <button class="lightbox-close" id="lightbox-close" aria-label="Close">✕</button>
-        <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image">‹</button>
+        <button class="lightbox-close" id="lightbox-close" aria-label="Close" data-i18n-aria-label="gallery.lightbox_close">✕</button>
+        <button class="lightbox-prev" id="lightbox-prev" aria-label="Previous image" data-i18n-aria-label="gallery.lightbox_prev">‹</button>
         <div class="lightbox-img-wrap" id="lightbox-img-wrap"></div>
-        <button class="lightbox-next" id="lightbox-next" aria-label="Next image">›</button>
+        <button class="lightbox-next" id="lightbox-next" aria-label="Next image" data-i18n-aria-label="gallery.lightbox_next">›</button>
       </div>
     </div>
     <!-- CTA -->

@@ -359,13 +359,15 @@ assert(mainCss.includes('.gallery-count'), 'main.css: .gallery-count styles pres
 assert(mainCss.includes('.gallery-page-btn'), 'main.css: pagination button styles present');
 assert(mainCss.includes('.lightbox-img-wrap img { object-fit: contain; }'), 'main.css: mobile lightbox preserves full image');
 // All HTML pages reference main.css
-['index.html','gallery.html','services.html','studio.html','about.html','contact.html','aftercare.html'].forEach(page => {
+['index.html','gallery.html','services.html','studio.html','availability.html','about.html','contact.html','aftercare.html'].forEach(page => {
   const html = fs.readFileSync(path.join(DOCS, page), 'utf8');
   assert(html.includes('assets/css/main.css'), `${page}: links main.css`);
   assert(html.includes('assets/js/i18n.js'),   `${page}: loads i18n.js`);
   assert(html.includes('assets/js/main.js'),   `${page}: loads main.js`);
   assert(html.includes('id="nav-placeholder"'), `${page}: has nav-placeholder`);
   assert(html.includes('id="footer-placeholder"'), `${page}: has footer-placeholder`);
+  assert(/<title\s+data-i18n="meta\.[^"]+\.title"/.test(html), `${page}: localized document title`);
+  assert(/<meta\s+name="description"[^>]+data-i18n-content="meta\.[^"]+\.description"/.test(html), `${page}: localized meta description`);
 });
 // ─────────────────────────────────────────────────────────────────────────────
 // UNIT-05  Translation completeness (every EN key has ZH counterpart)
@@ -386,6 +388,56 @@ const missingInZh = enKeys.filter(k => !zhKeys.includes(k));
 const missingInEn = zhKeys.filter(k => !enKeys.includes(k));
 assert(missingInZh.length === 0, `all EN keys present in ZH (missing: ${missingInZh.join(', ') || 'none'})`);
 assert(missingInEn.length === 0, `all ZH keys present in EN (missing: ${missingInEn.join(', ') || 'none'})`);
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-06  Every referenced key exists + JSON-backed bilingual fields are paired
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-06  Translation references + bilingual content');
+const sourceFiles = [];
+function collectSourceFiles(dir) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) collectSourceFiles(full);
+    else if (/\.(?:html|js)$/.test(entry.name)) sourceFiles.push(full);
+  });
+}
+collectSourceFiles(DOCS);
+const referencedKeys = new Set();
+sourceFiles.forEach(file => {
+  const source = fs.readFileSync(file, 'utf8');
+  [
+    /data-i18n(?:-placeholder|-title|-aria-label|-alt|-content)?=["']([^"']+)/g,
+    /I18N\.t\(\s*["']([^"']+)/g,
+  ].forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(source))) referencedKeys.add(match[1]);
+  });
+});
+const missingReferencedEn = [...referencedKeys].filter(key => !enKeys.includes(key));
+const missingReferencedZh = [...referencedKeys].filter(key => !zhKeys.includes(key));
+assert(missingReferencedEn.length === 0, `all referenced keys exist in EN (missing: ${missingReferencedEn.join(', ') || 'none'})`);
+assert(missingReferencedZh.length === 0, `all referenced keys exist in ZH (missing: ${missingReferencedZh.join(', ') || 'none'})`);
+
+const bilingualFiles = ['data/gallery.json', 'data/faq.json', 'data/reviews.json', 'data/promotions.json', 'data/aftercare.json', 'data/site.json'];
+const bilingualGaps = [];
+function findBilingualGaps(value, location) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => findBilingualGaps(item, `${location}[${index}]`));
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  Object.keys(value).forEach(key => {
+    if (key.endsWith('En')) {
+      const zhKey = `${key.slice(0, -2)}Zh`;
+      if (!(zhKey in value) || value[zhKey] === '') bilingualGaps.push(`${location}.${key}/${zhKey}`);
+    } else if (key.endsWith('Zh')) {
+      const enKey = `${key.slice(0, -2)}En`;
+      if (!(enKey in value) || value[enKey] === '') bilingualGaps.push(`${location}.${enKey}/${key}`);
+    }
+  });
+  Object.entries(value).forEach(([key, child]) => findBilingualGaps(child, `${location}.${key}`));
+}
+bilingualFiles.forEach(file => findBilingualGaps(readJSON(file), file));
+assert(bilingualGaps.length === 0, `all JSON-backed EN/ZH fields are paired and non-empty (gaps: ${bilingualGaps.join(', ') || 'none'})`);
 // ─────────────────────────────────────────────────────────────────────────────
 // Summary
 // ─────────────────────────────────────────────────────────────────────────────

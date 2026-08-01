@@ -9,10 +9,10 @@
 
 function _formatHourLabel(hour24) {
   const normalizedHour = ((hour24 % 24) + 24) % 24;
-  if (normalizedHour === 0) return '12 AM';
-  if (normalizedHour === 12) return '12 PM';
-  if (normalizedHour < 12) return `${normalizedHour} AM`;
-  return `${normalizedHour - 12} PM`;
+  const date = new Date(2000, 0, 1, normalizedHour, 0, 0, 0);
+  return new Intl.DateTimeFormat(I18N.getLang() === 'zh' ? 'zh-CN' : 'en-US', {
+    hour: 'numeric'
+  }).format(date);
 }
 
 function _overlap(aStart, aEnd, bStart, bEnd) {
@@ -122,9 +122,11 @@ function buildHybridAvailabilityItems(hourlyStatuses) {
 function _formatRangeEndLabel(hour24) {
   const endHour = ((hour24 % 24) + 24) % 24;
   const previousHour = (endHour + 23) % 24;
-  const isAfternoon = previousHour >= 12;
-  const hour12 = previousHour === 0 ? 12 : previousHour > 12 ? previousHour - 12 : previousHour;
-  return `${hour12}:59 ${isAfternoon ? 'PM' : 'AM'}`;
+  const date = new Date(2000, 0, 1, previousHour, 59, 0, 0);
+  return new Intl.DateTimeFormat(I18N.getLang() === 'zh' ? 'zh-CN' : 'en-US', {
+    hour: 'numeric',
+    minute: '2-digit'
+  }).format(date);
 }
 
 function renderHybridAvailability(container, items) {
@@ -146,7 +148,7 @@ function renderHybridAvailability(container, items) {
     } else {
       element.classList.add('availability-slot--booked-range');
       label.textContent = `${_formatHourLabel(item.start)} – ${_formatRangeEndLabel(item.end)} · ${I18N.t('availability.booked', 'Booked')}`;
-      element.setAttribute('aria-label', `${_formatHourLabel(item.start)} to ${_formatRangeEndLabel(item.end)} ${I18N.t('availability.booked', 'Booked')}`);
+      element.setAttribute('aria-label', label.textContent);
     }
 
     element.appendChild(label);
@@ -450,7 +452,11 @@ async function captureAvailabilityScreenshot() {
     const file = new File([blob], 'availability-screenshot.png', { type: 'image/png' });
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      await navigator.share({ files: [file], title: 'Availability screenshot', text: 'Save this availability screenshot to Photos.' });
+      await navigator.share({
+        files: [file],
+        title: I18N.t('availability.share_title', 'Availability screenshot'),
+        text: I18N.t('availability.share_text', 'Save this availability screenshot to Photos.')
+      });
       return;
     }
 
@@ -479,6 +485,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (filterButton) filterButton.addEventListener('click', applyAvailabilityFilter);
   if (resetButton) resetButton.addEventListener('click', resetAvailabilityFilter);
   if (screenshotButton) screenshotButton.addEventListener('click', captureAvailabilityScreenshot);
+});
+
+document.addEventListener('langchange', () => {
+  const state = window.__SNOWY_AVAILABILITY;
+  if (!state) return;
+  const inputs = _getAvailabilityInputs();
+  const startDate = _normalizeDate(inputs.start?.value ? `${inputs.start.value}T00:00:00` : null);
+  const endDate = _normalizeDate(inputs.end?.value ? `${inputs.end.value}T00:00:00` : null);
+  renderAvailabilityGrid(state.containerId, state.busy, state.openH, state.closeH, state.days, startDate, endDate, false);
 });
 
 window.loadAvailability = loadAvailability;
