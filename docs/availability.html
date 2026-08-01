@@ -18,6 +18,21 @@
     </div>
     <section class="section">
       <div class="container">
+        <div class="availability-controls">
+          <label class="availability-control-label">
+            Start date
+            <input type="date" id="availability-start-date" aria-label="Start date">
+          </label>
+          <label class="availability-control-label">
+            End date
+            <input type="date" id="availability-end-date" aria-label="End date">
+          </label>
+          <div class="availability-controls-actions">
+            <button id="availability-filter-button" type="button">Filter</button>
+            <button id="availability-reset-button" type="button">Reset</button>
+            <button id="availability-screenshot-button" type="button">Save screenshot</button>
+          </div>
+        </div>
         <div id="availability-grid"></div>
       </div>
     </section>

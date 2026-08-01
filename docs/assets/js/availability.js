@@ -150,6 +150,105 @@ function renderHybridAvailability(container, items) {
   });
 }
 
+function _normalizeDate(value) {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+function _isDateInRange(date, startDate, endDate) {
+  if (!startDate && !endDate) return true;
+  const time = date.getTime();
+  if (startDate && time < startDate.getTime()) return false;
+  if (endDate && time > endDate.getTime()) return false;
+  return true;
+}
+
+function _canvasToBlob(canvas) {
+  return new Promise((resolve) => canvas.toBlob(resolve));
+}
+
+function renderAvailabilityGrid(containerId, busy, openH, closeH, days, startDate, endDate, autoScroll = true) {
+  const wrap = document.getElementById(containerId);
+  if (!wrap) return;
+
+  wrap.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div></div>`;
+
+  const grid = document.createElement('div');
+  grid.className = 'availability-grid';
+
+  const heading = document.createElement('div');
+  heading.className = 'availability-heading';
+  const hTitle = document.createElement('h3');
+  hTitle.textContent = I18N.t('availability.hours_heading', I18N.t('contact.hours_heading', 'Business Hours'));
+  heading.appendChild(hTitle);
+  grid.appendChild(heading);
+
+  const now = new Date();
+  const normalizedStart = _normalizeDate(startDate);
+  const normalizedEnd = _normalizeDate(endDate);
+  let renderedCount = 0;
+
+  for (let d = 1; d <= days; d++) {
+    const dayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
+
+    if (!_isDateInRange(dayDate, normalizedStart, normalizedEnd)) {
+      continue;
+    }
+
+    const dayCard = document.createElement('div');
+    dayCard.className = 'availability-day';
+
+    const dayLabel = document.createElement('div');
+    dayLabel.className = 'availability-day-label';
+    dayLabel.textContent = dayDate.toLocaleDateString(I18N.getLang() === 'zh' ? 'zh-CN' : 'en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    });
+    dayCard.appendChild(dayLabel);
+
+    const slots = document.createElement('div');
+    slots.className = 'availability-slots';
+
+    const hourlyStatuses = getHourlyStatuses(dayDate, busy, openH, closeH);
+    const displayItems = buildHybridAvailabilityItems(hourlyStatuses);
+    const hasAvailableSlots = displayItems.some((item) => item.type === 'available');
+
+    if (hasAvailableSlots) {
+      renderHybridAvailability(slots, displayItems);
+    } else {
+      const fullyBooked = document.createElement('div');
+      fullyBooked.className = 'availability-fully-booked';
+      fullyBooked.textContent = I18N.t('availability.fully_booked', 'Fully Booked');
+      slots.appendChild(fullyBooked);
+    }
+
+    dayCard.appendChild(slots);
+    grid.appendChild(dayCard);
+    renderedCount += 1;
+  }
+
+  wrap.innerHTML = '';
+
+  if (renderedCount === 0) {
+    const emptyState = document.createElement('div');
+    emptyState.className = 'availability-no-results';
+    emptyState.textContent = I18N.t('availability.no_range_results', 'No availability matches your selected date range.');
+    wrap.appendChild(emptyState);
+    return;
+  }
+
+  wrap.appendChild(grid);
+
+  if (autoScroll !== false) {
+    const firstDay = wrap.querySelector('.availability-day');
+    if (firstDay) firstDay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
 async function loadAvailability(containerId, opts = {}) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
@@ -173,58 +272,8 @@ async function loadAvailability(containerId, opts = {}) {
     const busy = Array.isArray(av.busy) ? av.busy.map((b) => ({ start: new Date(b.start), end: new Date(b.end) })) : [];
     const days = opts.days || (containerId.includes('preview') ? 3 : 14);
 
-    const grid = document.createElement('div');
-    grid.className = 'availability-grid';
-
-    const heading = document.createElement('div');
-    heading.className = 'availability-heading';
-    const hTitle = document.createElement('h3');
-    hTitle.textContent = I18N.t('availability.hours_heading', I18N.t('contact.hours_heading', 'Business Hours'));
-    heading.appendChild(hTitle);
-    grid.appendChild(heading);
-
-    const now = new Date();
-    for (let d = 1; d <= days; d++) {
-      const dayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + d);
-      const dayCard = document.createElement('div');
-      dayCard.className = 'availability-day';
-
-      const dayLabel = document.createElement('div');
-      dayLabel.className = 'availability-day-label';
-      dayLabel.textContent = dayDate.toLocaleDateString(I18N.getLang() === 'zh' ? 'zh-CN' : 'en-US', {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric'
-      });
-      dayCard.appendChild(dayLabel);
-
-      const slots = document.createElement('div');
-      slots.className = 'availability-slots';
-
-      const hourlyStatuses = getHourlyStatuses(dayDate, busy, openH, closeH);
-      const displayItems = buildHybridAvailabilityItems(hourlyStatuses);
-      const hasAvailableSlots = displayItems.some((item) => item.type === 'available');
-
-      if (hasAvailableSlots) {
-        renderHybridAvailability(slots, displayItems);
-      } else {
-        const fullyBooked = document.createElement('div');
-        fullyBooked.className = 'availability-fully-booked';
-        fullyBooked.textContent = I18N.t('availability.fully_booked', 'Fully Booked');
-        slots.appendChild(fullyBooked);
-      }
-
-      dayCard.appendChild(slots);
-      grid.appendChild(dayCard);
-    }
-
-    wrap.innerHTML = '';
-    wrap.appendChild(grid);
-
-    if (opts.autoScroll !== false) {
-      const firstDay = wrap.querySelector('.availability-day');
-      if (firstDay) firstDay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    window.__SNOWY_AVAILABILITY = { busy, openH, closeH, days, containerId };
+    renderAvailabilityGrid(containerId, busy, openH, closeH, days, opts.startDate || null, opts.endDate || null, opts.autoScroll);
   } catch (e) {
     const errorHeading = I18N.t('availability.unavailable_heading', 'Live availability is temporarily unavailable.');
     const errorMessage = I18N.t('availability.unavailable_description', 'Please contact Snowy Nail Studio to confirm your appointment time.');
@@ -232,5 +281,173 @@ async function loadAvailability(containerId, opts = {}) {
     console.error('loadAvailability error:', e);
   }
 }
+
+function _getAvailabilityInputs() {
+  return {
+    start: document.getElementById('availability-start-date'),
+    end: document.getElementById('availability-end-date')
+  };
+}
+
+function applyAvailabilityFilter() {
+  const state = window.__SNOWY_AVAILABILITY;
+  if (!state) return;
+
+  const inputs = _getAvailabilityInputs();
+  let startDate = _normalizeDate(inputs.start?.value ? `${inputs.start.value}T00:00:00` : null);
+  let endDate = _normalizeDate(inputs.end?.value ? `${inputs.end.value}T00:00:00` : null);
+
+  if (startDate && endDate && startDate > endDate) {
+    [startDate, endDate] = [endDate, startDate];
+  }
+
+  renderAvailabilityGrid(state.containerId, state.busy, state.openH, state.closeH, state.days, startDate, endDate, true);
+}
+
+function resetAvailabilityFilter() {
+  const inputs = _getAvailabilityInputs();
+  if (inputs.start) inputs.start.value = '';
+  if (inputs.end) inputs.end.value = '';
+
+  const state = window.__SNOWY_AVAILABILITY;
+  if (state) {
+    renderAvailabilityGrid(state.containerId, state.busy, state.openH, state.closeH, state.days, null, null, true);
+  }
+}
+
+async function _loadHtml2Canvas() {
+  if (window.html2canvas) return;
+  if (document.getElementById('html2canvas-script')) return;
+
+  const script = document.createElement('script');
+  script.id = 'html2canvas-script';
+  script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  script.crossOrigin = 'anonymous';
+  document.body.appendChild(script);
+
+  await new Promise((resolve, reject) => {
+    script.onload = resolve;
+    script.onerror = () => reject(new Error('Unable to load screenshot helper')); 
+  });
+}
+
+async function captureAvailabilityScreenshot() {
+  const state = window.__SNOWY_AVAILABILITY;
+  const grid = document.querySelector('.availability-grid');
+  const nav = document.querySelector('nav');
+  if (!state || !grid || !nav) return;
+
+  try {
+    await _loadHtml2Canvas();
+
+    const screenshotBox = document.createElement('div');
+    screenshotBox.className = 'availability-screenshot-wrapper';
+    screenshotBox.style.position = 'absolute';
+    screenshotBox.style.left = '-9999px';
+    screenshotBox.style.top = '0';
+    screenshotBox.style.backgroundColor = '#ffffff';
+    screenshotBox.style.padding = '16px';
+    screenshotBox.style.borderRadius = '18px';
+    screenshotBox.style.boxSizing = 'border-box';
+    screenshotBox.style.maxWidth = `${Math.min(document.body.offsetWidth, 1100)}px`;
+    screenshotBox.style.width = '100%';
+
+    const banner = document.createElement('div');
+    banner.className = 'availability-screenshot-url';
+    banner.textContent = window.location.origin + window.location.pathname;
+    screenshotBox.appendChild(banner);
+
+    const menuBar = document.createElement('div');
+    menuBar.style.display = 'flex';
+    menuBar.style.flexWrap = 'wrap';
+    menuBar.style.alignItems = 'center';
+    menuBar.style.justifyContent = 'center';
+    menuBar.style.gap = '12px';
+    menuBar.style.padding = '16px 0';
+    menuBar.style.borderBottom = '1px solid rgba(0,0,0,0.08)';
+    menuBar.style.textAlign = 'center';
+
+    const logoText = nav.querySelector('.nav-logo .nav-logo-name')?.textContent?.trim() || window.location.hostname;
+    const logo = document.createElement('div');
+    logo.textContent = logoText;
+    logo.style.fontWeight = '700';
+    logo.style.color = '#6f4152';
+    logo.style.fontSize = '0.95rem';
+    logo.style.letterSpacing = '0.02em';
+    logo.style.lineHeight = '1.4';
+    menuBar.appendChild(logo);
+
+    const linksWrapper = document.createElement('div');
+    linksWrapper.style.display = 'flex';
+    linksWrapper.style.flexWrap = 'wrap';
+    linksWrapper.style.justifyContent = 'center';
+    linksWrapper.style.gap = '10px';
+
+    nav.querySelectorAll('.nav-link').forEach((link) => {
+      const item = document.createElement('span');
+      item.textContent = link.textContent.trim();
+      item.style.padding = '8px 14px';
+      item.style.borderRadius = '999px';
+      item.style.background = '#f7eef4';
+      item.style.color = '#7c4b56';
+      item.style.fontSize = '0.85rem';
+      item.style.fontWeight = '600';
+      item.style.whiteSpace = 'nowrap';
+      linksWrapper.appendChild(item);
+    });
+
+    menuBar.appendChild(linksWrapper);
+    screenshotBox.appendChild(menuBar);
+
+    const gridClone = grid.cloneNode(true);
+    screenshotBox.appendChild(gridClone);
+
+    document.body.appendChild(screenshotBox);
+
+    const canvas = await window.html2canvas(screenshotBox, {
+      backgroundColor: '#ffffff',
+      scale: window.devicePixelRatio || 2,
+      useCORS: true,
+      allowTaint: true
+    });
+
+    screenshotBox.remove();
+
+    const blob = await _canvasToBlob(canvas);
+    if (!blob) throw new Error('Screenshot blob generation failed');
+
+    const file = new File([blob], 'availability-screenshot.png', { type: 'image/png' });
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Availability screenshot', text: 'Save this availability screenshot to Photos.' });
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'availability-screenshot.png';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 10000);
+  } catch (e) {
+    console.error('captureAvailabilityScreenshot error:', e);
+    alert(I18N.t('availability.screenshot_error', 'Unable to capture screenshot. Please use your device screenshot function.'));
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const filterButton = document.getElementById('availability-filter-button');
+  const resetButton = document.getElementById('availability-reset-button');
+  const screenshotButton = document.getElementById('availability-screenshot-button');
+
+  if (filterButton) filterButton.addEventListener('click', applyAvailabilityFilter);
+  if (resetButton) resetButton.addEventListener('click', resetAvailabilityFilter);
+  if (screenshotButton) screenshotButton.addEventListener('click', captureAvailabilityScreenshot);
+});
 
 window.loadAvailability = loadAvailability;

@@ -3,13 +3,24 @@
 .availability-day { border: 1px solid var(--clr-border, #eee); padding: 14px; border-radius: 10px; background: var(--clr-surface, #fff); }
 .availability-day-label { font-weight: 600; margin-bottom: 10px; }
 .availability-slots { display: flex; flex-wrap: wrap; gap: 8px; }
-.availability-slot { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1.2; white-space: nowrap; }
+.availability-slot { display: inline-flex; align-items: center; justify-content: center; min-height: 36px; padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; line-height: 1; white-space: nowrap; }
 .availability-slot--available { min-width: 50px; background: #dcefe0; color: #245c35; }
 .availability-slot--available-muted { min-width: 50px; background: #f4f4f4; color: #6f6f6f; border: 1px solid rgba(0, 0, 0, 0.06); }
-.availability-slot--booked-range { background: #f5dadd; color: #8b3041; padding-left: 14px; padding-right: 14px; }
+.availability-slot--booked-range { background: #f5dadd; color: #8b3041; padding-left: 14px; padding-right: 14px; line-height: 1; }
 .availability-fully-booked { font-weight: 700; color: #8b3041; }
 .availability-heading { margin-bottom: 16px; }
 .error-state { padding: 18px; border: 1px solid rgba(181, 91, 107, 0.2); border-radius: 10px; background: #fff0f2; color: #6f2f40; }
+.availability-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 20px; }
+.availability-control-label { display: flex; flex-direction: column; font-size: 0.9rem; color: #4f4f4f; min-width: 160px; }
+.availability-control-label input { margin-top: 8px; border: 1px solid #dcdcdc; border-radius: 10px; padding: 10px 12px; background: #fff; font: inherit; color: #222; }
+.availability-controls-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.availability-controls-actions button { border: 1px solid #dcdcdc; border-radius: 10px; background: #fff; color: #222; padding: 10px 16px; font: inherit; cursor: pointer; transition: background 0.2s ease; }
+.availability-controls-actions button:hover { background: #f6f2f6; }
+.availability-screenshot-wrapper { border-radius: 18px; box-shadow: 0 18px 42px rgba(0, 0, 0, 0.08); }
+.availability-screenshot-url { font-size: 0.8rem; color: #5d5d5d; margin-bottom: 12px; text-align: center; letter-spacing: 0.02em; word-break: break-all; padding-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.availability-screenshot-nav { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.availability-screenshot-nav-item { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border-radius: 999px; background: #f7eef4; color: #7c4b56; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+.availability-no-results { padding: 18px; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; background: #fbfbfb; color: #454545; font-weight: 600; }
 .loading-state { min-height: 64px; display: flex; align-items: center; justify-content: center; }
 .loading-spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(0,0,0,0.1); border-top-color: var(--clr-primary, #c4788a); animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
