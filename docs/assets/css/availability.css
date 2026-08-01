@@ -10,14 +10,36 @@
 .availability-fully-booked { font-weight: 700; color: #8b3041; }
 .availability-heading { margin-bottom: 16px; }
 .error-state { padding: 18px; border: 1px solid rgba(181, 91, 107, 0.2); border-radius: 10px; background: #fff0f2; color: #6f2f40; }
-.availability-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 20px; }
-.availability-control-label { display: flex; flex-direction: column; font-size: 0.9rem; color: #4f4f4f; min-width: 160px; }
-.availability-control-label input { margin-top: 8px; border: 1px solid #dcdcdc; border-radius: 10px; padding: 10px 12px; background: #fff; font: inherit; color: #222; }
-.availability-controls-actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.availability-controls-actions button { border: 1px solid #dcdcdc; border-radius: 10px; background: #fff; color: #222; padding: 10px 16px; font: inherit; cursor: pointer; transition: background 0.2s ease; }
+.availability-controls { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: flex-start; margin-bottom: 20px; }
+.availability-control-label { display: flex; flex-direction: row; align-items: center; gap: 8px; font-size: 0.95rem; color: #4f4f4f; min-width: 0; }
+.availability-control-label input { margin: 0; border: 1px solid #dcdcdc; border-radius: 8px; padding: 8px 10px; background: #fff; font: inherit; color: #222; height: 38px; min-width: 160px; }
+.availability-controls-actions { display: flex; gap: 10px; align-items: center; }
+.availability-controls-actions button { border: 1px solid #dcdcdc; border-radius: 10px; background: #fff; color: #222; padding: 8px 14px; font: inherit; cursor: pointer; transition: background 0.2s ease; height: 38px; }
 .availability-controls-actions button:hover { background: #f6f2f6; }
 .availability-screenshot-wrapper { border-radius: 18px; box-shadow: 0 18px 42px rgba(0, 0, 0, 0.08); }
 .availability-screenshot-url { font-size: 0.8rem; color: #5d5d5d; margin-bottom: 12px; text-align: center; letter-spacing: 0.02em; word-break: break-all; padding-bottom: 12px; border-bottom: 1px solid rgba(0,0,0,0.08); }
+.availability-screenshot-wrapper .availability-slot,
+.availability-screenshot-wrapper .availability-slot--booked-range {
+	display: inline-flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+	min-height: 36px !important;
+	height: 36px !important;
+	padding: 0 12px !important;
+	box-sizing: border-box !important;
+	/* enforce exact vertical centering in rasterized screenshots */
+	line-height: 36px !important;
+}
+.availability-screenshot-wrapper .availability-slot--booked-range { padding-left: 14px !important; padding-right: 14px !important; }
+
+/* Inner label to make vertical centering consistent across renderers */
+.availability-slot-label { display: inline-block; vertical-align: middle; line-height: 1; margin: 0; padding: 0; }
+.availability-screenshot-wrapper .availability-slot-label { line-height: 1; }
+
+/* Use flex alignment on the inner label for pixel-perfect centering in rasterized screenshots */
+.availability-screenshot-wrapper .availability-slot-label { display: flex !important; align-items: center !important; justify-content: center !important; height: 36px !important; padding: 0 !important; margin: 0 !important; box-sizing: border-box !important; }
+/* tiny upward nudge to counter font-metric rendering differences in canvas rasterization */
+.availability-screenshot-wrapper .availability-slot-label { transform: translateY(-1px) !important; }
 .availability-screenshot-nav { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 10px; padding: 14px 0; border-bottom: 1px solid rgba(0,0,0,0.08); }
 .availability-screenshot-nav-item { display: inline-flex; align-items: center; justify-content: center; padding: 8px 14px; border-radius: 999px; background: #f7eef4; color: #7c4b56; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
 .availability-no-results { padding: 18px; border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; background: #fbfbfb; color: #454545; font-weight: 600; }

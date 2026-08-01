@@ -136,15 +136,20 @@ function renderHybridAvailability(container, items) {
     const element = document.createElement('span');
     element.className = 'availability-slot';
 
+    const label = document.createElement('span');
+    label.className = 'availability-slot-label';
+
     if (item.type === 'available') {
       element.classList.add('availability-slot--available');
-      element.textContent = _formatHourLabel(item.hour);
+      label.textContent = _formatHourLabel(item.hour);
       element.setAttribute('aria-label', `${_formatHourLabel(item.hour)} ${I18N.t('availability.available', 'Available')}`);
     } else {
       element.classList.add('availability-slot--booked-range');
-      element.textContent = `${_formatHourLabel(item.start)} – ${_formatRangeEndLabel(item.end)} · ${I18N.t('availability.booked', 'Booked')}`;
+      label.textContent = `${_formatHourLabel(item.start)} – ${_formatRangeEndLabel(item.end)} · ${I18N.t('availability.booked', 'Booked')}`;
       element.setAttribute('aria-label', `${_formatHourLabel(item.start)} to ${_formatRangeEndLabel(item.end)} ${I18N.t('availability.booked', 'Booked')}`);
     }
+
+    element.appendChild(label);
 
     container.appendChild(element);
   });
@@ -289,11 +294,21 @@ function _getAvailabilityInputs() {
   };
 }
 
-function applyAvailabilityFilter() {
-  const state = window.__SNOWY_AVAILABILITY;
-  if (!state) return;
-
+async function applyAvailabilityFilter() {
+  let state = window.__SNOWY_AVAILABILITY;
   const inputs = _getAvailabilityInputs();
+
+  // If availability data hasn't loaded yet, try to load it first.
+  if (!state) {
+    try {
+      await loadAvailability('availability-grid', { days: 60, autoScroll: false });
+      state = window.__SNOWY_AVAILABILITY;
+    } catch (e) {
+      console.warn('applyAvailabilityFilter: availability not ready', e);
+      return;
+    }
+  }
+
   let startDate = _normalizeDate(inputs.start?.value ? `${inputs.start.value}T00:00:00` : null);
   let endDate = _normalizeDate(inputs.end?.value ? `${inputs.end.value}T00:00:00` : null);
 
@@ -304,12 +319,22 @@ function applyAvailabilityFilter() {
   renderAvailabilityGrid(state.containerId, state.busy, state.openH, state.closeH, state.days, startDate, endDate, true);
 }
 
-function resetAvailabilityFilter() {
+async function resetAvailabilityFilter() {
   const inputs = _getAvailabilityInputs();
   if (inputs.start) inputs.start.value = '';
   if (inputs.end) inputs.end.value = '';
 
-  const state = window.__SNOWY_AVAILABILITY;
+  let state = window.__SNOWY_AVAILABILITY;
+  if (!state) {
+    try {
+      await loadAvailability('availability-grid', { days: 60, autoScroll: false });
+      state = window.__SNOWY_AVAILABILITY;
+    } catch (e) {
+      console.warn('resetAvailabilityFilter: availability not ready', e);
+      return;
+    }
+  }
+
   if (state) {
     renderAvailabilityGrid(state.containerId, state.busy, state.openH, state.closeH, state.days, null, null, true);
   }
@@ -334,8 +359,7 @@ async function _loadHtml2Canvas() {
 async function captureAvailabilityScreenshot() {
   const state = window.__SNOWY_AVAILABILITY;
   const grid = document.querySelector('.availability-grid');
-  const nav = document.querySelector('nav');
-  if (!state || !grid || !nav) return;
+  if (!state || !grid) return;
 
   try {
     await _loadHtml2Canvas();
@@ -367,7 +391,8 @@ async function captureAvailabilityScreenshot() {
     menuBar.style.borderBottom = '1px solid rgba(0,0,0,0.08)';
     menuBar.style.textAlign = 'center';
 
-    const logoText = nav.querySelector('.nav-logo .nav-logo-name')?.textContent?.trim() || window.location.hostname;
+    const nav = document.querySelector('nav');
+    const logoText = (nav && nav.querySelector('.nav-logo .nav-logo-name')?.textContent?.trim()) || window.location.hostname;
     const logo = document.createElement('div');
     logo.textContent = logoText;
     logo.style.fontWeight = '700';
@@ -383,18 +408,24 @@ async function captureAvailabilityScreenshot() {
     linksWrapper.style.justifyContent = 'center';
     linksWrapper.style.gap = '10px';
 
-    nav.querySelectorAll('.nav-link').forEach((link) => {
-      const item = document.createElement('span');
-      item.textContent = link.textContent.trim();
-      item.style.padding = '8px 14px';
-      item.style.borderRadius = '999px';
-      item.style.background = '#f7eef4';
-      item.style.color = '#7c4b56';
-      item.style.fontSize = '0.85rem';
-      item.style.fontWeight = '600';
-      item.style.whiteSpace = 'nowrap';
-      linksWrapper.appendChild(item);
-    });
+    // Prefer primary nav links inside `#site-nav .nav-links` to avoid duplicates
+    const navLinks = document.querySelectorAll('#site-nav .nav-links .nav-link');
+    if (navLinks && navLinks.length) {
+      navLinks.forEach((link) => {
+        const item = document.createElement('span');
+        item.className = 'availability-screenshot-nav-item';
+        item.textContent = link.textContent.trim();
+        linksWrapper.appendChild(item);
+      });
+    } else {
+      // Fallback static menu if nav links are not present yet
+      ['Home','Gallery','Services','Studio','Availability','About','Contact','Nail Care'].forEach((t) => {
+        const item = document.createElement('span');
+        item.className = 'availability-screenshot-nav-item';
+        item.textContent = t;
+        linksWrapper.appendChild(item);
+      });
+    }
 
     menuBar.appendChild(linksWrapper);
     screenshotBox.appendChild(menuBar);
