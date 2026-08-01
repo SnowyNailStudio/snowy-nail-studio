@@ -51,82 +51,90 @@
   .availability-controls {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
-    margin-bottom: 14px;
+    gap: 8px;
+    margin-bottom: 12px;
   }
 
   .availability-control-label {
     flex-direction: column;
     align-items: flex-start;
-    gap: 6px;
-    font-size: 0.9rem;
+    gap: 4px;
+    font-size: 0.88rem;
   }
 
   .availability-control-label input {
     width: 100%;
     min-width: 0;
-    height: 36px;
-    padding: 7px 10px;
+    height: 34px;
+    padding: 6px 8px;
   }
 
   .availability-controls-actions {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
+    gap: 6px;
   }
 
   .availability-controls-actions button {
     width: 100%;
     height: auto;
-    min-height: 38px;
-    padding: 8px 10px;
-    font-size: 0.85rem;
+    min-height: 34px;
+    padding: 6px 8px;
+    font-size: 0.8rem;
   }
 
   .availability-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    display: flex !important;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .availability-heading {
+    margin-bottom: 8px;
   }
 
   .availability-day {
     padding: 10px;
     border-radius: 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .availability-day-label {
-    margin-bottom: 8px;
-    font-size: 0.9rem;
+    margin-bottom: 6px;
+    font-size: 0.88rem;
   }
 
   .availability-slots {
-    gap: 6px;
+    gap: 5px;
   }
 
   .availability-slot {
-    min-height: 26px;
-    padding: 6px 8px;
-    font-size: 0.78rem;
+    min-height: 24px;
+    padding: 5px 7px;
+    font-size: 0.74rem;
+    border-radius: 6px;
   }
 
   .availability-slot--available,
   .availability-slot--available-muted {
-    min-width: 38px;
+    min-width: 34px;
   }
 
   .availability-slot--booked-range {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .availability-screenshot-wrapper .availability-slot,
   .availability-screenshot-wrapper .availability-slot--booked-range {
-    min-height: 28px !important;
-    height: 28px !important;
-    padding: 0 8px !important;
-    line-height: 28px !important;
+    min-height: 24px !important;
+    height: 24px !important;
+    padding: 0 7px !important;
+    line-height: 24px !important;
   }
 
   .availability-screenshot-wrapper .availability-slot-label {
-    height: 28px !important;
+    height: 24px !important;
   }
 }
