@@ -476,6 +476,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const resetButton = document.getElementById('availability-reset-button');
   const screenshotButton = document.getElementById('availability-screenshot-button');
 
+  // Ensure date inputs have sensible min/max so mobile date pickers (iOS) show a usable range
+  (function setDateInputLimits() {
+    try {
+      const start = document.getElementById('availability-start-date');
+      const end = document.getElementById('availability-end-date');
+      if (!start || !end) return;
+      const today = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      const toISODate = (d) => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+      const minDate = toISODate(today);
+      const maxDateObj = new Date(today.getTime());
+      maxDateObj.setDate(maxDateObj.getDate() + 365);
+      const maxDate = toISODate(maxDateObj);
+      start.min = minDate;
+      end.min = minDate;
+      start.max = maxDate;
+      end.max = maxDate;
+    } catch (e) {
+      // noop
+    }
+  })();
+
   if (filterButton) filterButton.addEventListener('click', applyAvailabilityFilter);
   if (resetButton) resetButton.addEventListener('click', resetAvailabilityFilter);
   if (screenshotButton) screenshotButton.addEventListener('click', captureAvailabilityScreenshot);
