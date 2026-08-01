@@ -13,3 +13,5 @@ npm-debug.log*
 # Gallery staging (raw uploads — keep .gitkeep)
 content/gallery/*
 !content/gallery/.gitkeep
+!content/gallery/original-uploads/
+!content/gallery/original-uploads/*

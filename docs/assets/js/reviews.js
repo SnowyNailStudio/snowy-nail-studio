@@ -46,7 +46,7 @@ async function loadReviews(targetId, featuredOnly) {
 /* ─── Render ───────────────────────────────────────────────── */
 function _renderReviews(container, items, featuredOnly) {
   if (!items.length) {
-    container.innerHTML = '<p style="text-align:center;color:var(--clr-text-muted);padding:2rem;">No reviews yet.</p>';
+    container.innerHTML = `<p style="text-align:center;color:var(--clr-text-muted);padding:2rem;">${escapeHtml(I18N.t('about.no_reviews', 'No reviews yet.'))}</p>`;
     return;
   }
 
@@ -57,12 +57,12 @@ function _renderReviews(container, items, featuredOnly) {
   const cardsHTML = pageItems.map(_buildReviewCard).join('');
   const paginationHTML = totalPages > 1
     ? `<div class="review-pagination" style="grid-column:1/-1">
-        <button class="review-page-btn" type="button" data-review-page="${_reviewPage - 1}" ${_reviewPage === 1 ? 'disabled' : ''} aria-label="Previous page">←</button>
+        <button class="review-page-btn" type="button" data-review-page="${_reviewPage - 1}" ${_reviewPage === 1 ? 'disabled' : ''} aria-label="${escapeAttr(I18N.t('about.previous_page', 'Previous page'))}">←</button>
         ${Array.from({ length: totalPages }, (_, index) => {
             const pageNum = index + 1;
             return `<button class="review-page-btn${pageNum === _reviewPage ? ' active' : ''}" type="button" data-review-page="${pageNum}">${pageNum}</button>`;
           }).join('')}
-        <button class="review-page-btn" type="button" data-review-page="${_reviewPage + 1}" ${_reviewPage === totalPages ? 'disabled' : ''} aria-label="Next page">→</button>
+        <button class="review-page-btn" type="button" data-review-page="${_reviewPage + 1}" ${_reviewPage === totalPages ? 'disabled' : ''} aria-label="${escapeAttr(I18N.t('about.next_page', 'Next page'))}">→</button>
       </div>`
     : '';
 
@@ -89,10 +89,11 @@ function _buildTextCard(review) {
     ? (review.quoteZh || review.quoteEn || '')
     : (review.quoteEn || review.quoteZh || '');
   const stars  = '★'.repeat(Math.min(5, Math.max(1, review.rating || 5)));
+  const starsLabel = I18N.t('about.stars_label', '{rating} stars').replace('{rating}', String(review.rating || 5));
   const initial = (review.displayName || 'C')[0].toUpperCase();
   const source  = review.source || '小红书';
   return `<div class="review-card review-card--text">
-    <div class="review-stars" aria-label="${review.rating || 5} stars">${escapeHtml(stars)}</div>
+    <div class="review-stars" aria-label="${escapeAttr(starsLabel)}">${escapeHtml(stars)}</div>
     <p class="review-quote">${escapeHtml(quote)}</p>
     <div class="review-meta">
       <div class="review-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
@@ -109,24 +110,24 @@ function _buildImageCard(review) {
   const quoteZh = review.quoteZh || '';
   const quoteEn = review.quoteEn || '';
   const orientation = review.orientation === 'portrait' ? 'portrait' : 'landscape';
-  const tlabel  = lang === 'zh'
-    ? I18N.t('about.screenshot_translation_label', '翻译：')
-    : 'Translation:';
+  const tlabel  = I18N.t('about.screenshot_translation_label', 'Translation:');
   const initial = (review.displayName || 'C')[0].toUpperCase();
   const source  = review.source || '小红书';
   const screenshotHTML = review.image
-    ? `<img src="${escapeAttr(review.image)}" alt="Customer review screenshot" loading="lazy"
+    ? `<img src="${escapeAttr(review.image)}" alt="${escapeAttr(I18N.t('about.customer_review_screenshot', 'Customer review screenshot'))}" loading="lazy"
            data-fallback-quote="${escapeAttr(quoteZh)}"
            onerror="window.snowyReviewFallback(this)">`
     : _buildMockXHS(quoteZh);
-  const zhBlock = quoteZh
-    ? `<p class="review-original-zh">"${escapeHtml(quoteZh)}"</p>` : '';
+  const translatedQuote = lang === 'zh' ? quoteZh : quoteEn;
+  const translationHTML = lang === 'zh'
+    ? `<p class="review-translation-en">"${escapeHtml(translatedQuote)}"</p>`
+    : `${quoteZh ? `<p class="review-original-zh">"${escapeHtml(quoteZh)}"</p>` : ''}
+      <div class="review-translation-label">${escapeHtml(tlabel)}</div>
+      <p class="review-translation-en">"${escapeHtml(translatedQuote)}"</p>`;
   return `<div class="review-card review-card--image review-card--image-${orientation}">
     <div class="review-screenshot">${screenshotHTML}</div>
     <div class="review-translation">
-      ${zhBlock}
-      <div class="review-translation-label">${escapeHtml(tlabel)}</div>
-      <p class="review-translation-en">"${escapeHtml(quoteEn)}"</p>
+      ${translationHTML}
       <div class="review-meta" style="margin-top:12px">
         <div class="review-avatar" aria-hidden="true">${escapeHtml(initial)}</div>
         <div>
@@ -210,14 +211,15 @@ async function loadPromotions(containerId) {
       const desc  = lang === 'zh' ? (promo.descriptionZh || promo.descriptionEn) : (promo.descriptionEn || '');
       const lblEn = I18N.t('services.view_en', 'English');
       const lblZh = I18N.t('services.view_zh', '中文');
+      const showZh = lang === 'zh';
       const enPanelId = `pp-en-${promo.id}`;
       const zhPanelId = `pp-zh-${promo.id}`;
       const enImg = promo.imageEn
-        ? `<img src="${escapeAttr(promo.imageEn)}" alt="${escapeAttr(title)} - English" loading="lazy"
+        ? `<img src="${escapeAttr(promo.imageEn)}" alt="${escapeAttr(promo.titleEn || title)} - English" loading="lazy"
                onerror="this.closest('.promo-poster-img').innerHTML='<div class=\\'promo-poster-mock\\'>${escapeAttr(I18N.t('common.mock_note'))}</div>'">`
         : `<div class="promo-poster-mock">${escapeHtml(I18N.t('common.mock_note', 'Replace with real image'))}</div>`;
       const zhImg = promo.imageZh
-        ? `<img src="${escapeAttr(promo.imageZh)}" alt="${escapeAttr(title)} - 中文" loading="lazy"
+        ? `<img src="${escapeAttr(promo.imageZh)}" alt="${escapeAttr(promo.titleZh || title)} - 中文" loading="lazy"
                onerror="this.closest('.promo-poster-img').innerHTML='<div class=\\'promo-poster-mock\\'>${escapeAttr(I18N.t('common.mock_note'))}</div>'">`
         : `<div class="promo-poster-mock">${escapeHtml(I18N.t('common.mock_note', 'Replace with real image'))}</div>`;
       const validUntil = promo.validUntil
@@ -227,13 +229,13 @@ async function loadPromotions(containerId) {
         <h3 class="promo-card-title">${escapeHtml(title)}</h3>
         <p class="promo-card-desc">${escapeHtml(desc)}</p>
         <div class="promo-lang-toggle">
-          <button class="promo-lang-btn active" data-lang="en"
+          <button class="promo-lang-btn${showZh ? '' : ' active'}" data-lang="en"
                   onclick="handlePromoLang(this,'en')">${escapeHtml(lblEn)}</button>
-          <button class="promo-lang-btn" data-lang="zh"
+          <button class="promo-lang-btn${showZh ? ' active' : ''}" data-lang="zh"
                   onclick="handlePromoLang(this,'zh')">${escapeHtml(lblZh)}</button>
         </div>
-        <div class="promo-poster-img" data-promo-panel="en" id="${escapeAttr(enPanelId)}">${enImg}</div>
-        <div class="promo-poster-img" data-promo-panel="zh" id="${escapeAttr(zhPanelId)}" style="display:none;">${zhImg}</div>
+        <div class="promo-poster-img" data-promo-panel="en" id="${escapeAttr(enPanelId)}"${showZh ? ' style="display:none;"' : ''}>${enImg}</div>
+        <div class="promo-poster-img" data-promo-panel="zh" id="${escapeAttr(zhPanelId)}"${showZh ? '' : ' style="display:none;"'}>${zhImg}</div>
         ${validUntil ? `<p class="promo-valid">${escapeHtml(validUntil)}</p>` : ''}
       </div>`;
     }).join('');
@@ -431,12 +433,6 @@ document.addEventListener('langchange', () => {
     loadSiteContacts('contact-methods-container');
   if (document.getElementById('business-hours-container'))
     loadBusinessHours('business-hours-container');
-  if (document.getElementById('availability-preview') || document.getElementById('availability-grid')) {
-    if (typeof loadAvailability === 'function') {
-      if (document.getElementById('availability-preview')) loadAvailability('availability-preview');
-      if (document.getElementById('availability-grid')) loadAvailability('availability-grid', { days: 60 });
-    }
-  }
   if (document.getElementById('reviews-grid'))
     loadReviews('reviews-grid', false);
   if (document.getElementById('home-reviews'))

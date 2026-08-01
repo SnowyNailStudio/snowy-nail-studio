@@ -10,9 +10,9 @@
 /* ─── Shared nav HTML ──────────────────────────────────────── */
 const NAV_HTML = `
 <a href="#main-content" class="skip-link" data-i18n="common.skip_nav">Skip to content</a>
-<nav class="site-nav" id="site-nav" role="navigation" aria-label="Main navigation">
+<nav class="site-nav" id="site-nav" role="navigation" aria-label="Main navigation" data-i18n-aria-label="common.main_navigation">
   <div class="container nav-inner">
-    <a href="index.html" class="nav-logo" aria-label="Snowy Nail Studio home">
+    <a href="index.html" class="nav-logo" aria-label="Snowy Nail Studio home" data-i18n-aria-label="common.home_link">
       <span class="nav-logo-name">Snowy Nail Studio</span>
       <span class="nav-logo-loc">Richmond Hill</span>
     </a>
@@ -28,16 +28,16 @@ const NAV_HTML = `
     </div>
     <div class="nav-actions">
       <button class="lang-btn" id="lang-toggle"
-              onclick="I18N.toggle()" aria-label="Switch language">中文</button>
+              onclick="I18N.toggle()" aria-label="Switch language" data-i18n-aria-label="common.switch_language">中文</button>
       <button class="hamburger" id="hamburger"
-              aria-label="Open menu" aria-expanded="false"
+              aria-label="Open menu" data-i18n-aria-label="common.open_menu" aria-expanded="false"
               aria-controls="nav-drawer">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 </nav>
-<div class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile navigation">
+<div class="nav-drawer" id="nav-drawer" role="dialog" aria-modal="true" aria-label="Mobile navigation" data-i18n-aria-label="common.mobile_navigation">
   <a href="index.html"     class="nav-link" data-i18n="nav.home">Home</a>
   <a href="gallery.html"   class="nav-link" data-i18n="nav.gallery">Gallery</a>
   <a href="services.html"  class="nav-link" data-i18n="nav.services">Services</a>
@@ -83,7 +83,7 @@ const FOOTER_HTML = `
     </div>
   </div>
 </footer>
-<button class="back-to-top" id="back-to-top" aria-label="Back to top">↑</button>
+<button class="back-to-top" id="back-to-top" aria-label="Back to top" data-i18n-aria-label="common.back_to_top">↑</button>
 `;
 /* ─── Helpers ──────────────────────────────────────────────── */
 function _getPageName() {
@@ -122,10 +122,17 @@ function _initNav() {
   onScroll();
   // Hamburger / mobile drawer
   if (hamburger && drawer) {
+    const updateMenuLabel = () => {
+      const isOpen = hamburger.classList.contains('open');
+      const key = isOpen ? 'common.close_menu' : 'common.open_menu';
+      hamburger.setAttribute('data-i18n-aria-label', key);
+      hamburger.setAttribute('aria-label', I18N.t(key, isOpen ? 'Close menu' : 'Open menu'));
+    };
     hamburger.addEventListener('click', () => {
       const open = hamburger.classList.toggle('open');
       drawer.classList.toggle('open', open);
       hamburger.setAttribute('aria-expanded', String(open));
+      updateMenuLabel();
     });
     // Close drawer on outside click or nav link click
     document.addEventListener('click', e => {
@@ -133,6 +140,7 @@ function _initNav() {
         hamburger.classList.remove('open');
         drawer.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
+        updateMenuLabel();
       }
     });
     drawer.querySelectorAll('a').forEach(a => {
@@ -140,8 +148,10 @@ function _initNav() {
         hamburger.classList.remove('open');
         drawer.classList.remove('open');
         hamburger.setAttribute('aria-expanded', 'false');
+        updateMenuLabel();
       });
     });
+    document.addEventListener('langchange', updateMenuLabel);
   }
   // Back to top
   if (backTop) {
@@ -201,6 +211,19 @@ function initPosterToggle() {
       if (target) target.classList.add('active');
     });
   });
+  syncPosterLanguage(I18N.getLang());
+}
+
+function syncPosterLanguage(lang) {
+  document.querySelectorAll('.poster-wrap').forEach(wrap => {
+    const panelId = lang === 'zh' ? 'poster-zh' : 'poster-en';
+    wrap.querySelectorAll('.poster-tab').forEach(tab => {
+      tab.classList.toggle('active', tab.getAttribute('data-panel') === panelId);
+    });
+    wrap.querySelectorAll('.poster-panel').forEach(panel => {
+      panel.classList.toggle('active', panel.id === panelId);
+    });
+  });
 }
 /* ─── Escape helpers (used by gallery.js / reviews.js) ──────── */
 function escapeHtml(str) {
@@ -243,4 +266,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   initFAQAccordion();
   initPosterToggle();
 });
-document.addEventListener('langchange', _updateCopyrightYear);
+document.addEventListener('langchange', event => {
+  _updateCopyrightYear();
+  syncPosterLanguage(event.detail.lang);
+});

@@ -72,12 +72,12 @@ startSection('SMOKE-03  translations.json');
 const t = readJSON('data/translations.json');
 assert('en' in t && 'zh' in t, 'has en + zh keys');
 const requiredGallery = [
-  'filter_all','filter_floral','filter_minimalist','filter_glam','filter_geometric',
-  'filter_kawaii','filter_ombre','filter_romantic','filter_colour',
+  'filter_all','filter_french','filter_cat-eye','filter_chrome','filter_ombre',
+  'filter_floral','filter_rhinestone','filter_marble','filter_hand-painted','filter_glitter','filter_colour',
   'filter_pink','filter_red','filter_nude','filter_white','filter_black',
   'filter_purple','filter_blue','filter_green','filter_gold',
   'filter_shape','filter_length','filter_finish',
-  'no_results','load_more','lightbox_close',
+  'no_results','lightbox_close','showing_count','page_label',
 ];
 requiredGallery.forEach(k => {
   assert(t.en.gallery[k] !== undefined, `en.gallery.${k}`);
@@ -93,8 +93,8 @@ assert(t.en.common.mock_note !== undefined, 'en.common.mock_note');
 startSection('SMOKE-04  gallery.json');
 const gal = readJSON('data/gallery.json');
 assert(Array.isArray(gal.items), 'items is array');
-assert(gal.items.length >= 10, `has >= 10 items (got ${gal.items.length})`);
-const requiredItemKeys = ['id','altEn','altZh','style','colour','shape','length','finish','service','featured','date'];
+assert(gal.items.length === 33, `has exactly 33 items (got ${gal.items.length})`);
+const requiredItemKeys = ['id','src','thumb','altEn','altZh','style','colour','shape','length','finish','service','featured','date'];
 gal.items.forEach((item, i) => {
   requiredItemKeys.forEach(k => {
     if (!(k in item)) assert(false, `item[${i}].${k} present`, `id=${item.id}`);
@@ -103,19 +103,20 @@ gal.items.forEach((item, i) => {
 assert(true, 'all item required keys present');
 const allStyles  = [...new Set(gal.items.flatMap(i => i.style || []))];
 const allColours = [...new Set(gal.items.flatMap(i => i.colour || []))];
-assert(allStyles.includes('romantic'),  `romantic style items exist (found: ${allStyles.join(', ')})`);
-assert(allColours.includes('gold'),     `gold colour items exist (found: ${allColours.join(', ')})`);
+const approvedStyles = ['french','cat-eye','chrome','ombre','floral','rhinestone','marble','hand-painted','glitter'];
+assert(allStyles.every(style => approvedStyles.includes(style)), `only approved styles are used (found: ${allStyles.join(', ')})`);
+assert(gal.items.some(i => Array.isArray(i.style) && i.style.length === 0), 'empty style arrays are supported');
 assert(gal.items.some(i => i.featured), 'at least one featured item');
+const featuredGalleryItems = gal.items.filter(i => i.featured);
+const featuredOrders = featuredGalleryItems.map(i => i['featured-order']);
+assert(featuredGalleryItems.length <= 4, `at most four featured gallery items (got ${featuredGalleryItems.length})`);
+assert(featuredOrders.every(Number.isInteger), 'all featured gallery items have an integer featured-order');
+assert(new Set(featuredOrders).size === featuredOrders.length, 'featured-order values are unique');
 // Each style value used in data has a translation key in both languages
 allStyles.forEach(s => {
   const key = `filter_${s}`;
   assert(t.en.gallery[key] !== undefined, `en.gallery translation key exists for style "${s}"`);
   assert(t.zh.gallery[key] !== undefined, `zh.gallery translation key exists for style "${s}"`);
-});
-allColours.forEach(c => {
-  const key = `filter_${c}`;
-  assert(t.en.gallery[key] !== undefined, `en.gallery translation key exists for colour "${c}"`);
-  assert(t.zh.gallery[key] !== undefined, `zh.gallery translation key exists for colour "${c}"`);
 });
 // ─────────────────────────────────────────────────────────────────────────────
 // SMOKE-05  faq.json structure
@@ -251,7 +252,7 @@ function applyFilters(items, activeFilters) {
   return items.filter(item => {
     for (const [group, value] of Object.entries(activeFilters)) {
       switch (group) {
-        case 'service': if (item.service !== value) return false; break;
+        case 'service': if (value === 'manicure' ? !['manicure','extensions'].includes(item.service) : item.service !== value) return false; break;
         case 'style':   if (!item.style  || !item.style.includes(value))  return false; break;
         case 'colour':  if (!item.colour || !item.colour.includes(value)) return false; break;
         case 'shape':   if (item.shape  !== value) return false; break;
@@ -271,12 +272,10 @@ assert(pinkItems.length > 0, `colour:pink → at least one result`);
 assert(pinkItems.every(i => i.colour.includes('pink')), 'colour:pink → all results have pink');
 const manItems = applyFilters(items, { service: 'manicure' });
 assert(manItems.length > 0, 'service:manicure → at least one result');
-assert(manItems.every(i => i.service === 'manicure'), 'service:manicure → all results correct');
-const romanticItems = applyFilters(items, { style: 'romantic' });
-assert(romanticItems.length > 0, `style:romantic → at least one result (got ${romanticItems.length})`);
-assert(romanticItems.every(i => i.style.includes('romantic')), 'style:romantic → all results correct');
-const goldItems = applyFilters(items, { colour: 'gold' });
-assert(goldItems.length > 0, `colour:gold → at least one result (got ${goldItems.length})`);
+assert(manItems.every(i => ['manicure','extensions'].includes(i.service)), 'service:manicure → manicure and extensions results correct');
+const chromeItems = applyFilters(items, { style: 'chrome' });
+assert(chromeItems.length > 0, `style:chrome → at least one result (got ${chromeItems.length})`);
+assert(chromeItems.every(i => i.style.includes('chrome')), 'style:chrome → all results correct');
 const noResults = applyFilters(items, { colour: 'invisible' });
 assert(noResults.length === 0, 'colour:invisible → empty results');
 // Multi-filter: pink + almond
@@ -287,6 +286,16 @@ assert(multiItems.every(i => i.colour.includes('pink') && i.shape === 'almond'),
 const featuredItems = applyFilters(items, { special: 'featured' });
 assert(featuredItems.length > 0, 'special:featured → at least one result');
 assert(featuredItems.every(i => i.featured === true), 'special:featured → all are featured');
+const defaultGalleryOrder = [...items].sort((a, b) => {
+  if (a.featured !== b.featured) return a.featured ? -1 : 1;
+  if (a.featured && b.featured) return a['featured-order'] - b['featured-order'];
+  const aName = a.src.split('/').pop();
+  const bName = b.src.split('/').pop();
+  return bName.localeCompare(aName, undefined, { numeric: true });
+});
+assert(defaultGalleryOrder.slice(0, 4).map(i => i.id).join(',') === 'g030,g027,g031,g009', 'default gallery starts with featured-order sequence');
+assert(new Set(defaultGalleryOrder.map(i => i.id)).size === defaultGalleryOrder.length, 'default gallery ordering does not duplicate items');
+assert(defaultGalleryOrder[4].src.includes('g033-'), 'non-featured gallery continues in descending filename order');
 // ─────────────────────────────────────────────────────────────────────────────
 // UNIT-03  JS static analysis (bug fix verification)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -321,17 +330,22 @@ assert(mainJs.includes('footer-copyright'),       'Feature: footer-copyright cla
 assert(!mainJs.includes('data-i18n="footer.copyright"'), 'Feature: copyright no longer i18n-bound');
 assert(reviewsJs.includes('loadSiteContacts'),    'Feature: loadSiteContacts defined');
 assert(galleryJs.includes('gallery-count'),       'Feature: gallery count line updated');
+assert(galleryJs.includes('a.featuredOrder - b.featuredOrder'), 'Feature: homepage sorts by featured-order');
+assert(galleryJs.includes('GALLERY_PAGE_SIZE'), 'Feature: numbered gallery pagination enabled');
+assert(galleryJs.includes('window.scrollTo'), 'Feature: page changes return to gallery top');
 // ─────────────────────────────────────────────────────────────────────────────
 // UNIT-04  HTML structure checks
 // ─────────────────────────────────────────────────────────────────────────────
 startSection('UNIT-04  HTML structure');
 const galleryHtml = fs.readFileSync(path.join(DOCS, 'gallery.html'), 'utf8');
-assert(galleryHtml.includes('data-value="romantic"'),   'gallery.html: romantic filter button');
-assert(galleryHtml.includes('gallery.filter_romantic'), 'gallery.html: romantic i18n key');
+assert(galleryHtml.includes('data-value="hand-painted"'),   'gallery.html: hand-painted filter button');
+assert(galleryHtml.includes('gallery.filter_hand-painted'), 'gallery.html: hand-painted i18n key');
 assert(galleryHtml.includes('gallery.filter_gold'),     'gallery.html: gold uses correct i18n key');
 assert(!galleryHtml.includes('"gallery.filter_colour">Gold'), 'gallery.html: gold no longer uses wrong key');
 assert(galleryHtml.includes('id="gallery-count"'),      'gallery.html: gallery-count element');
 assert(galleryHtml.includes('aria-live="polite"'),      'gallery.html: gallery-count has aria-live');
+assert(galleryHtml.includes('id="gallery-pagination"'), 'gallery.html: numbered pagination container');
+assert(!galleryHtml.includes('id="load-more-btn"'),     'gallery.html: load-more button removed');
 const contactHtml = fs.readFileSync(path.join(DOCS, 'contact.html'), 'utf8');
 assert(contactHtml.includes('id="contact-methods-container"'), 'contact.html: dynamic container id');
 assert(contactHtml.includes('loadSiteContacts('),              'contact.html: loadSiteContacts called');
@@ -342,14 +356,18 @@ const mainCss = fs.readFileSync(path.join(DOCS, 'assets/css/main.css'), 'utf8');
 assert(mainCss.includes('.skip-link'),     'main.css: .skip-link styles present');
 assert(mainCss.includes('.skip-link:focus'), 'main.css: .skip-link:focus styles present');
 assert(mainCss.includes('.gallery-count'), 'main.css: .gallery-count styles present');
+assert(mainCss.includes('.gallery-page-btn'), 'main.css: pagination button styles present');
+assert(mainCss.includes('.lightbox-img-wrap img { object-fit: contain; }'), 'main.css: mobile lightbox preserves full image');
 // All HTML pages reference main.css
-['index.html','gallery.html','services.html','studio.html','about.html','contact.html','aftercare.html'].forEach(page => {
+['index.html','gallery.html','services.html','studio.html','availability.html','about.html','contact.html','aftercare.html'].forEach(page => {
   const html = fs.readFileSync(path.join(DOCS, page), 'utf8');
   assert(html.includes('assets/css/main.css'), `${page}: links main.css`);
   assert(html.includes('assets/js/i18n.js'),   `${page}: loads i18n.js`);
   assert(html.includes('assets/js/main.js'),   `${page}: loads main.js`);
   assert(html.includes('id="nav-placeholder"'), `${page}: has nav-placeholder`);
   assert(html.includes('id="footer-placeholder"'), `${page}: has footer-placeholder`);
+  assert(/<title\s+data-i18n="meta\.[^"]+\.title"/.test(html), `${page}: localized document title`);
+  assert(/<meta\s+name="description"[^>]+data-i18n-content="meta\.[^"]+\.description"/.test(html), `${page}: localized meta description`);
 });
 // ─────────────────────────────────────────────────────────────────────────────
 // UNIT-05  Translation completeness (every EN key has ZH counterpart)
@@ -370,6 +388,56 @@ const missingInZh = enKeys.filter(k => !zhKeys.includes(k));
 const missingInEn = zhKeys.filter(k => !enKeys.includes(k));
 assert(missingInZh.length === 0, `all EN keys present in ZH (missing: ${missingInZh.join(', ') || 'none'})`);
 assert(missingInEn.length === 0, `all ZH keys present in EN (missing: ${missingInEn.join(', ') || 'none'})`);
+// ─────────────────────────────────────────────────────────────────────────────
+// UNIT-06  Every referenced key exists + JSON-backed bilingual fields are paired
+// ─────────────────────────────────────────────────────────────────────────────
+startSection('UNIT-06  Translation references + bilingual content');
+const sourceFiles = [];
+function collectSourceFiles(dir) {
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) collectSourceFiles(full);
+    else if (/\.(?:html|js)$/.test(entry.name)) sourceFiles.push(full);
+  });
+}
+collectSourceFiles(DOCS);
+const referencedKeys = new Set();
+sourceFiles.forEach(file => {
+  const source = fs.readFileSync(file, 'utf8');
+  [
+    /data-i18n(?:-placeholder|-title|-aria-label|-alt|-content)?=["']([^"']+)/g,
+    /I18N\.t\(\s*["']([^"']+)/g,
+  ].forEach(pattern => {
+    let match;
+    while ((match = pattern.exec(source))) referencedKeys.add(match[1]);
+  });
+});
+const missingReferencedEn = [...referencedKeys].filter(key => !enKeys.includes(key));
+const missingReferencedZh = [...referencedKeys].filter(key => !zhKeys.includes(key));
+assert(missingReferencedEn.length === 0, `all referenced keys exist in EN (missing: ${missingReferencedEn.join(', ') || 'none'})`);
+assert(missingReferencedZh.length === 0, `all referenced keys exist in ZH (missing: ${missingReferencedZh.join(', ') || 'none'})`);
+
+const bilingualFiles = ['data/gallery.json', 'data/faq.json', 'data/reviews.json', 'data/promotions.json', 'data/aftercare.json', 'data/site.json'];
+const bilingualGaps = [];
+function findBilingualGaps(value, location) {
+  if (Array.isArray(value)) {
+    value.forEach((item, index) => findBilingualGaps(item, `${location}[${index}]`));
+    return;
+  }
+  if (!value || typeof value !== 'object') return;
+  Object.keys(value).forEach(key => {
+    if (key.endsWith('En')) {
+      const zhKey = `${key.slice(0, -2)}Zh`;
+      if (!(zhKey in value) || value[zhKey] === '') bilingualGaps.push(`${location}.${key}/${zhKey}`);
+    } else if (key.endsWith('Zh')) {
+      const enKey = `${key.slice(0, -2)}En`;
+      if (!(enKey in value) || value[enKey] === '') bilingualGaps.push(`${location}.${enKey}/${key}`);
+    }
+  });
+  Object.entries(value).forEach(([key, child]) => findBilingualGaps(child, `${location}.${key}`));
+}
+bilingualFiles.forEach(file => findBilingualGaps(readJSON(file), file));
+assert(bilingualGaps.length === 0, `all JSON-backed EN/ZH fields are paired and non-empty (gaps: ${bilingualGaps.join(', ') || 'none'})`);
 // ─────────────────────────────────────────────────────────────────────────────
 // Summary
 // ─────────────────────────────────────────────────────────────────────────────

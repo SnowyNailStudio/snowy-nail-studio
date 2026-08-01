@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Availability | Snowy Nail Studio</title>
+  <title data-i18n="meta.availability.title">Availability | Snowy Nail Studio</title>
+  <meta name="description" content="View upcoming appointment availability at Snowy Nail Studio in Richmond Hill." data-i18n-content="meta.availability.description">
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/availability.css">
 </head>
@@ -20,17 +21,17 @@
       <div class="container">
         <div class="availability-controls">
           <label class="availability-control-label">
-            Start date
-            <input type="date" id="availability-start-date" aria-label="Start date">
+            <span data-i18n="availability.start_date">Start date</span>
+            <input type="date" id="availability-start-date" aria-label="Start date" data-i18n-aria-label="availability.start_date">
           </label>
           <label class="availability-control-label">
-            End date
-            <input type="date" id="availability-end-date" aria-label="End date">
+            <span data-i18n="availability.end_date">End date</span>
+            <input type="date" id="availability-end-date" aria-label="End date" data-i18n-aria-label="availability.end_date">
           </label>
           <div class="availability-controls-actions">
-            <button id="availability-filter-button" type="button">Filter</button>
-            <button id="availability-reset-button" type="button">Reset</button>
-            <button id="availability-screenshot-button" type="button">Save screenshot</button>
+            <button id="availability-filter-button" type="button" data-i18n="availability.filter">Filter</button>
+            <button id="availability-reset-button" type="button" data-i18n="availability.reset">Reset</button>
+            <button id="availability-screenshot-button" type="button" data-i18n="availability.save_screenshot">Save screenshot</button>
           </div>
         </div>
         <div id="availability-grid"></div>

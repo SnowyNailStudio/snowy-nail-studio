@@ -32,6 +32,12 @@ const I18N = (() => {
       const val = _resolve(dict, el.getAttribute('data-i18n-title'));
       if (val !== undefined) el.title = val;
     });
+    ['aria-label', 'alt', 'content'].forEach(attr => {
+      document.querySelectorAll(`[data-i18n-${attr}]`).forEach(el => {
+        const val = _resolve(dict, el.getAttribute(`data-i18n-${attr}`));
+        if (val !== undefined) el.setAttribute(attr, val);
+      });
+    });
     // Update lang-toggle button label
     const btn = document.getElementById('lang-toggle');
     if (btn && dict.lang) btn.textContent = dict.lang.toggle;

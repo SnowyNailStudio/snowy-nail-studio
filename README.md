@@ -66,19 +66,19 @@ snowy-nail-studio/
 **Recommended:** Use the Cursor `@gallery-upload` skill for bilingual auto-tagging, image optimization, and JSON updates. Say "upload gallery" in Agent chat.
 
 **Manual workflow:**
-1. Optimize photos to `.webp` (recommended: 800×1067 px, < 200 KB):
+1. Archive the original upload under `content/gallery/original-uploads/`, then create a full-size `.webp` and a matching thumbnail:
    ```bash
    npm install
    node tools/optimize-gallery-image.js content/gallery/photo.jpg docs/assets/images/gallery/g015-slug.webp
    node tools/gallery-next-id.js "descriptive slug words"
    ```
-2. Place files in `docs/assets/images/gallery/`.
+2. Place the full image in `docs/assets/images/gallery/` and the thumbnail with the same filename in `docs/assets/images/gallery/thumbs/`.
 3. Open `docs/data/gallery.json` and add or update entries:
    ```json
    {
      "id": "g015-cherry-blossom",
      "src": "assets/images/gallery/g015-cherry-blossom.webp",
-     "thumb": "assets/images/gallery/g015-cherry-blossom.webp",
+     "thumb": "assets/images/gallery/thumbs/g015-cherry-blossom.webp",
      "altEn": "Description in English",
      "altZh": "中文描述",
      "style": ["floral"],
@@ -88,11 +88,18 @@ snowy-nail-studio/
      "finish": "gel",
      "service": "manicure",
      "featured": false,
+     "featured-order": null,
      "date": "2025-08",
      "mockColor": ""
    }
    ```
 4. Set `"mockColor": ""` (empty) to use the real image; set a color name to keep using the CSS placeholder.
+
+Use only these approved gallery style tags: `french`, `cat-eye`, `chrome`, `ombre`, `floral`, `rhinestone`, `marble`, `hand-painted`, and `glitter`. Use an empty `style` array when none applies. Do not invent additional style values and do not classify an item as Shellac.
+
+For homepage placement, set `featured` to `true` and assign a unique positive integer in `featured-order`. The homepage displays up to four featured records in ascending `featured-order`; non-featured records may omit the field or set it to `null`.
+
+For bulk updates, reconcile the original upload, gallery record ID, website image filename, and thumbnail filename against the gallery mapping workbook before editing `gallery.json`.
 ### Reviews
 #### Text review
 ```json

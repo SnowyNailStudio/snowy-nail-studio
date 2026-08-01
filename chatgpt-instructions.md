@@ -16,6 +16,8 @@ The website files are served from `docs/`.
 Important asset folders:
 
 - `docs/assets/images/gallery/`
+- `docs/assets/images/gallery/thumbs/`
+- `content/gallery/original-uploads/`
 - `docs/assets/images/reviews/`
 - `docs/assets/images/posters/en/`
 - `docs/assets/images/posters/zh/`
@@ -55,20 +57,27 @@ Example prompt:
 > Add these new gallery items to `docs/data/gallery.json`:
 > - `id`: `g015`
 > - `src`: `assets/images/gallery/g015.webp`
-> - `thumb`: `assets/images/gallery/g015.webp`
+> - `thumb`: `assets/images/gallery/thumbs/g015.webp`
 > - `altEn`: `Soft pink almond gel nails with cherry blossom art`
 > - `altZh`: `粉色杏形光疗甲，樱花图案`
-> - `style`: `["floral", "romantic"]`
+> - `style`: `["floral"]`
 > - `colour`: `["pink", "white"]`
 > - `shape`: `almond`
 > - `length`: `medium`
 > - `finish`: `gel`
 > - `service`: `manicure`
 > - `featured`: `true`
+> - `featured-order`: `1`
 > - `date`: `2025-08`
 > - `mockColor`: `""`
 
 If the photo is ready, set `mockColor` to `""`. If you want a placeholder until the photo is added, use a color string such as `"pink"`.
+
+Archive each source photo in `content/gallery/original-uploads/` and give its full-size and thumbnail WebP files the same mapped website filename. For bulk changes, verify the original upload, gallery record ID, website image filename, and thumbnail filename against the gallery mapping workbook.
+
+Gallery style classification must use only these approved tags: `french`, `cat-eye`, `chrome`, `ombre`, `floral`, `rhinestone`, `marble`, `hand-painted`, and `glitter`. Do not invent new style values. Use an empty `style` array when none applies, and never classify an item as Shellac.
+
+Homepage featured gallery items must have `featured: true` and a unique positive integer `featured-order`. Up to four are displayed in ascending order. Non-featured items may omit `featured-order` or set it to `null`.
 
 ### 3. Update `reviews.json`
 

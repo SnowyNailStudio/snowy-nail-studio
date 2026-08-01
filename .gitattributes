@@ -1,0 +1,9 @@
+# Keep source and content files consistent across Windows, macOS, and Linux.
+* text=auto eol=lf
+
+# Binary assets must never undergo line-ending conversion.
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.docx binary
