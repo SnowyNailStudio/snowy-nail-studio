@@ -3,7 +3,8 @@
   "private": true,
   "description": "Snowy Nail Studio static site — content tools",
   "scripts": {
-    "validate": "node tools/validate-content.js",
+    "validate": "node tools/validate-content.js && node tools/validate-gallery.mjs",
+    "validate:gallery": "node tools/validate-gallery.mjs",
     "gallery:next-id": "node tools/gallery-next-id.js",
     "gallery:optimize": "node tools/optimize-gallery-image.js"
   },

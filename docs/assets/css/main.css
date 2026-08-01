@@ -392,7 +392,17 @@ p { line-height: 1.75; }
   grid-template-columns: repeat(2, 1fr);
   gap: var(--sp-3);
 }
-@media (min-width: 540px) { .featured-grid { grid-template-columns: repeat(4, 1fr); } }
+.featured-grid .gallery-item {
+  aspect-ratio: 5/7;
+}
+@media (min-width: 540px) {
+  .featured-grid {
+    width: 120%;
+    margin-left: -10%;
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .featured-grid .gallery-item { aspect-ratio: 1/1; }
+}
 /* ─── Gallery ────────────────────────────────────────────── */
 .gallery-controls {
   margin-bottom: var(--sp-8);
@@ -445,7 +455,10 @@ p { line-height: 1.75; }
   grid-template-columns: repeat(2, 1fr);
   gap: var(--sp-3);
 }
-@media (min-width: 600px)  { .gallery-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 600px)  {
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+  .gallery-grid .gallery-item { aspect-ratio: 1/1; }
+}
 @media (min-width: 1024px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
 .gallery-item {
   position: relative;
@@ -510,7 +523,29 @@ p { line-height: 1.75; }
   font-size: 15px;
 }
 .gallery-empty-icon { font-size: 40px; margin-bottom: var(--sp-4); opacity: .5; }
-.gallery-load-more { text-align: center; margin-top: var(--sp-10); }
+.gallery-pagination {
+  display: flex;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-10);
+}
+.gallery-page-btn {
+  min-width: 42px;
+  height: 42px;
+  padding: 0 var(--sp-3);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--r-pill);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+.gallery-page-btn:hover { border-color: var(--clr-accent); color: var(--clr-accent); }
+.gallery-page-btn.active {
+  border-color: var(--clr-accent);
+  background: var(--clr-accent);
+  color: var(--clr-white);
+}
 /* ─── Lightbox ───────────────────────────────────────────── */
 .lightbox {
   position: fixed; inset: 0;
@@ -536,6 +571,11 @@ p { line-height: 1.75; }
   width: 100%;
 }
 .lightbox-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 599px) {
+  .lightbox-inner { max-width: 94vw; }
+  .lightbox-img-wrap { background: transparent; }
+  .lightbox-img-wrap img { object-fit: contain; }
+}
 .lightbox-close {
   position: absolute;
   top: -52px; right: 0;
