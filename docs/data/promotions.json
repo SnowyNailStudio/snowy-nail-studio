@@ -1,6 +1,83 @@
 {
-  "_comment": "Promotions data. Set active:false to hide a promotion. imageEn/imageZh paths are relative to docs/. Leave blank for mock poster display.",
+  "_comment": "Homepage pricing and promotions. Poster and image paths are relative to docs/.",
+  "pricing": {
+    "posterEn": "assets/images/pricing/pricing-poster-zh.jpg",
+    "posterZh": "assets/images/pricing/pricing-poster-zh.jpg",
+    "services": [
+      {
+        "nameEn": "Hand Gel Manicure",
+        "nameZh": "手部美甲",
+        "price": "$29.90",
+        "descriptionEn": "Natural nails · Solid colour or two colours",
+        "descriptionZh": "本甲纯色或双色"
+      },
+      {
+        "nameEn": "Gel Pedicure",
+        "nameZh": "脚部美甲",
+        "price": "$35",
+        "descriptionEn": "Natural nails · Solid colour, two colours, or cat-eye",
+        "descriptionZh": "本甲纯色、双色或猫眼",
+        "noteEn": "Complimentary light builder included",
+        "noteZh": "赠送微建构"
+      }
+    ],
+    "addons": [
+      { "nameEn": "Half/Full Tips", "nameZh": "半贴 / 全贴", "price": "+$10" },
+      { "nameEn": "Short Tips", "nameZh": "浅贴", "price": "+$20" },
+      { "nameEn": "Natural Nail Builder", "nameZh": "本甲建构", "price": "+$10" },
+      { "nameEn": "Tip Builder", "nameZh": "甲片建构", "price": "+$15" },
+      { "nameEn": "Single-Colour Nail Art", "nameZh": "单色款式", "price": "+$10" },
+      { "nameEn": "Multi-Colour Nail Art", "nameZh": "多色款式", "price": "+$20" },
+      { "nameEn": "Rhinestones", "nameZh": "贴钻", "price": "+$5" },
+      { "nameEn": "Cat-Eye", "nameZh": "猫眼", "price": "+$5" },
+      { "nameEn": "Removal Only", "nameZh": "单独卸甲", "price": "$10–15" }
+    ]
+  },
   "active": [
+    {
+      "id": "august-bogo-2026",
+      "labelEn": "August Special",
+      "labelZh": "八月特别优惠",
+      "kickerEn": "August Exclusive",
+      "kickerZh": "八月限定",
+      "titleEn": "Book One, Get One Free",
+      "titleZh": "预约一次，第二次免费",
+      "descriptionEn": "Book a qualifying nail appointment during August 2026 and receive one complimentary future appointment for a comparable style. Redeem your complimentary visit whenever you’re ready.",
+      "descriptionZh": "于 2026 年 8 月预约一次符合条件的美甲服务，即可获赠一次同等相似款式的免费美甲。赠送服务可在未来任意时间预约使用。",
+      "termsEn": "Applies to comparable simple styles. Full rhinestone sets, complex nail art, 3D designs, sculpting, and other advanced styles are excluded.",
+      "termsZh": "适用于同等相似的简单款式。满钻、复杂彩绘、3D 立体造型、雕花及其他高难度款式不参与此优惠。",
+      "imageEn": "assets/images/gallery/g030-tortoise-polka-dot-coffin.webp",
+      "imageZh": "assets/images/gallery/g030-tortoise-polka-dot-coffin.webp",
+      "imageAltEn": "Long coffin French extensions with hand-painted tortoiseshell and black polka dots",
+      "imageAltZh": "长款棺材形法式延长甲，搭配手绘玳瑁纹和黑色波点",
+      "badgesEn": ["Book in August", "Future Visit Included"],
+      "badgesZh": ["八月预约", "赠未来一次服务"],
+      "dateLeadEn": "Book by",
+      "dateLeadZh": "预约截止",
+      "ctaEn": "Claim the August Offer",
+      "ctaZh": "咨询八月优惠",
+      "perks": [
+        {
+          "icon": "♡",
+          "titleEn": "Share the Love",
+          "titleZh": "好友推荐 · 双倍优惠",
+          "descriptionEn": "Friends who book through your recommendation receive 12% off. Earn 10% off your next visit for each successful referral—two referrals earn 20%, and so on.",
+          "descriptionZh": "通过您的推荐预约的朋友可享 12% 优惠。每成功推荐一位，您下次消费可享 10% 优惠；推荐两位享 20%，以此类推。"
+        },
+        {
+          "icon": "☂",
+          "titleEn": "Weather-Day Appreciation",
+          "titleZh": "特殊天气暖心优惠",
+          "descriptionEn": "Receive 12% off when heavy rain, snowstorms, or other severe weather affects your appointment day.",
+          "descriptionZh": "如预约当天遇到大雨、暴雪或其他恶劣天气，可享 12% 优惠。"
+        }
+      ],
+      "startDate": "2026-08-01",
+      "endDate": "2026-08-31",
+      "priority": 1,
+      "active": true,
+      "isTemplate": false
+    },
     {
       "id": "promo-001",
       "titleEn": "New Client Special",
@@ -10,7 +87,7 @@
       "imageEn": "assets/images/posters/en/new-client-special-en.webp",
       "imageZh": "assets/images/posters/zh/new-client-special-zh.webp",
       "validUntil": "2025-12-31",
-      "active": true
+      "active": false
     },
     {
       "id": "promo-002",
@@ -21,7 +98,7 @@
       "imageEn": "assets/images/posters/en/summer-pedicure-en.webp",
       "imageZh": "assets/images/posters/zh/summer-pedicure-zh.webp",
       "validUntil": "2025-09-30",
-      "active": true
+      "active": false
     }
   ],
   "services": [

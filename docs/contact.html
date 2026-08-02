@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="meta.contact.title">Contact &amp; FAQ | Snowy Nail Studio</title>
-  <meta name="description" content="Contact Snowy Nail Studio in Richmond Hill via Instagram, 小红书, or WeChat. Find answers to frequently asked questions." data-i18n-content="meta.contact.description">
+  <meta name="description" content="Contact Snowy Nail Studio in Richmond Hill via Instagram, Xiaohongshu, or WeChat. Find answers to frequently asked questions." data-i18n-content="meta.contact.description">
   <meta name="theme-color" content="#C4788A">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,42 +14,48 @@
 <body>
   <div id="nav-placeholder"></div>
   <main class="page-content">
-    <!-- Page hero -->
-    <div class="page-hero">
+    <div class="page-hero contact-page-hero">
       <div class="container">
-        <h1 data-i18n="contact.title">Contact &amp; FAQ</h1>
-        <p data-i18n="contact.subtitle">Get in touch or find answers below</p>
+        <h1 data-i18n="contact.title">Contact Snowy</h1>
+        <p data-i18n="contact.subtitle">Choose the easiest way to reach the studio, or find answers below</p>
       </div>
     </div>
-    <!-- Contact methods + CTAs -->
-    <section class="section reveal" aria-labelledby="contact-heading">
-      <div class="container" style="max-width:760px;">
-        <div class="section-header">
+
+    <section class="section contact-connect-section reveal" aria-labelledby="contact-heading">
+      <div class="container contact-container">
+        <div class="section-header contact-section-header">
           <p class="eyebrow" data-i18n="eyebrow.reach_us">Reach Us</p>
-          <h2 id="contact-heading" data-i18n="contact.section_contact">Get in Touch</h2>
-          <p data-i18n="contact.contact_intro">The best way to reach us is through Instagram or 小红书. WeChat is also available for Chinese-speaking clients.</p>
+          <h2 id="contact-heading" data-i18n="contact.section_contact">Let’s Connect</h2>
+          <p data-i18n="contact.contact_intro">For direct enquiries, message Snowy Nail Studio through Instagram or Xiaohongshu. Chinese-language support is also available through WeChat.</p>
         </div>
-        <div class="contact-methods" id="contact-methods-container">
-          <div class="loading-state" style="min-height:80px;">
-            <div class="loading-spinner"></div>
+
+        <div class="contact-shell">
+          <div class="contact-panel">
+            <div class="contact-methods" id="contact-methods-container">
+              <div class="loading-state" style="min-height:80px;">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
           </div>
-        </div>
-        <!-- CTA buttons -->
-        <div class="contact-cta-grid" style="margin-top:32px;">
-          <a href="#" class="btn btn-primary" data-i18n="contact.cta_inspiration">Send an Inspiration Photo</a>
-          <a href="availability.html" class="btn btn-outline" data-i18n="contact.cta_availability">Ask About Availability</a>
-          <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_instagram">Message on Instagram</a>
-          <a href="#" class="btn btn-ghost"   data-i18n="contact.cta_xhs">Visit 小红书</a>
-        </div>
-        <!-- Availability preview -->
-        <div id="availability-preview" style="margin-top:28px;">
-          <!-- availability loader will populate this container -->
+
+          <aside class="contact-details-card">
+            <span class="contact-details-card__sparkle" aria-hidden="true">✦</span>
+            <p class="contact-details-card__eyebrow" data-i18n="contact.studio_details">Studio Details</p>
+            <h3 data-i18n="contact.appointment_title">A private studio, by appointment</h3>
+            <p data-i18n="contact.appointment_text">Snowy Nail Studio welcomes clients in Richmond Hill, Ontario. Please contact the studio directly before visiting.</p>
+            <ul class="contact-details-list">
+              <li><span aria-hidden="true">◇</span><span data-i18n="contact.private_studio">Private home studio</span></li>
+              <li><span aria-hidden="true">◇</span><span data-i18n="contact.language_support">English &amp; 中文</span></li>
+              <li><span aria-hidden="true">◇</span><span data-i18n="contact.appointment_required">Appointment required</span></li>
+            </ul>
+            <div id="business-hours-container" class="contact-hours"></div>
+          </aside>
         </div>
       </div>
     </section>
-    <!-- FAQ -->
+
     <section class="section section--alt reveal" aria-labelledby="faq-heading">
-      <div class="container" style="max-width:760px;">
+      <div class="container contact-content-container">
         <div class="section-header">
           <p class="eyebrow" data-i18n="eyebrow.questions">Questions</p>
           <h2 id="faq-heading" data-i18n="contact.section_faq">Frequently Asked Questions</h2>
@@ -62,21 +68,21 @@
         </div>
       </div>
     </section>
-    <!-- Policies -->
+
     <section class="section reveal" aria-labelledby="policies-heading">
-      <div class="container" style="max-width:760px;">
+      <div class="container contact-content-container">
         <div class="section-header">
           <p class="eyebrow" data-i18n="eyebrow.studio_policies">Studio Policies</p>
           <h2 id="policies-heading" data-i18n="contact.section_policies">Studio Policies</h2>
         </div>
-        <div>
+        <div class="policies-grid">
           <div class="policy-box">
             <h4 data-i18n="contact.cancellation_title">Cancellation Policy</h4>
             <p data-i18n="contact.cancellation_text">Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may result in a deposit forfeiture.</p>
           </div>
           <div class="policy-box">
             <h4 data-i18n="contact.late_title">Late Arrival Policy</h4>
-            <p data-i18n="contact.late_text">Please notify us if you will be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled to avoid affecting other appointments.</p>
+            <p data-i18n="contact.late_text">Please notify us if you will be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled.</p>
           </div>
         </div>
       </div>
@@ -86,12 +92,11 @@
   <script src="assets/js/i18n.js"></script>
   <script src="assets/js/main.js"></script>
   <script src="assets/js/reviews.js"></script>
-  <script src="assets/js/availability.js"></script>
-    <script>
+  <script>
     document.addEventListener('DOMContentLoaded', () => {
       loadFAQ('faq-container');
       loadSiteContacts('contact-methods-container');
-      if (typeof loadAvailability === 'function') loadAvailability('availability-preview');
+      loadBusinessHours('business-hours-container');
     });
   </script>
 </body>

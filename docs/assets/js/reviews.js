@@ -192,6 +192,203 @@ async function loadServices(gridId) {
     if (grid) grid.innerHTML = '';
   }
 }
+
+/* ─── Homepage pricing & seasonal special ────────────────── */
+let _priceModalTrigger = null;
+let _priceModalReady = false;
+
+function _localized(item, key, lang) {
+  return item[`${key}${lang === 'zh' ? 'Zh' : 'En'}`] || item[`${key}En`] || '';
+}
+
+function _promotionIsCurrent(promotion, now = new Date()) {
+  if (!promotion.active) return false;
+  const start = promotion.startDate ? new Date(`${promotion.startDate}T00:00:00`) : null;
+  const end = promotion.endDate ? new Date(`${promotion.endDate}T23:59:59`) : null;
+  return (!start || now >= start) && (!end || now <= end);
+}
+
+function _formatPromotionDate(dateString, lang) {
+  if (!dateString) return '';
+  const date = new Date(`${dateString}T12:00:00`);
+  if (Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-CA', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  }).format(date);
+}
+
+function _initPriceModal() {
+  if (_priceModalReady) return;
+  const modal = document.getElementById('price-modal');
+  if (!modal) return;
+  const dialog = modal.querySelector('.price-modal__dialog');
+  const closeButtons = modal.querySelectorAll('[data-price-modal-close]');
+
+  const closeModal = () => {
+    if (modal.hidden) return;
+    modal.hidden = true;
+    document.body.classList.remove('modal-open');
+    if (_priceModalTrigger) _priceModalTrigger.focus();
+  };
+
+  closeButtons.forEach(button => button.addEventListener('click', closeModal));
+  document.addEventListener('keydown', event => {
+    if (modal.hidden) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeModal();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = [...dialog.querySelectorAll('button, [href], [tabindex]:not([tabindex="-1"])')]
+      .filter(element => !element.disabled && element.offsetParent !== null);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+  _priceModalReady = true;
+}
+
+function openPricePoster(button, src, lang) {
+  const modal = document.getElementById('price-modal');
+  if (!modal) return;
+  _initPriceModal();
+  const image = modal.querySelector('.price-modal__image');
+  _priceModalTrigger = button;
+  image.src = src;
+  image.alt = lang === 'zh'
+    ? 'Snowy 美甲工作室中文手部与脚部美甲活动价目表'
+    : 'Snowy Nail Studio Chinese manicure and pedicure promotional price list';
+  modal.hidden = false;
+  document.body.classList.add('modal-open');
+  modal.querySelector('.price-modal__close').focus();
+}
+
+function _renderPricingCard(pricing, lang) {
+  const zh = lang === 'zh';
+  const services = (pricing.services || []).map(service => `
+    <div class="pricing-service">
+      <div>
+        <h4>${escapeHtml(_localized(service, 'name', lang))}</h4>
+        <p>${escapeHtml(_localized(service, 'description', lang))}</p>
+        ${_localized(service, 'note', lang) ? `<span class="pricing-service__note">✦ ${escapeHtml(_localized(service, 'note', lang))}</span>` : ''}
+      </div>
+      <strong>${escapeHtml(service.price)}</strong>
+    </div>`).join('');
+  const addons = (pricing.addons || []).map(addon => `
+    <li><span>${escapeHtml(_localized(addon, 'name', lang))}</span><strong>${escapeHtml(addon.price)}</strong></li>`).join('');
+  const poster = zh ? (pricing.posterZh || pricing.posterEn) : (pricing.posterEn || pricing.posterZh);
+
+  return `<article class="pricing-card">
+    <div class="pricing-card__header">
+      <div>
+        <p class="card-kicker">${zh ? '日常价目' : 'Everyday Pricing'}</p>
+        <h3>${zh ? '精致服务，清晰价格' : 'Polished essentials, priced clearly'}</h3>
+      </div>
+      <span class="pricing-card__mark" aria-hidden="true">✦</span>
+    </div>
+    <div class="pricing-card__services">${services}</div>
+    <div class="pricing-card__addons">
+      <div class="pricing-card__subhead">
+        <h4>${zh ? '热门加项' : 'Popular add-ons'}</h4>
+        <span>${zh ? '按服务加价' : 'Added to service'}</span>
+      </div>
+      <ul>${addons}</ul>
+    </div>
+    <div class="pricing-card__highlight">
+      <span class="pricing-card__gift" aria-hidden="true">✦</span>
+      <div><strong>${zh ? '卸甲再做免费' : 'FREE Removal With a New Set'}</strong>
+      <p>${zh ? '卸甲后继续做美甲，不收卸甲费。' : 'Continue with another nail service and pay no removal fee.'}</p></div>
+    </div>
+    <p class="pricing-card__disclaimer">${zh
+      ? '以上价格适用于简单款式。满钻、复杂彩绘、立体造型、雕花及其他高难度款式需单独报价。'
+      : 'Prices apply to simple designs. Full rhinestone sets, complex nail art, 3D designs, sculpting, and other advanced styles are quoted separately.'}</p>
+    <div class="pricing-card__actions">
+      <button class="btn btn-primary" type="button" data-price-poster="${escapeAttr(poster)}">${zh ? '查看完整价目表' : 'View Full Price List (Chinese)'}</button>
+      <button class="btn btn-outline" type="button" data-price-poster="${escapeAttr(pricing.posterZh || poster)}">中文价目表</button>
+    </div>
+  </article>`;
+}
+
+function _renderSeasonalCard(promotion, lang) {
+  const zh = lang === 'zh';
+  if (!promotion) {
+    return `<article class="seasonal-card seasonal-card--empty">
+      <p class="card-kicker">${zh ? '当前优惠' : 'Current Special'}</p>
+      <h3>${zh ? '新的季节优惠即将推出' : 'New seasonal offers are coming soon'}</h3>
+      <p>${zh ? '关注我们的最新动态，或联系 Snowy 了解更多。' : 'Follow our latest updates or contact Snowy for details.'}</p>
+      <a class="btn btn-white" href="contact.html">${zh ? '联系 Snowy' : 'Contact Snowy'}</a>
+    </article>`;
+  }
+  const image = zh ? (promotion.imageZh || promotion.imageEn) : (promotion.imageEn || promotion.imageZh);
+  const alt = _localized(promotion, 'imageAlt', lang);
+  const badges = (zh ? promotion.badgesZh : promotion.badgesEn) || [];
+  const perks = promotion.perks || [];
+  const endDate = _formatPromotionDate(promotion.endDate, lang);
+  const label = _localized(promotion, 'label', lang) || (zh ? '当前优惠' : 'Current Special');
+  const kicker = _localized(promotion, 'kicker', lang) || (zh ? '季节精选' : 'Seasonal feature');
+  const terms = _localized(promotion, 'terms', lang);
+  const dateLead = _localized(promotion, 'dateLead', lang);
+  const cta = _localized(promotion, 'cta', lang) || (zh ? '咨询此优惠' : 'Ask About This Offer');
+  return `<article class="seasonal-card">
+    <div class="seasonal-card__image">
+      <img src="${escapeAttr(image)}" width="900" height="900" loading="lazy" alt="${escapeAttr(alt)}">
+      <span class="seasonal-card__label">${escapeHtml(label)}</span>
+    </div>
+    <div class="seasonal-card__content">
+      <p class="card-kicker">${escapeHtml(kicker)}</p>
+      <h3>${escapeHtml(_localized(promotion, 'title', lang))}</h3>
+      <p class="seasonal-card__description">${escapeHtml(_localized(promotion, 'description', lang))}</p>
+      ${badges.length ? `<div class="seasonal-card__badges">${badges.map(badge => `<span>${escapeHtml(badge)}</span>`).join('')}</div>` : ''}
+      ${endDate ? `<p class="seasonal-card__date"><span aria-hidden="true">✦</span> ${escapeHtml(dateLead || (zh ? '有效期至' : 'Valid through'))} ${escapeHtml(endDate)}</p>` : ''}
+      ${terms ? `<p class="seasonal-card__terms"><strong>${zh ? '优惠说明' : 'Offer details'}</strong>${escapeHtml(terms)}</p>` : ''}
+      ${perks.length ? `<div class="seasonal-card__perks">
+        <p class="seasonal-card__perks-label">${zh ? '长期客户优惠' : 'More ways to save'}</p>
+        ${perks.map(perk => `<div class="seasonal-perk">
+          <span class="seasonal-perk__icon" aria-hidden="true">${escapeHtml(perk.icon || '✦')}</span>
+          <div><h4>${escapeHtml(_localized(perk, 'title', lang))}</h4><p>${escapeHtml(_localized(perk, 'description', lang))}</p></div>
+        </div>`).join('')}
+      </div>` : ''}
+      <a class="btn btn-white" href="contact.html">${escapeHtml(cta)}</a>
+      ${promotion.isTemplate ? `<p class="seasonal-card__template-note">${zh ? '活动详情确认后，可随时替换此模板。' : 'This template is ready for your confirmed offer details.'}</p>` : ''}
+    </div>
+  </article>`;
+}
+
+async function loadHomePricingSpecials(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  try {
+    const response = await fetch('data/promotions.json');
+    if (!response.ok) throw new Error('Pricing data unavailable');
+    const data = await response.json();
+    const lang = I18N.getLang();
+    const currentPromotion = (data.active || [])
+      .filter(promotion => _promotionIsCurrent(promotion))
+      .sort((a, b) => (a.priority || 999) - (b.priority || 999))[0];
+    container.innerHTML = _renderPricingCard(data.pricing || {}, lang) + _renderSeasonalCard(currentPromotion, lang);
+    container.querySelectorAll('[data-price-poster]').forEach(button => {
+      button.addEventListener('click', () => openPricePoster(button, button.dataset.pricePoster, lang));
+    });
+    document.querySelectorAll('[data-section-lang]').forEach(button => {
+      const active = button.dataset.sectionLang === lang;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+      button.onclick = () => I18N.setLang(button.dataset.sectionLang);
+    });
+    _initPriceModal();
+  } catch (error) {
+    container.innerHTML = `<p class="pricing-specials__error">${escapeHtml(I18N.t('common.error', 'Content could not be loaded.'))}</p>`;
+  }
+}
+
 async function loadPromotions(containerId) {
   const wrap = document.getElementById(containerId);
   if (!wrap) return;
@@ -200,7 +397,9 @@ async function loadPromotions(containerId) {
     if (!res.ok) throw new Error();
     const data = await res.json();
     const lang   = I18N.getLang();
-    const promos = (data.active || []).filter(p => p.active);
+    const promos = (data.active || [])
+      .filter(p => _promotionIsCurrent(p))
+      .sort((a, b) => (a.priority || 999) - (b.priority || 999));
     if (!promos.length) {
       const msg = I18N.t('services.no_promos', 'No active promotions at this time.');
       wrap.innerHTML = `<p style="color:var(--clr-text-muted);font-size:15px;">${escapeHtml(msg)}</p>`;
@@ -310,20 +509,21 @@ async function loadSiteContacts(containerId) {
       const label = lang === 'zh' ? (c.labelZh || c.labelEn) : (c.labelEn || '');
       const value = lang === 'zh' ? (c.valueZh || c.valueEn) : (c.valueEn || '');
       const icon  = escapeHtml(c.icon || '');
-      if (c.url) {
-        return `<a href="${escapeAttr(c.url)}" class="contact-method" aria-label="${escapeAttr(label)}">
+      if (c.url && c.url !== '#') {
+        return `<a href="${escapeAttr(c.url)}" class="contact-method contact-method--link" aria-label="${escapeAttr(label)}">
           <div class="contact-icon" aria-hidden="true">${icon}</div>
           <div class="contact-info">
             <span class="contact-label">${escapeHtml(label)}</span>
             <span class="contact-value">${escapeHtml(value)}</span>
           </div>
+          <span class="contact-method__arrow" aria-hidden="true">↗</span>
         </a>`;
       }
-      return `<div class="contact-method" style="cursor:default;">
+      return `<div class="contact-method contact-method--static">
         <div class="contact-icon" aria-hidden="true">${icon}</div>
         <div class="contact-info">
           <span class="contact-label">${escapeHtml(label)}</span>
-          <span class="contact-value" style="font-size:13px;color:var(--clr-text-muted);">${escapeHtml(value)}</span>
+          <span class="contact-value">${escapeHtml(value)}</span>
         </div>
       </div>`;
     }).join('');
@@ -428,7 +628,7 @@ document.addEventListener('langchange', () => {
   if (document.getElementById('promos-container'))
     loadPromotions('promos-container');
   if (document.getElementById('home-promos-container'))
-    loadPromotions('home-promos-container');
+    loadHomePricingSpecials('home-promos-container');
   if (document.getElementById('contact-methods-container'))
     loadSiteContacts('contact-methods-container');
   if (document.getElementById('business-hours-container'))
