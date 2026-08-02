@@ -39,6 +39,13 @@
       "latest_title": "Latest Designs",
       "latest_sub": "Fresh work straight from the studio",
       "promo_title": "Current Promotion",
+      "pricing_eyebrow": "Pricing & Specials",
+      "pricing_title": "Beautiful Nails, Simple Pricing",
+      "pricing_sub": "Transparent everyday pricing with limited-time offers.",
+      "section_language_label": "Pricing and specials language",
+      "price_modal_eyebrow": "Full price list",
+      "price_modal_title": "Snowy Nail Studio Price List",
+      "price_modal_close": "Close price list",
       "reviews_title": "What Clients Say",
       "reviews_sub": "Real words from real clients",
       "studio_title": "A Clean, Private Studio",
@@ -182,14 +189,14 @@
       "customer_review_screenshot": "Customer review screenshot"
     },
     "contact": {
-      "title": "Contact & FAQ",
-      "subtitle": "Get in touch or find answers below",
+      "title": "Contact Snowy",
+      "subtitle": "Choose the easiest way to reach the studio, or find answers below",
       "hours_heading": "Business Hours",
       "open_now": "Open now",
       "closed": "Closed",
       "next_available": "Next available",
       "hours_label": "Hours",
-      "section_contact": "Get in Touch",
+      "section_contact": "Let’s Connect",
       "section_faq": "Frequently Asked Questions",
       "section_policies": "Studio Policies",
       "instagram_label": "Instagram",
@@ -204,14 +211,20 @@
       "cancellation_text": "Please provide at least 24 hours notice for cancellations or rescheduling. Late cancellations may result in a deposit forfeiture.",
       "late_title": "Late Arrival Policy",
       "late_text": "Please notify us if you will be more than 10 minutes late. Arrivals more than 15 minutes late may need to be rescheduled.",
-      "contact_intro": "The best way to reach Snowy Nail Studio is through Instagram or 小红书. For Chinese-speaking clients, WeChat is also available."
+      "studio_details": "Studio Details",
+      "appointment_title": "A private studio, by appointment",
+      "appointment_text": "Snowy Nail Studio welcomes clients in Richmond Hill, Ontario. Please contact the studio directly before visiting.",
+      "private_studio": "Private home studio",
+      "language_support": "English & 中文",
+      "appointment_required": "Appointment required",
+      "contact_intro": "For direct enquiries, message Snowy Nail Studio through Instagram or Xiaohongshu. Chinese-language support is also available through WeChat."
     },
     "aftercare": {
       "title": "Nail Care & Aftercare",
       "subtitle": "Keep your nails beautiful between appointments",
       "loading": "Loading aftercare guide…",
       "tip_icon": "✦",
-      "intro": "Following these aftercare tips will help your nails last longer and stay healthier between appointments."
+      "intro": "These tips can help reduce dryness, lifting, and chipping between appointments."
     },
     "footer": {
       "tagline": "Handcrafted nail art · Richmond Hill",
@@ -279,6 +292,13 @@
       "latest_title": "最新作品",
       "latest_sub": "工作室新鲜出炉的作品",
       "promo_title": "当前优惠",
+      "pricing_eyebrow": "价格与优惠",
+      "pricing_title": "精致美甲，价格简单透明",
+      "pricing_sub": "清晰日常价格，搭配限时优惠活动。",
+      "section_language_label": "价格与优惠语言",
+      "price_modal_eyebrow": "完整价目表",
+      "price_modal_title": "Snowy 美甲工作室价目表",
+      "price_modal_close": "关闭价目表",
       "reviews_title": "客户评价",
       "reviews_sub": "来自真实客户的真实评价",
       "studio_title": "洁净私密的工作室",
@@ -422,14 +442,14 @@
       "customer_review_screenshot": "客户评价截图"
     },
     "contact": {
-      "title": "联系我们与常见问题",
-      "subtitle": "与我们联系或查看下方解答",
+      "title": "联系 Snowy",
+      "subtitle": "选择最方便的联系方式，或查看下方常见问题",
       "hours_heading": "营业时间",
       "open_now": "正在营业",
       "closed": "已打烊",
       "next_available": "下一个可预约时间",
       "hours_label": "营业时间",
-      "section_contact": "联系方式",
+      "section_contact": "与我们联系",
       "section_faq": "常见问题",
       "section_policies": "工作室政策",
       "instagram_label": "Instagram",
@@ -444,14 +464,20 @@
       "cancellation_text": "请至少提前24小时通知取消或改期。逾期取消可能导致定金不予退还。",
       "late_title": "迟到政策",
       "late_text": "如您预计迟到超过10分钟，请提前通知我们。迟到超过15分钟可能需要重新安排预约时间。",
-      "contact_intro": "联系 Snowy 美甲工作室最便捷的方式是通过 Instagram 或小红书私信。中文客户也可通过微信联系。"
+      "studio_details": "工作室信息",
+      "appointment_title": "私密工作室 · 仅限预约",
+      "appointment_text": "Snowy 美甲工作室位于安大略省列治文山。到访前请先通过以下方式与我们联系。",
+      "private_studio": "私密家庭工作室",
+      "language_support": "English & 中文",
+      "appointment_required": "需要提前预约",
+      "contact_intro": "如需咨询，请通过 Instagram 或小红书私信联系 Snowy 美甲工作室。中文客户也可通过微信联系。"
     },
     "aftercare": {
       "title": "护甲指南",
       "subtitle": "在每次预约之间保持美甲完美状态",
       "loading": "正在加载护甲指南…",
       "tip_icon": "✦",
-      "intro": "遵循以下护甲建议，可帮助您的美甲保持更长时间，并在预约之间保持健康。"
+      "intro": "以下建议可帮助减少两次预约之间的干燥、翘起和崩裂。"
     },
     "footer": {
       "tagline": "精心美甲艺术 · 列治文山",

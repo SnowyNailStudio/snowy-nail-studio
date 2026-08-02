@@ -82,6 +82,13 @@
           "questionZh": "你们提供卸甲服务吗？",
           "answerEn": "Yes, we offer professional removal of previous gel, acrylic, or dip powder sets. Please mention this when booking as it adds time to the appointment.",
           "answerZh": "是的，我们提供专业卸除光疗胶、水晶甲或浸粉甲的服务。预约时请注明，因为卸甲需要额外时间。"
+        },
+        {
+          "id": "faq-010",
+          "questionEn": "Should I tell you about nail allergies or nail problems?",
+          "questionZh": "如果我有美甲产品过敏或指甲问题，需要提前告知吗？",
+          "answerEn": "Yes. Tell us before booking if you have previously reacted to gel, acrylic, nail glue, dip powder, or other nail products. Services should be postponed if there are open cuts, sores, significant inflammation, or signs of a nail or skin infection. A nail technician cannot diagnose or treat a medical condition.",
+          "answerZh": "需要。如果您曾对光疗胶、水晶甲、美甲胶水、浸粉或其他美甲产品产生过敏反应，请在预约前告知我们。如有开放性伤口、皮肤破损、明显炎症，或疑似指甲或皮肤感染，应暂缓服务。美甲师无法诊断或治疗医疗问题。"
         }
       ]
     }

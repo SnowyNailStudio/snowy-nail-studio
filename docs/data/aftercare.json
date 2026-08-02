@@ -9,8 +9,8 @@
       "items": [
         {
           "id": "ac-001",
-          "textEn": "Avoid prolonged water exposure — skip dishwashing, long baths, and swimming.",
-          "textZh": "避免长时间接触水 — 洗碗、泡澡和游泳请暂缓。"
+          "textEn": "To reduce lifting and chipping, avoid prolonged soaking and wear gloves for dishes and cleaning, especially during the first 24 hours.",
+          "textZh": "为减少翘起和崩裂，请避免长时间浸水，并在洗碗和清洁时佩戴手套，尤其是在完成美甲后的前24小时。"
         },
         {
           "id": "ac-002",
@@ -19,8 +19,8 @@
         },
         {
           "id": "ac-003",
-          "textEn": "Allow the gel to fully cure before heavy activity.",
-          "textZh": "在进行繁重活动前，请确保光疗胶完全固化。"
+          "textEn": "Your gel should be fully cured before you leave. If it feels soft, wrinkles, or changes unexpectedly, contact the studio.",
+          "textZh": "光疗胶应在您离开工作室前完全固化。如果甲面发软、起皱或出现异常变化，请联系工作室。"
         }
       ]
     },
@@ -65,8 +65,8 @@
         },
         {
           "id": "ac-009",
-          "textEn": "Apply sunscreen to your hands — UV exposure can fade nail colour over time.",
-          "textZh": "给双手涂抹防晒霜 — 紫外线照射会使指甲颜色随时间褪色。"
+          "textEn": "Before a gel manicure, apply broad-spectrum, water-resistant SPF 30+ sunscreen to your hands, or wear dark, opaque fingerless gloves, to help protect your skin from UV exposure.",
+          "textZh": "做光疗美甲前，请在手部涂抹广谱、防水、SPF 30或以上的防晒霜，或佩戴深色不透光的露指手套，以帮助保护皮肤免受紫外线照射。"
         }
       ]
     },
@@ -83,13 +83,13 @@
         },
         {
           "id": "ac-011",
-          "textEn": "If a nail lifts or chips, contact the studio — do not attempt to fix it yourself.",
-          "textZh": "如果指甲翘起或崩裂，请联系工作室 — 不要自行尝试修复。"
+          "textEn": "If the gel coating lifts or chips, do not pick it or glue it down; contact the studio. If your natural nail separates, becomes discoloured, or is painful, seek advice from a healthcare professional.",
+          "textZh": "如果美甲胶层翘起或崩裂，请勿抠撕或用胶水粘回，并联系工作室。如果天然甲分离、变色或疼痛，请咨询医疗专业人员。"
         },
         {
           "id": "ac-012",
-          "textEn": "If you notice any pain, swelling, or irritation around your nails, consult a healthcare professional.",
-          "textZh": "如果您注意到指甲周围有疼痛、肿胀或刺激感，请咨询医疗专业人员。"
+          "textEn": "Stop using nail products and seek medical advice if you develop persistent itching, burning, redness, swelling, blistering, rash, nail separation, unusual discolouration, or drainage. Facial swelling or breathing difficulty requires urgent medical care.",
+          "textZh": "如果出现持续瘙痒、灼热、发红、肿胀、水疱、皮疹、天然甲分离、异常变色或渗液，请停止使用美甲产品并寻求医疗建议。如出现面部肿胀或呼吸困难，请立即就医。"
         }
       ]
     },
@@ -101,18 +101,18 @@
       "items": [
         {
           "id": "ac-013",
-          "textEn": "Professional removal is strongly recommended to protect your natural nails.",
-          "textZh": "强烈建议进行专业卸甲，以保护您的天然甲。"
+          "textEn": "Professional removal is recommended, particularly for hard gel, extensions, or when you are unsure of the product. Never peel or aggressively file off the coating.",
+          "textZh": "建议由专业人员卸甲，尤其是硬胶、延长甲，或您不确定所用产品类型时。切勿撕除胶层或过度打磨。"
         },
         {
           "id": "ac-014",
-          "textEn": "Book a removal appointment when ready — we'll safely soak off or file down your set.",
-          "textZh": "准备好时请预约卸甲服务 — 我们将安全地浸泡或打磨卸除您的指甲。"
+          "textEn": "Book a removal appointment when ready. Based on the product type, we'll safely soak off or file down the existing nail product.",
+          "textZh": "需要卸甲时请预约卸甲服务。我们会根据产品类型，安全地浸泡卸除或打磨卸除原有的美甲产品。"
         },
         {
           "id": "ac-015",
-          "textEn": "Allow your nails a short rest between sets if they feel thin or sensitive.",
-          "textZh": "如果指甲感觉变薄或敏感，请在两次做甲之间给指甲短暂休息时间。"
+          "textEn": "If your nails feel thin, brittle, or sensitive, take a one- to two-week break—or longer if needed—and moisturize regularly. Seek medical advice if symptoms persist.",
+          "textZh": "如果指甲感觉变薄、脆弱或敏感，请暂停美甲一至两周，必要时可延长，并定期保湿。如果症状持续，请寻求医疗建议。"
         }
       ]
     }

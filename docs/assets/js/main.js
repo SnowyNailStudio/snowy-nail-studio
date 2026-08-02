@@ -58,7 +58,7 @@ const FOOTER_HTML = `
         <p class="footer-tagline" data-i18n="footer.tagline">Handcrafted nail art · Richmond Hill</p>
         <p class="footer-loc"     data-i18n="footer.richmond_hill">Richmond Hill, Ontario</p>
       </div>
-      <div class="footer-col">
+      <div class="footer-col footer-col--pages">
         <h4 data-i18n="footer.nav_title">Pages</h4>
         <ul>
           <li><a href="index.html"     data-i18n="nav.home">Home</a></li>
@@ -70,7 +70,7 @@ const FOOTER_HTML = `
           <li><a href="aftercare.html" data-i18n="nav.aftercare">Nail Care</a></li>
         </ul>
       </div>
-      <div class="footer-col">
+      <div class="footer-col footer-col--social">
         <h4 data-i18n="footer.social_title">Follow Us</h4>
         <ul>
           <li><a href="#" aria-label="Instagram">📸 Instagram</a></li>
@@ -260,6 +260,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Boot i18n (loads translations + applies language to all [data-i18n] elements,
   // including those just injected into nav-placeholder / footer-placeholder)
   await I18N.init();
+  if (document.getElementById('home-promos-container') && typeof loadHomePricingSpecials === 'function') {
+    loadHomePricingSpecials('home-promos-container');
+  }
   _updateCopyrightYear();
   _initNav();
   _initScrollReveal();

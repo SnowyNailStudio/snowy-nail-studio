@@ -49,18 +49,39 @@
       </div>
     </section>
     <!-- â”€â”€ Promotion banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
-    <section class="section section--alt reveal" aria-labelledby="promo-heading">
+    <section class="section section--alt reveal pricing-specials" aria-labelledby="promo-heading">
       <div class="container">
-        <div class="section-header">
-          <p class="eyebrow" data-i18n="eyebrow.special_offer">Special Offer</p>
-          <h2 id="promo-heading" data-i18n="home.promo_title">Current Promotion</h2>
+        <div class="pricing-specials__intro">
+          <div class="section-header">
+            <p class="eyebrow" data-i18n="home.pricing_eyebrow">Pricing &amp; Specials</p>
+            <h2 id="promo-heading" data-i18n="home.pricing_title">Beautiful Nails, Simple Pricing</h2>
+            <p data-i18n="home.pricing_sub">Transparent everyday pricing with limited-time offers.</p>
+          </div>
+          <div class="section-language" role="group" aria-label="Pricing and specials language" data-i18n-aria-label="home.section_language_label">
+            <button class="section-language__button" type="button" data-section-lang="en" aria-pressed="true">English</button>
+            <button class="section-language__button" type="button" data-section-lang="zh" aria-pressed="false">中文</button>
+          </div>
         </div>
-        <div id="home-promo-wrap">
-          <!-- Injected by JS -->
-          <div class="promo-cards" id="home-promos-container"></div>
+        <div id="home-promo-wrap" aria-live="polite">
+          <div class="pricing-specials-grid" id="home-promos-container"></div>
         </div>
       </div>
     </section>
+    <div class="price-modal" id="price-modal" hidden>
+      <div class="price-modal__backdrop" data-price-modal-close></div>
+      <div class="price-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="price-modal-title" tabindex="-1">
+        <div class="price-modal__header">
+          <div>
+            <p class="price-modal__eyebrow" data-i18n="home.price_modal_eyebrow">Full price list</p>
+            <h2 id="price-modal-title" data-i18n="home.price_modal_title">Snowy Nail Studio Price List</h2>
+          </div>
+          <button class="price-modal__close" type="button" data-price-modal-close aria-label="Close price list" data-i18n-aria-label="home.price_modal_close">&times;</button>
+        </div>
+        <div class="price-modal__body">
+          <img class="price-modal__image" alt="" width="1024" height="1536">
+        </div>
+      </div>
+    </div>
     <!-- â”€â”€ Featured reviews â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
     <section class="section reveal" aria-labelledby="reviews-heading">
       <div class="container">
@@ -144,7 +165,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadFeaturedStrip('featured-strip');
       loadReviews('home-reviews', true);
-      loadPromotions('home-promos-container');
     });
   </script>
 </body>
