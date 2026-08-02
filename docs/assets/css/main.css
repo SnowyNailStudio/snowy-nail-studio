@@ -1397,7 +1397,11 @@ p { line-height: 1.75; }
   overflow: hidden;
   aspect-ratio: 4/3;
   background: var(--clr-surface-alt);
+  cursor: zoom-in;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
 }
+.studio-photo:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.studio-photo:focus-visible { outline: 2px solid var(--clr-accent); outline-offset: 3px; }
 .studio-photo picture,
 .studio-photo img {
   width: 100%;
@@ -1423,6 +1427,18 @@ p { line-height: 1.75; }
   display: none;
 }
 .studio-photo-mock-icon { font-size: 36px; opacity: .4; }
+.studio-lightbox .lightbox-inner { max-width: min(92vw, 1100px); }
+.studio-lightbox .lightbox-img-wrap {
+  width: 100%;
+  height: min(82svh, 900px);
+  aspect-ratio: auto;
+  background: transparent;
+}
+.studio-lightbox .lightbox-img-wrap img { object-fit: contain; }
+@media (max-width: 599px) {
+  .studio-lightbox .lightbox-inner { max-width: 100vw; }
+  .studio-lightbox .lightbox-img-wrap { height: 100svh; border-radius: 0; }
+}
 .sanitation-steps { display: flex; flex-direction: column; gap: var(--sp-5); }
 .sanitation-step { display: flex; gap: var(--sp-4); align-items: flex-start; }
 .step-num {
