@@ -150,6 +150,8 @@ site.contacts.forEach((c, i) => {
   }
 });
 const wechat = site.contacts.find(c => c.id === 'wechat');
+const xhs = site.contacts.find(c => c.id === 'xhs');
+assert(xhs && xhs.url && xhs.url.startsWith('https://www.xiaohongshu.com/user/profile/'), 'xiaohongshu contact has profile URL');
 assert(wechat !== undefined, 'wechat contact exists');
 assert(wechat && !('url' in wechat), 'wechat has no url (renders as div, not <a>)');
 // business.hours validation (optional but recommended)

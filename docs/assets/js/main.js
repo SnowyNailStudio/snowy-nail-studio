@@ -74,7 +74,7 @@ const FOOTER_HTML = `
         <h4 data-i18n="footer.social_title">Follow Us</h4>
         <ul>
           <li><a href="#" aria-label="Instagram">📸 Instagram</a></li>
-          <li><a href="#" aria-label="小红书">🌸 小红书</a></li>
+          <li><a href="https://www.xiaohongshu.com/user/profile/63d8d0ba00000000270294bc?m_source=pwa&amp;xsec_token=AB2CRLbpM6AjbjlaggHjX5GcE4am0vVZXMJKSEBbKoB08=&amp;xsec_source=pc_search" aria-label="小红书">🌸 小红书</a></li>
         </ul>
       </div>
     </div>
